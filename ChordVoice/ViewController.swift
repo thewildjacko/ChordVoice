@@ -12,17 +12,6 @@ import AudioKitUI
 
 class ViewController: UIViewController {
     
-    let frequencies = [27.5, 29.14, 30.87, 32.7, 34.65, 36.71, 38.89, 41.2, 43.65, 46.25, 49, 51.91, 55, 58.27, 61.74, 65.41, 69.3, 73.42, 77.78, 82.41, 87.31, 92.5, 98, 103.83, 110, 116.54, 123.47, 130.81, 138.59, 146.83, 155.56, 164.81, 174.61, 185, 196, 207.65, 220, 233.08, 246.94, 261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 369.99, 392, 415.3, 440, 466.16, 493.88, 523.25, 554.37, 587.33, 622.25, 659.25, 698.46, 739.99, 783.99, 830.61, 880, 932.33, 987.77, 1046.5, 1108.73, 1174.66, 1244.51, 1318.51, 1396.91, 1479.98, 1567.98, 1661.22, 1760, 1864.66, 1975.53, 2093, 2217.46, 2349.32, 2489.02, 2637.02, 2793.83, 2959.96, 3135.96, 3322.44, 3520, 3729.31, 3951.07, 4186.01]
-    
-    func createOscillator(frequency: Double) -> AKOscillator {
-        let newOscillator = AKOscillator(waveform: AKTable(.sawtooth))
-        newOscillator.amplitude = 0.3
-        newOscillator.frequency = frequency
-        newOscillator.stop()
-        newOscillator.rampTime = 0
-        return newOscillator
-    }
-    
     @IBAction func setOrRemoveHighlights(_ sender: AnyObject) {
 //        print(sender.tag)
         let myNSTag = NSString(string: String(sender.tag))
@@ -38,7 +27,6 @@ class ViewController: UIViewController {
     var tapIndex = 0
     var keyboardIndex = 1
     var keyboards = [Keyboard]()
-    var oscillators = [AKOscillator]()
     let engine = AudioEngine(waveform: AKTable(.sawtooth))
     
     @objc func handleTap(_ sender: UITapGestureRecognizer) {
@@ -82,18 +70,13 @@ class ViewController: UIViewController {
 
             let myRoot = myKeys[myTag]
             let midiRootOffset = parent.startingPitch + myTag + 21
-            let myRootMidiNote = MIDINoteNumber(parent.startingPitch + myTag + 21)
+            let myRootMidiNote = MIDINoteNumber(midiRootOffset)
             print("my tag is \(myTag), my midi note is \(myRootMidiNote)")
-            let myRootOsc = oscillators[parent.startingPitch + myTag]
             
             var my3rd = Key()
-            var my3rdOscNum = Int()
-            var my3rdOsc = AKOscillator()
             var my3rdMidiNote = MIDINoteNumber()
 
             var my5th = Key()
-            var my5thOscNum = Int()
-            var my5thOsc = AKOscillator()
             var my5thMidiNote = MIDINoteNumber()
             
             func toggleChordShape(triadType: Int, addRemove: Bool) {
@@ -108,32 +91,21 @@ class ViewController: UIViewController {
                         my3rd = myKeys[myTag + chord![0]]
                         my5th = myKeys[myTag + chord![1]]
                         
-                        my3rdOscNum = parent.startingPitch + myTag + chord![0]
-                        my5thOscNum = parent.startingPitch + myTag + chord![1]
-                        
                         my3rdMidiNote = MIDINoteNumber(midiRootOffset + chord![0])
                         my5thMidiNote = MIDINoteNumber(midiRootOffset + chord![1])
                     } else if myTag > myCount - rootPosOffset && myTag <= myCount - firstInvOffset {
                         my3rd = myKeys[myTag + chord![0]]
                         my5th = myKeys[myTag - chord![2]]
                     
-                        my3rdOscNum = parent.startingPitch + myTag + chord![0]
-                        my5thOscNum = parent.startingPitch + myTag - chord![2]
-
                         my3rdMidiNote = MIDINoteNumber(midiRootOffset + chord![0])
                         my5thMidiNote = MIDINoteNumber(midiRootOffset - chord![2])
                     } else {
                         my3rd = myKeys[myTag - chord![3]]
                         my5th = myKeys[myTag - chord![2]]
 
-                        my3rdOscNum = parent.startingPitch + myTag - chord![3]
-                        my5thOscNum = parent.startingPitch + myTag - chord![2]
-
                         my3rdMidiNote = MIDINoteNumber(midiRootOffset - chord![3])
                         my5thMidiNote = MIDINoteNumber(midiRootOffset - chord![2])
                     }
-                    my3rdOsc = oscillators[my3rdOscNum]
-                    my5thOsc = oscillators[my5thOscNum]
                 }
                 
                 // addRemove == true, highlight; addRemove == false, remove highlights
@@ -161,8 +133,6 @@ class ViewController: UIViewController {
                     myRoot.backgroundColor = .magenta
                 } else if tapIndex > 0 {
                     toggleChordShape(triadType: tapIndex, addRemove: true)
-                    my3rdOsc.start()
-                    my5thOsc.start()
                     engine.noteOn(note: my3rdMidiNote)
                     engine.noteOn(note: my5thMidiNote)
                 }
@@ -174,8 +144,6 @@ class ViewController: UIViewController {
                     myRoot.backgroundColor = myRoot.defaultBackgroundColor
                 } else if tapIndex > 0 {
                     toggleChordShape(triadType: tapIndex, addRemove: false)
-                    my3rdOsc.stop()
-                    my5thOsc.stop()
                     engine.noteOff(note: my3rdMidiNote)
                     engine.noteOff(note: my5thMidiNote)
                 } else {
@@ -228,19 +196,6 @@ class ViewController: UIViewController {
         myKeyboard.addGestureRecognizer(tap)
     }
     
-    func removeGestureRecognizers(myKeyboard: Keyboard) {
-        func removeGestures(myKeysArray: [Key]) {
-            for key in myKeysArray {
-                for gestureRec in key.gestureRecognizers! {
-                    key.removeGestureRecognizer(gestureRec)
-                }
-            }
-        }
-        
-        removeGestures(myKeysArray: myKeyboard.whiteKeys)
-        removeGestures(myKeysArray: myKeyboard.blackKeys)
-    }
-    
     let backgroundView = BackgroundView()
     
     override func viewDidLoad() {
@@ -285,10 +240,6 @@ class ViewController: UIViewController {
         addKeyboard(initialKey: 10, startingOctave: 4, numberOfKeys: 7)
         addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8)
         addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8)
-        
-        oscillators = frequencies.map {
-            createOscillator(frequency: $0)
-        }
         
         addTapGestureRecognizers(myKeyboard: keyboards[0])
         
