@@ -71,7 +71,6 @@ class ViewController: UIViewController {
             let myRoot = myKeys[myTag]
             let midiRootOffset = parent.startingPitch + myTag + 21
             let myRootMidiNote = MIDINoteNumber(midiRootOffset)
-            print("my tag is \(myTag), my midi note is \(myRootMidiNote)")
             
             var my3rd = Key()
             var my3rdMidiNote = MIDINoteNumber()
@@ -110,38 +109,42 @@ class ViewController: UIViewController {
                 
                 // addRemove == true, highlight; addRemove == false, remove highlights
                 if addRemove {
-                    myRoot.backgroundColor = myKeyboard.keyHighlightColor
+                    highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: true)
                     if myCount - myChordInversionOuterBounds[2] > 0 {
                         //                    print("We can invert!")
                         set3rdAnd5th()
-                        my3rd.backgroundColor = myKeyboard.secondKeyHighlightColor
-                        my5th.backgroundColor = myKeyboard.secondKeyHighlightColor
+                        highlightKeys(myKey: my3rd, myRoot: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: true)
+                        highlightKeys(myKey: my5th, myRoot: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: true)
                     }
                 } else {
-                    myRoot.backgroundColor = myRoot.defaultBackgroundColor
+                    highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
                     if myCount - myChordInversionOuterBounds[2] > 0 {
                         set3rdAnd5th()
-                        my3rd.backgroundColor = my3rd.defaultBackgroundColor
-                        my5th.backgroundColor = my5th.defaultBackgroundColor
+                        
+                        highlightKeys(myKey: my3rd, myRoot: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: false)
+                        highlightKeys(myKey: my5th, myRoot: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: false)
                     }
                 }
             }
             if sender.state == .began  {
-    //                        print(myTag)
+//                print("my tag is \(myTag), my midi note is \(myRootMidiNote)")
                 engine.noteOn(note: myRootMidiNote)
+                myRoot.holding = true
                 if tapIndex == 0 {
-                    myRoot.backgroundColor = .magenta
+                    highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: true)
                 } else if tapIndex > 0 {
                     toggleChordShape(triadType: tapIndex, addRemove: true)
                     engine.noteOn(note: my3rdMidiNote)
                     engine.noteOn(note: my5thMidiNote)
                 }
+                myRoot.isPlaying = true
             }
             
             if sender.state == .ended {
                 engine.noteOff(note: myRootMidiNote)
+                myRoot.holding = false
                 if tapIndex == 0 {
-                    myRoot.backgroundColor = myRoot.defaultBackgroundColor
+                    highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
                 } else if tapIndex > 0 {
                     toggleChordShape(triadType: tapIndex, addRemove: false)
                     engine.noteOff(note: my3rdMidiNote)
@@ -149,6 +152,7 @@ class ViewController: UIViewController {
                 } else {
                     print("Error!")
                 }
+                myRoot.isPlaying = false
             }
         }
     }
@@ -229,7 +233,7 @@ class ViewController: UIViewController {
         view.sendSubview(toBack: backgroundView)
         
         addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 37)
-        print(keyboards[0].startingPitch)
+//        print(keyboards[0].startingPitch)
         addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8)
         addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8)
         addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 9)
@@ -243,16 +247,7 @@ class ViewController: UIViewController {
         
         addTapGestureRecognizers(myKeyboard: keyboards[0])
         
-        addChordGestureRecognizers(myKeyboard: keyboards[1])
-        addChordGestureRecognizers(myKeyboard: keyboards[2])
-        addChordGestureRecognizers(myKeyboard: keyboards[3])
-        addChordGestureRecognizers(myKeyboard: keyboards[4])
-        addChordGestureRecognizers(myKeyboard: keyboards[5])
-        addChordGestureRecognizers(myKeyboard: keyboards[6])
-        addChordGestureRecognizers(myKeyboard: keyboards[7])
-        addChordGestureRecognizers(myKeyboard: keyboards[8])
-        addChordGestureRecognizers(myKeyboard: keyboards[9])
-        addChordGestureRecognizers(myKeyboard: keyboards[10])
+        keyboards[1...].forEach {addChordGestureRecognizers(myKeyboard: $0)}
     }
     
     override func viewWillLayoutSubviews() {
@@ -294,70 +289,22 @@ class ViewController: UIViewController {
         scaleKeyboard(myKeyboard: keyboards[9], scale: 1/5, x: 415, y: 165, xCentered: false, yCentered: false)
         scaleKeyboard(myKeyboard: keyboards[10], scale: 1/5, x: 575, y: 165, xCentered: false, yCentered: false)
         
-        keyboards[0].keys[12].backgroundColor = keyboards[1].keyHighlightColor
+        keyboards[0].keys[12].backgroundColor = tonicHighlightColor
         keyboards[0].keys[12].highlightLocked = true
+        keyboards[0].keys[12].defaultBackgroundColor = tonicHighlightColor
         
-        keyboards[1].keys[0].backgroundColor = .green
-        keyboards[1].keys[0].layer.borderColor = keyboards[1].keyHighlightColor.cgColor
-        keyboards[1].keys[0].layer.borderWidth = 2
-        keyboards[1].keys[4].backgroundColor = keyboards[1].secondKeyHighlightColor
-        keyboards[1].keys[7].backgroundColor = keyboards[1].secondKeyHighlightColor
+        commonToneTriad(myKeyboard: keyboards[1], tonic: 0, root: 0, third: 4, fifth: 7)
+        commonToneTriad(myKeyboard: keyboards[2], tonic: 0, root: 0, third: 3, fifth: 7)
+        commonToneTriad(myKeyboard: keyboards[3], tonic: 0, root: 0, third: 4, fifth: 8)
+        commonToneTriad(myKeyboard: keyboards[4], tonic: 0, root: 0, third: 3, fifth: 6)
+        commonToneTriad(myKeyboard: keyboards[5], tonic: 3, root: 0, third: 3, fifth: 7)
+        commonToneTriad(myKeyboard: keyboards[6], tonic: 3, root: 0, third: 3, fifth: 6)
+        commonToneTriad(myKeyboard: keyboards[7], tonic: 4, root: 0, third: 4, fifth: 7)
+        commonToneTriad(myKeyboard: keyboards[8], tonic: 6, root: 0, third: 3, fifth: 6)
+        commonToneTriad(myKeyboard: keyboards[9], tonic: 7, root: 0, third: 4, fifth: 7)
+        commonToneTriad(myKeyboard: keyboards[10], tonic: 7, root: 0, third: 3, fifth: 7)
         
-        keyboards[2].keys[0].backgroundColor = .green
-        keyboards[2].keys[0].layer.borderColor = keyboards[1].keyHighlightColor.cgColor
-        keyboards[2].keys[0].layer.borderWidth = 2
-        keyboards[2].keys[3].backgroundColor = keyboards[1].secondKeyHighlightColor
-        keyboards[2].keys[7].backgroundColor = keyboards[1].secondKeyHighlightColor
-        
-        keyboards[3].keys[0].backgroundColor = .green
-        keyboards[3].keys[0].layer.borderColor = keyboards[1].keyHighlightColor.cgColor
-        keyboards[3].keys[0].layer.borderWidth = 2
-        keyboards[3].keys[4].backgroundColor = keyboards[1].secondKeyHighlightColor
-        keyboards[3].keys[8].backgroundColor = keyboards[1].secondKeyHighlightColor
-        
-        keyboards[4].keys[0].backgroundColor = .green
-        keyboards[4].keys[0].layer.borderColor = keyboards[1].keyHighlightColor.cgColor
-        keyboards[4].keys[0].layer.borderWidth = 2
-        keyboards[4].keys[3].backgroundColor = keyboards[1].secondKeyHighlightColor
-        keyboards[4].keys[6].backgroundColor = keyboards[1].secondKeyHighlightColor
-        
-        keyboards[5].keys[0].backgroundColor = .green
-        keyboards[5].keys[3].layer.borderColor = keyboards[1].keyHighlightColor.cgColor
-        keyboards[5].keys[3].layer.borderWidth = 2
-        keyboards[5].keys[3].backgroundColor = keyboards[1].secondKeyHighlightColor
-        keyboards[5].keys[7].backgroundColor = keyboards[1].secondKeyHighlightColor
-        
-        keyboards[6].keys[0].backgroundColor = .green
-        keyboards[6].keys[3].layer.borderColor = keyboards[1].keyHighlightColor.cgColor
-        keyboards[6].keys[3].layer.borderWidth = 2
-        keyboards[6].keys[3].backgroundColor = keyboards[1].secondKeyHighlightColor
-        keyboards[6].keys[6].backgroundColor = keyboards[1].secondKeyHighlightColor
-        
-        keyboards[7].keys[0].backgroundColor = .green
-        keyboards[7].keys[4].backgroundColor = keyboards[1].secondKeyHighlightColor
-        keyboards[7].keys[4].layer.borderColor = keyboards[1].keyHighlightColor.cgColor
-        keyboards[7].keys[4].layer.borderWidth = 2
-        keyboards[7].keys[7].backgroundColor = keyboards[1].secondKeyHighlightColor
-        
-        keyboards[8].keys[0].backgroundColor = .green
-        keyboards[8].keys[3].backgroundColor = keyboards[1].secondKeyHighlightColor
-        keyboards[8].keys[6].backgroundColor = keyboards[1].secondKeyHighlightColor
-        keyboards[8].keys[6].layer.borderColor = keyboards[1].keyHighlightColor.cgColor
-        keyboards[8].keys[6].layer.borderWidth = 2
-        
-        keyboards[9].keys[0].backgroundColor = .green
-        keyboards[9].keys[4].backgroundColor = keyboards[1].secondKeyHighlightColor
-        keyboards[9].keys[7].backgroundColor = keyboards[1].secondKeyHighlightColor
-        keyboards[9].keys[7].layer.borderColor = keyboards[1].keyHighlightColor.cgColor
-        keyboards[9].keys[7].layer.borderWidth = 2
-        
-        keyboards[10].keys[0].backgroundColor = .green
-        keyboards[10].keys[3].backgroundColor = keyboards[1].secondKeyHighlightColor
-        keyboards[10].keys[7].backgroundColor = keyboards[1].secondKeyHighlightColor
-        keyboards[10].keys[7].layer.borderColor = keyboards[1].keyHighlightColor.cgColor
-        keyboards[10].keys[7].layer.borderWidth = 2
-        
-//        backgroundView.createLine(key1: keyboards[0].keys[12], key2: keyboards[1].keys[2], array: keyboards[0].keys)
+//        backgroundView.createLine(key1: keyboards[0].keys[12], key2: Keyboard.keys[2], array: keyboards[0].keys)
     }
 
     override func viewDidAppear(_ animated: Bool) {

@@ -21,9 +21,15 @@ class Keyboard: UIView {
     var myKeyboardWidthMod: CGFloat = 0
     var startingPitch = Int()
     
-    
-    var keyHighlightColor: UIColor = .magenta
-    var secondKeyHighlightColor: UIColor = .cyan
+    static var blackBorder: CGColor = UIColor.black.cgColor
+    static var keyHighlightColor: UIColor = .red
+    static var secondKeyHighlightColor: UIColor = .cyan
+    static var secondKeyBorderColor: CGColor = UIColor.cyan.cgColor
+    static var shared3rdOr5thBorderColor: CGColor = UIColor.blue.cgColor
+    static var tonicHighlightColor: UIColor = .magenta
+    static var tonicBorderHighlightColor: CGColor = UIColor.magenta.cgColor
+    static var rootKeyHighlightColor: UIColor = .green
+    static var rootBorderHighlightColor: CGColor = UIColor.green.cgColor
     
     var scale: CGFloat = 1.0
     

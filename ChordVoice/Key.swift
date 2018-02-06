@@ -14,10 +14,15 @@ class Key: UIView {
     /// 1 is A, 2 is A#/Bb, 3 is B ... 12 is G#/Ab
     
     var defaultBackgroundColor: UIColor = .clear
+    var currentHighlight = 0
+    var isPlaying = false
+    var holding = false
+    var previousBackground = UIColor()
     var highlightLocked = false // Haven't set up yet...use to set a key so that it can't be unhighlighted, or so that the highlight colors are inverted.
     
     init() {
         super.init(frame: CGRect())
+        self.previousBackground = defaultBackgroundColor
         self.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner] // rounded bottom corners
     }
     

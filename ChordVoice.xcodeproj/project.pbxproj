@@ -20,6 +20,9 @@
 		1D1660B12027A435002BB542 /* AudioKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1D1660AE2027A435002BB542 /* AudioKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1D1660B22027A435002BB542 /* AudioKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D1660AF2027A435002BB542 /* AudioKitUI.framework */; };
 		1D1660B32027A435002BB542 /* AudioKitUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1D1660AF2027A435002BB542 /* AudioKitUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1D9476512028BB2D002029AE /* HighlightKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D9476502028BB2D002029AE /* HighlightKeys.swift */; };
+		1D9476532028D66E002029AE /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D9476522028D66E002029AE /* Colors.swift */; };
+		1D95ABBB202A31F700E594D1 /* CommonToneKeyboards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D95ABBA202A31F700E594D1 /* CommonToneKeyboards.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -51,6 +54,9 @@
 		1D1660A92027A3D7002BB542 /* Key.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
 		1D1660AE2027A435002BB542 /* AudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AudioKit.framework; sourceTree = "<group>"; };
 		1D1660AF2027A435002BB542 /* AudioKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AudioKitUI.framework; sourceTree = "<group>"; };
+		1D9476502028BB2D002029AE /* HighlightKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightKeys.swift; sourceTree = "<group>"; };
+		1D9476522028D66E002029AE /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		1D95ABBA202A31F700E594D1 /* CommonToneKeyboards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonToneKeyboards.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,9 +96,12 @@
 				1D1660942027A381002BB542 /* AppDelegate.swift */,
 				1D1660962027A381002BB542 /* ViewController.swift */,
 				1D1660A62027A3D7002BB542 /* AudioEngine.swift */,
-				1D1660A72027A3D7002BB542 /* BackgroundView.swift */,
-				1D1660A92027A3D7002BB542 /* Key.swift */,
 				1D1660A82027A3D7002BB542 /* Keyboard.swift */,
+				1D1660A92027A3D7002BB542 /* Key.swift */,
+				1D1660A72027A3D7002BB542 /* BackgroundView.swift */,
+				1D9476502028BB2D002029AE /* HighlightKeys.swift */,
+				1D95ABBA202A31F700E594D1 /* CommonToneKeyboards.swift */,
+				1D9476522028D66E002029AE /* Colors.swift */,
 				1D1660982027A381002BB542 /* Main.storyboard */,
 				1D16609B2027A381002BB542 /* Assets.xcassets */,
 				1D16609D2027A381002BB542 /* LaunchScreen.storyboard */,
@@ -175,7 +184,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D1660AA2027A3D7002BB542 /* AudioEngine.swift in Sources */,
+				1D9476532028D66E002029AE /* Colors.swift in Sources */,
+				1D9476512028BB2D002029AE /* HighlightKeys.swift in Sources */,
 				1D1660972027A381002BB542 /* ViewController.swift in Sources */,
+				1D95ABBB202A31F700E594D1 /* CommonToneKeyboards.swift in Sources */,
 				1D1660AC2027A3D7002BB542 /* Keyboard.swift in Sources */,
 				1D1660AB2027A3D7002BB542 /* BackgroundView.swift in Sources */,
 				1D1660952027A381002BB542 /* AppDelegate.swift in Sources */,
