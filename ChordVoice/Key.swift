@@ -17,6 +17,7 @@ class Key: UIView {
     var currentHighlight = 0
     var isPlaying = false
     var holding = false
+    var playCount = 0
     var previousBackground = UIColor()
     var highlightLocked = false // Haven't set up yet...use to set a key so that it can't be unhighlighted, or so that the highlight colors are inverted.
     

@@ -84,7 +84,7 @@ class ViewController: UIViewController {
                 let chord = chordInversions[triadType]
                 
                 let myChordInversionOuterBounds = chordInversionOuterBounds[triadType]!.sorted()
-                
+                                
                 func set3rdAnd5th() {
                     if myTag <= myCount - rootPosOffset {
                         my3rd = myKeys[myTag + chord![0]]
@@ -110,17 +110,22 @@ class ViewController: UIViewController {
                 // addRemove == true, highlight; addRemove == false, remove highlights
                 if addRemove {
                     highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: true)
+                    myRoot.playCount += 1
                     if myCount - myChordInversionOuterBounds[2] > 0 {
                         //                    print("We can invert!")
                         set3rdAnd5th()
+                        my3rd.playCount += 1
+                        my5th.playCount += 1
                         highlightKeys(myKey: my3rd, myRoot: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: true)
                         highlightKeys(myKey: my5th, myRoot: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: true)
                     }
                 } else {
                     highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
+                    myRoot.playCount -= 1
                     if myCount - myChordInversionOuterBounds[2] > 0 {
                         set3rdAnd5th()
-                        
+                        my3rd.playCount -= 1
+                        my5th.playCount -= 1
                         highlightKeys(myKey: my3rd, myRoot: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: false)
                         highlightKeys(myKey: my5th, myRoot: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: false)
                     }
@@ -128,9 +133,12 @@ class ViewController: UIViewController {
             }
             if sender.state == .began  {
 //                print("my tag is \(myTag), my midi note is \(myRootMidiNote)")
-                engine.noteOn(note: myRootMidiNote)
-                myRoot.holding = true
+                if !myRoot.holding {
+                    engine.noteOn(note: myRootMidiNote)
+                    myRoot.holding = true
+                }
                 if tapIndex == 0 {
+                    myRoot.playCount += 1
                     highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: true)
                 } else if tapIndex > 0 {
                     toggleChordShape(triadType: tapIndex, addRemove: true)
@@ -141,14 +149,23 @@ class ViewController: UIViewController {
             }
             
             if sender.state == .ended {
-                engine.noteOff(note: myRootMidiNote)
+                func ifNotHolding(note: Key, midiNote: MIDINoteNumber) {
+                    if !note.holding {
+                        engine.noteOff(note: midiNote)
+                    }
+                }
+
                 myRoot.holding = false
+                if myRoot.playCount == 1 {
+                    engine.noteOff(note: myRootMidiNote)
+                }
                 if tapIndex == 0 {
                     highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
+                    myRoot.playCount -= 1
                 } else if tapIndex > 0 {
                     toggleChordShape(triadType: tapIndex, addRemove: false)
-                    engine.noteOff(note: my3rdMidiNote)
-                    engine.noteOff(note: my5thMidiNote)
+                    ifNotHolding(note: my3rd, midiNote: my3rdMidiNote)
+                    ifNotHolding(note: my5th, midiNote: my5thMidiNote)
                 } else {
                     print("Error!")
                 }
@@ -232,7 +249,7 @@ class ViewController: UIViewController {
         backgroundView.frame = CGRect(x: 0.0, y: 0.0, width: screenWidth, height: screenHeight)
         view.sendSubview(toBack: backgroundView)
         
-        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 37)
+        addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 37)
 //        print(keyboards[0].startingPitch)
         addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8)
         addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8)
