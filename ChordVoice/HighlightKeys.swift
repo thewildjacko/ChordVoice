@@ -10,14 +10,6 @@ import Foundation
 import AudioKit
 import AudioKitUI
 
-func commonToneTriad(myKeyboard: Keyboard, tonic: Int, root: Int, third: Int, fifth: Int) {
-    myKeyboard.keys[root].backgroundColor = rootKeyHighlightColor
-    myKeyboard.keys[tonic].layer.borderColor = tonicBorderHighlightColor
-    myKeyboard.keys[tonic].layer.borderWidth = 1
-    myKeyboard.keys[third].backgroundColor = secondKeyHighlightColor
-    myKeyboard.keys[fifth].backgroundColor = secondKeyHighlightColor
-}
-
 func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight: Bool) {
     
     let currentBackground = myKey.backgroundColor
