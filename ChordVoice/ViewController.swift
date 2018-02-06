@@ -232,7 +232,7 @@ class ViewController: UIViewController {
         backgroundView.frame = CGRect(x: 0.0, y: 0.0, width: screenWidth, height: screenHeight)
         view.sendSubview(toBack: backgroundView)
         
-        addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 37)
+        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 37)
 //        print(keyboards[0].startingPitch)
         addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8)
         addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8)

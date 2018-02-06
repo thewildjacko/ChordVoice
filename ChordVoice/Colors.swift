@@ -22,6 +22,10 @@ extension UIColor {
 let processMagenta = UIColor(red: 0xFF, green: 0x00, blue: 0x90)
 let rose = UIColor(red: 0xFF, green: 0x00, blue: 0x7F)
 let hotMagenta = UIColor(red: 0xFF, green: 0x33, blue: 0xCC)
+let darkCyan = UIColor(red: 0x00, green: 0x8B, blue: 0x8B)
+let processCyan = UIColor(red: 0x00, green: 0xB7, blue: 0xEB)
+let electricBlue = UIColor(red: 0x7D, green: 0xF9, blue: 0xFF)
+let purpleShadow = UIColor(red: 0x80, green: 0x00, blue: 0xFF)
 
 var blackBorder: CGColor = UIColor.black.cgColor
 var keyHighlightColor: UIColor = .red

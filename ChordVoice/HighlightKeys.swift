@@ -75,6 +75,22 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
         myKey.layer.borderWidth = width
     }
     
+    func addShadow(add: Bool) {
+        if add {
+            myKey.layer.shadowColor = purpleShadow.cgColor
+            myKey.layer.shadowOpacity = 1
+            myKey.layer.shadowOffset = CGSize.zero
+            myKey.layer.shadowRadius = 10
+            myKey.layer.shadowPath = UIBezierPath(rect: myKey.bounds).cgPath
+        } else {
+            myKey.layer.shadowColor = UIColor.clear.cgColor
+            myKey.layer.shadowOpacity = 0
+            myKey.layer.shadowOffset = CGSize.zero
+            myKey.layer.shadowRadius = 0
+            myKey.layer.shadowPath = nil
+        }
+    }
+    
     if myKey.currentHighlight == 0 {
         printPrevBackground()
         goHighlight(currentHighlightDelta: 1, newHighlightColor: highlightColor)
@@ -82,9 +98,9 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
             borderIt(color: tonicBorderHighlightColor, width: 4)
         }
         if myKey.holding {
-            print("Key is highlighted 1x and holding.")
+//            print("Key is highlighted 1x and holding.")
         } else {
-            print("Key is highlighted 1x but not holding.")
+//            print("Key is highlighted 1x but not holding.")
         }
     } else {
         if !doHighlight {
@@ -95,18 +111,18 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
                     borderIt(color: blackBorder, width: 1)
                 }
                 if myKey.holding {
-                    print("Key is highlighted 1x and holding.")
+//                    print("Key is highlighted 1x and holding.")
                 } else {
-                    print("Key is no longer highlighted or holding.")
+//                    print("Key is no longer highlighted or holding.")
                 }
-                print("Key was highlighted 1x but is no longer playing.")
+//                print("Key was highlighted 1x but is no longer playing.")
             case 2:
                 if myKey.holding {
-                    print("doHighlight is false, currentHighlight is 2, key is holding")
+//                    print("doHighlight is false, currentHighlight is 2, key is holding")
                     goHighlight(currentHighlightDelta: -1, newHighlightColor: keyHighlightColor)
                     borderIt(color: blackBorder, width: 1)
                 } else {
-                    print("doHighlight is false, currentHighlight is 2, key is not holding")
+//                    print("doHighlight is false, currentHighlight is 2, key is not holding")
                     goHighlight(currentHighlightDelta: -1, newHighlightColor: secondKeyHighlightColor)
                     if myKey.highlightLocked {
                         borderIt(color: tonicBorderHighlightColor, width: 4)
@@ -117,12 +133,35 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
             case 3:
                 if myKey.holding {
                     if myKey == myRoot {
-                        print("Key losing highlight is the root! Key is holding. ")
+//                        print("Key losing highlight is the root! Key is holding. ")
                     } else {
-                        print("Key losing highlight is not the root!  Key is not holding.")
+//                        print("Key losing highlight is not the root!  Key is not holding.")
                     }
-                    print("doHighlight is false, currentHighlight is 3")
+//                    print("doHighlight is false, currentHighlight is 3")
                     goHighlight(currentHighlightDelta: -1, newHighlightColor: keyHighlightColor)
+                    borderIt(color: secondKeyBorderColor, width: 4)
+                } else {
+                    if myKey == myRoot {
+//                        print("Key losing highlight is the root! Key is not holding.")
+//                        printPrevBackground()
+                    } else {
+//                        print("Key losing highlight is not the root! Key is not holding.")
+                    }
+//                    print("doHighlight is false, currentHighlight is 3")
+                    goHighlight(currentHighlightDelta: -1, newHighlightColor: secondKeyHighlightColor)
+                    borderIt(color: shared3rdOr5thBorderColor, width: 4)
+                }
+            case 4:
+                if myKey.holding {
+                    if myKey == myRoot {
+                        print("Key losing highlight is the root! Key is holding.")
+                        printPrevBackground()
+                    } else {
+                        print("Key losing highlight is not the root! Key is holding.")
+                    }
+                    goHighlight(currentHighlightDelta: -1, newHighlightColor: keyHighlightColor)
+                    
+//                    goHighlight(currentHighlightDelta: -1, newHighlightColor: UIColor.green)
                     borderIt(color: secondKeyBorderColor, width: 4)
                 } else {
                     if myKey == myRoot {
@@ -131,10 +170,11 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
                     } else {
                         print("Key losing highlight is not the root! Key is not holding.")
                     }
-                    print("doHighlight is false, currentHighlight is 3")
                     goHighlight(currentHighlightDelta: -1, newHighlightColor: secondKeyHighlightColor)
+//                    goHighlight(currentHighlightDelta: -1, newHighlightColor: UIColor.green)
                     borderIt(color: shared3rdOr5thBorderColor, width: 4)
                 }
+                addShadow(add: false)
             default:
                 ()
             }
@@ -154,21 +194,30 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
                         borderIt(color: secondKeyBorderColor, width: 4)
                     }
                 }
-                print("Highlighted 1x, highlighting again!")
+//                print("Highlighted 1x, highlighting again!")
                 printCurrentHighlight()
             case 2:
-                print("Highlighted 2x, highlighting a third time!")
+//                print("Highlighted 2x, highlighting a third time!")
                 if myKey == myRoot {
-                    print("3rd highlight as the root!")
+//                    print("3rd highlight as the root!")
                     goHighlight(currentHighlightDelta: 1, newHighlightColor: keyHighlightColor)
                     if myKey.holding {
                         borderIt(color: shared3rdOr5thBorderColor, width: 4)
                     }
                 } else {
                     myKey.currentHighlight += 1
-                    print("3rd highlight as 3rd or 5th!")
+//                    print("3rd highlight as 3rd or 5th!")
                     printCurrentHighlight()
                     borderIt(color: shared3rdOr5thBorderColor, width: 4)
+                }
+            case 3:
+                print("Highlighting a 4th time!")
+                goHighlight(currentHighlightDelta: 1, newHighlightColor: keyHighlightColor)
+                addShadow(add: true)
+                if myKey == myRoot {
+                    print("I'm highlighting the root!")
+                } else {
+                    print("I'm highlighting the 3rd or 5th!")
                 }
             default:
                 ()
