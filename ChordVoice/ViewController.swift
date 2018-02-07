@@ -105,6 +105,7 @@ class ViewController: UIViewController {
                         my3rdMidiNote = MIDINoteNumber(midiRootOffset - chord![3])
                         my5thMidiNote = MIDINoteNumber(midiRootOffset - chord![2])
                     }
+                    print(myRootMidiNote, my3rdMidiNote, my5thMidiNote)
                 }
                 
                 // addRemove == true, highlight; addRemove == false, remove highlights
@@ -190,23 +191,95 @@ class ViewController: UIViewController {
     
     @objc func highlightKeyboard(_ sender: UITapGestureRecognizer) {
         let parent: Keyboard = (sender.view as! Keyboard)
+        let lockedPitch = parent.highlightPitch
+//        print(lockedPitch)
         
         if sender.state == .began {
             if parent.keys[0].frame.origin.x != 0 {
-                print(parent.keys[parent.keys.count - 1].frame.origin.x + parent.keys[parent.keys.count - 1].frame.width - parent.keys[0].frame.origin.x)
+//                print(parent.keys[parent.keys.count - 1].frame.origin.x + parent.keys[parent.keys.count - 1].frame.width - parent.keys[0].frame.origin.x)
             } else {
-                print(parent.keys[parent.keys.count - 1].frame.origin.x + parent.keys[parent.keys.count - 1].frame.width)
+//                print(parent.keys[parent.keys.count - 1].frame.origin.x + parent.keys[parent.keys.count - 1].frame.width)
             }
 //            print(parent.keys[0].frame.origin.x)
 //            print(parent.keys[parent.keys.count - 1].frame.origin.x + parent.keys[parent.keys.count - 1].frame.width)
             parent.layer.borderWidth = 2
             parent.layer.borderColor = UIColor.red.cgColor
+            
+            engine.noteOn(note: lockedPitch)
+            switch parent.triadNumber {
+            case 1: // root major
+                engine.noteOn(note: lockedPitch + 4)
+                engine.noteOn(note: lockedPitch + 7)
+            case 2: // root minor
+                engine.noteOn(note: lockedPitch + 3)
+                engine.noteOn(note: lockedPitch + 7)
+            case 3: // root augmented
+                engine.noteOn(note: lockedPitch + 4)
+                engine.noteOn(note: lockedPitch + 8)
+            case 4: // root diminished
+                engine.noteOn(note: lockedPitch + 3)
+                engine.noteOn(note: lockedPitch + 6)
+            case 5: // min 3rd minor
+                engine.noteOn(note: lockedPitch - 3)
+                engine.noteOn(note: lockedPitch + 4)
+            case 6: // min 3rd diminished
+                engine.noteOn(note: lockedPitch - 3)
+                engine.noteOn(note: lockedPitch + 3)
+            case 7: // maj 3rd major
+                engine.noteOn(note: lockedPitch - 4)
+                engine.noteOn(note: lockedPitch + 3)
+            case 8: // dim 5th diminished
+                engine.noteOn(note: lockedPitch - 6)
+                engine.noteOn(note: lockedPitch - 3)
+            case 9: // P5 major
+                engine.noteOn(note: lockedPitch - 7)
+                engine.noteOn(note: lockedPitch - 3)
+            case 10: // P5 minor
+                engine.noteOn(note: lockedPitch - 7)
+                engine.noteOn(note: lockedPitch - 4)
+            default:
+                ()
+            }
         }
         
         if sender.state == .ended {
             parent.layer.borderWidth = 0
             parent.layer.borderColor = UIColor.black.cgColor
-        }
+            engine.noteOff(note: lockedPitch)
+            switch parent.triadNumber {
+            case 1: // root major
+                engine.noteOff(note: lockedPitch + 4)
+                engine.noteOff(note: lockedPitch + 7)
+            case 2: // root minor
+                engine.noteOff(note: lockedPitch + 3)
+                engine.noteOff(note: lockedPitch + 7)
+            case 3: // root augmented
+                engine.noteOff(note: lockedPitch + 4)
+                engine.noteOff(note: lockedPitch + 8)
+            case 4: // root diminished
+                engine.noteOff(note: lockedPitch + 3)
+                engine.noteOff(note: lockedPitch + 6)
+            case 5: // min 3rd minor
+                engine.noteOff(note: lockedPitch - 3)
+                engine.noteOff(note: lockedPitch + 4)
+            case 6: // min 3rd diminished
+                engine.noteOff(note: lockedPitch - 3)
+                engine.noteOff(note: lockedPitch + 3)
+            case 7: // maj 3rd major
+                engine.noteOff(note: lockedPitch - 4)
+                engine.noteOff(note: lockedPitch + 3)
+            case 8: // dim 5th diminished
+                engine.noteOff(note: lockedPitch - 6)
+                engine.noteOff(note: lockedPitch - 3)
+            case 9: // P5 major
+                engine.noteOff(note: lockedPitch - 7)
+                engine.noteOff(note: lockedPitch - 3)
+            case 10: // P5 minor
+                engine.noteOff(note: lockedPitch - 7)
+                engine.noteOff(note: lockedPitch - 4)
+            default:
+                ()
+            }        }
 
     }
     
@@ -229,7 +302,7 @@ class ViewController: UIViewController {
         let screenWidth = view.frame.height
         let screenHeight = view.frame.width
         
-        func addKeyboard(initialKey: Int, startingOctave: Int, numberOfKeys: Int) {
+        func addKeyboard(initialKey: Int, startingOctave: Int, numberOfKeys: Int, highlightLockKey: Int) {
             let myKeyboard = Keyboard(initialKey: initialKey, startingOctave: startingOctave, numberOfKeys: numberOfKeys)
             myKeyboard.tag = keyboardIndex
             //        print(myKeyboard.tag)
@@ -242,25 +315,28 @@ class ViewController: UIViewController {
             }
             backgroundView.addSubview(myKeyboard)
             keyboards.append(myKeyboard)
-            myKeyboard.addKeys()
+            myKeyboard.addKeys(highlightLockKey: highlightLockKey)
+            if highlightLockKey > 1 {
+                
+            }
         }
         
         view.addSubview(backgroundView)
         backgroundView.frame = CGRect(x: 0.0, y: 0.0, width: screenWidth, height: screenHeight)
         view.sendSubview(toBack: backgroundView)
         
-        addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 37)
+        addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 37, highlightLockKey: 12)
 //        print(keyboards[0].startingPitch)
-        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8)
-        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8)
-        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 9)
-        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 7)
-        addKeyboard(initialKey: 1, startingOctave: 4, numberOfKeys: 8)
-        addKeyboard(initialKey: 1, startingOctave: 4, numberOfKeys: 7)
-        addKeyboard(initialKey: 12, startingOctave: 4, numberOfKeys: 8)
-        addKeyboard(initialKey: 10, startingOctave: 4, numberOfKeys: 7)
-        addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8)
-        addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8)
+        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 9, highlightLockKey: -1)
+        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
+        addKeyboard(initialKey: 1, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+        addKeyboard(initialKey: 1, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
+        addKeyboard(initialKey: 12, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+        addKeyboard(initialKey: 10, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
+        addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+        addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
         
         addTapGestureRecognizers(myKeyboard: keyboards[0])
         
@@ -307,19 +383,19 @@ class ViewController: UIViewController {
         scaleKeyboard(myKeyboard: keyboards[10], scale: 1/5, x: 575, y: 165, xCentered: false, yCentered: false)
         
         keyboards[0].keys[12].backgroundColor = tonicHighlightColor
-        keyboards[0].keys[12].highlightLocked = true
+//        keyboards[0].keys[12].highlightLocked = true
         keyboards[0].keys[12].defaultBackgroundColor = tonicHighlightColor
         
-        commonToneTriad(myKeyboard: keyboards[1], tonic: 0, root: 0, third: 4, fifth: 7)
-        commonToneTriad(myKeyboard: keyboards[2], tonic: 0, root: 0, third: 3, fifth: 7)
-        commonToneTriad(myKeyboard: keyboards[3], tonic: 0, root: 0, third: 4, fifth: 8)
-        commonToneTriad(myKeyboard: keyboards[4], tonic: 0, root: 0, third: 3, fifth: 6)
-        commonToneTriad(myKeyboard: keyboards[5], tonic: 3, root: 0, third: 3, fifth: 7)
-        commonToneTriad(myKeyboard: keyboards[6], tonic: 3, root: 0, third: 3, fifth: 6)
-        commonToneTriad(myKeyboard: keyboards[7], tonic: 4, root: 0, third: 4, fifth: 7)
-        commonToneTriad(myKeyboard: keyboards[8], tonic: 6, root: 0, third: 3, fifth: 6)
-        commonToneTriad(myKeyboard: keyboards[9], tonic: 7, root: 0, third: 4, fifth: 7)
-        commonToneTriad(myKeyboard: keyboards[10], tonic: 7, root: 0, third: 3, fifth: 7)
+        commonToneTriad(myKeyboard: keyboards[1], tonic: 0, root: 0, third: 4, fifth: 7, triadNumber: 1)
+        commonToneTriad(myKeyboard: keyboards[2], tonic: 0, root: 0, third: 3, fifth: 7, triadNumber: 2)
+        commonToneTriad(myKeyboard: keyboards[3], tonic: 0, root: 0, third: 4, fifth: 8, triadNumber: 3)
+        commonToneTriad(myKeyboard: keyboards[4], tonic: 0, root: 0, third: 3, fifth: 6, triadNumber: 4)
+        commonToneTriad(myKeyboard: keyboards[5], tonic: 3, root: 0, third: 3, fifth: 7, triadNumber: 5)
+        commonToneTriad(myKeyboard: keyboards[6], tonic: 3, root: 0, third: 3, fifth: 6, triadNumber: 6)
+        commonToneTriad(myKeyboard: keyboards[7], tonic: 4, root: 0, third: 4, fifth: 7, triadNumber: 7)
+        commonToneTriad(myKeyboard: keyboards[8], tonic: 6, root: 0, third: 3, fifth: 6, triadNumber: 8)
+        commonToneTriad(myKeyboard: keyboards[9], tonic: 7, root: 0, third: 4, fifth: 7, triadNumber: 9)
+        commonToneTriad(myKeyboard: keyboards[10], tonic: 7, root: 0, third: 3, fifth: 7, triadNumber: 10)
         
 //        backgroundView.createLine(key1: keyboards[0].keys[12], key2: Keyboard.keys[2], array: keyboards[0].keys)
     }

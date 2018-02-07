@@ -26,6 +26,8 @@ let darkCyan = UIColor(red: 0x00, green: 0x8B, blue: 0x8B)
 let processCyan = UIColor(red: 0x00, green: 0xB7, blue: 0xEB)
 let electricBlue = UIColor(red: 0x7D, green: 0xF9, blue: 0xFF)
 let purpleShadow = UIColor(red: 0x80, green: 0x00, blue: 0xFF)
+let lavender = UIColor(red: 0xE6, green: 0xE6, blue: 0xFA)
+let orange = UIColor(red: 0xFF, green: 0x7F, blue: 0x00)
 
 var blackBorder: CGColor = UIColor.black.cgColor
 var keyHighlightColor: UIColor = .red
@@ -36,4 +38,5 @@ var tonicHighlightColor: UIColor = .magenta
 var tonicBorderHighlightColor: CGColor = UIColor.magenta.cgColor
 var rootKeyHighlightColor: UIColor = .green
 var rootBorderHighlightColor: CGColor = UIColor.green.cgColor
+var thirdAndFifthHighlightColor: UIColor = lavender
 

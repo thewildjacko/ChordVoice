@@ -8,6 +8,8 @@
 // A Keyboard wrapper for Key objects; includes methods to add Keys, set key type (A, B, C etc.), set layout constraints based on number of keys and initial key; also sets default highlight colors for keys.
 
 import UIKit
+import AudioKit
+import AudioKitUI
 
 class Keyboard: UIView {
     
@@ -20,6 +22,9 @@ class Keyboard: UIView {
     var myLayoutConstraints = [NSLayoutConstraint]()
     var myKeyboardWidthMod: CGFloat = 0
     var startingPitch = Int()
+    var highlightPitch = MIDINoteNumber()
+    static var globalHighlightPitch = MIDINoteNumber()
+    var triadNumber = Int()
     
     static var blackBorder: CGColor = UIColor.black.cgColor
     static var keyHighlightColor: UIColor = .red
@@ -43,7 +48,7 @@ class Keyboard: UIView {
         self.backgroundColor = .clear
     }
     
-    func addKeys() {
+    func addKeys(highlightLockKey: Int) {
         var counter = initialKey
         
         while counter <= (numberOfKeys + initialKey - 1)   {
@@ -78,6 +83,16 @@ class Keyboard: UIView {
             self.addSubview(key)
             
             counter += 1
+        }
+        if highlightLockKey > 0 {
+            keys[highlightLockKey].highlightLocked = true
+            keys[highlightLockKey].backgroundColor = Keyboard.tonicHighlightColor
+            keys[highlightLockKey].defaultBackgroundColor = Keyboard.tonicHighlightColor
+            self.highlightPitch = MIDINoteNumber(self.startingPitch + highlightLockKey + 21)
+//            print(self.highlightPitch)
+            Keyboard.globalHighlightPitch = self.highlightPitch
+        } else {
+            self.highlightPitch = Keyboard.globalHighlightPitch
         }
     }
     
