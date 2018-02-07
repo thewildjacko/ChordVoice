@@ -10,6 +10,22 @@ import Foundation
 import AudioKit
 import AudioKitUI
 
+func addShadow(add: Bool, key: Key) {
+    if add {
+        key.layer.shadowColor = purpleShadow.cgColor
+        key.layer.shadowOpacity = 1
+        key.layer.shadowOffset = CGSize.zero
+        key.layer.shadowRadius = 10
+        key.layer.shadowPath = UIBezierPath(rect: key.bounds).cgPath
+    } else {
+        key.layer.shadowColor = UIColor.clear.cgColor
+        key.layer.shadowOpacity = 0
+        key.layer.shadowOffset = CGSize.zero
+        key.layer.shadowRadius = 0
+        key.layer.shadowPath = nil
+    }
+}
+
 func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight: Bool) {
     
     let currentBackground = myKey.backgroundColor
@@ -72,21 +88,21 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
         myKey.layer.borderWidth = width
     }
     
-    func addShadow(add: Bool) {
-        if add {
-            myKey.layer.shadowColor = purpleShadow.cgColor
-            myKey.layer.shadowOpacity = 1
-            myKey.layer.shadowOffset = CGSize.zero
-            myKey.layer.shadowRadius = 10
-            myKey.layer.shadowPath = UIBezierPath(rect: myKey.bounds).cgPath
-        } else {
-            myKey.layer.shadowColor = UIColor.clear.cgColor
-            myKey.layer.shadowOpacity = 0
-            myKey.layer.shadowOffset = CGSize.zero
-            myKey.layer.shadowRadius = 0
-            myKey.layer.shadowPath = nil
-        }
-    }
+//    func addShadow(add: Bool) {
+//        if add {
+//            myKey.layer.shadowColor = purpleShadow.cgColor
+//            myKey.layer.shadowOpacity = 1
+//            myKey.layer.shadowOffset = CGSize.zero
+//            myKey.layer.shadowRadius = 10
+//            myKey.layer.shadowPath = UIBezierPath(rect: myKey.bounds).cgPath
+//        } else {
+//            myKey.layer.shadowColor = UIColor.clear.cgColor
+//            myKey.layer.shadowOpacity = 0
+//            myKey.layer.shadowOffset = CGSize.zero
+//            myKey.layer.shadowRadius = 0
+//            myKey.layer.shadowPath = nil
+//        }
+//    }
     
     if myKey.currentHighlight == 0 {
         goHighlight(currentHighlightDelta: 1, newHighlightColor: highlightColor)
@@ -129,7 +145,7 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
                     goHighlight(currentHighlightDelta: -1, newHighlightColor: secondKeyHighlightColor)
                     borderIt(color: shared3rdOr5thBorderColor, width: 4)
                 }
-                addShadow(add: false)
+                addShadow(add: false, key: myKey)
             default:
                 ()
             }
@@ -160,7 +176,7 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
                 }
             case 3:
                 goHighlight(currentHighlightDelta: 1, newHighlightColor: keyHighlightColor)
-                addShadow(add: true)
+                addShadow(add: true, key: myKey)
             default:
                 ()
             }

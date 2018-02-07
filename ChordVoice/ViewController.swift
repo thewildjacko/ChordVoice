@@ -301,6 +301,7 @@ class ViewController: UIViewController {
         key.isPlaying = false
         key.playCount = 0
         key.currentHighlight = 0
+        addShadow(add: false, key: key)
         engine.noteOff(note: midiNote, bank: 1)
     }
     
