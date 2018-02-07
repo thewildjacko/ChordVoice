@@ -27,7 +27,7 @@ class ViewController: UIViewController {
     var tapIndex = 0
     var keyboardIndex = 1
     var keyboards = [Keyboard]()
-    let engine = AudioEngine(waveform: AKTable(.sawtooth))
+    let engine = AudioEngine(waveform1: AKTable(.sawtooth), waveform2: AKTable(.square))
     
     @objc func handleTap(_ sender: UITapGestureRecognizer) {
         if tapIndex != -1 {
@@ -135,7 +135,7 @@ class ViewController: UIViewController {
             if sender.state == .began  {
 //                print("my tag is \(myTag), my midi note is \(myRootMidiNote)")
                 if !myRoot.holding {
-                    engine.noteOn(note: myRootMidiNote)
+                    engine.noteOn(note: myRootMidiNote, bank: 1)
                     myRoot.holding = true
                 }
                 if tapIndex == 0 {
@@ -143,8 +143,8 @@ class ViewController: UIViewController {
                     highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: true)
                 } else if tapIndex > 0 {
                     toggleChordShape(triadType: tapIndex, addRemove: true)
-                    engine.noteOn(note: my3rdMidiNote)
-                    engine.noteOn(note: my5thMidiNote)
+                    engine.noteOn(note: my3rdMidiNote, bank: 1)
+                    engine.noteOn(note: my5thMidiNote, bank: 1)
                 }
                 myRoot.isPlaying = true
             }
@@ -152,13 +152,13 @@ class ViewController: UIViewController {
             if sender.state == .ended {
                 func ifNotHolding(note: Key, midiNote: MIDINoteNumber) {
                     if !note.holding {
-                        engine.noteOff(note: midiNote)
+                        engine.noteOff(note: midiNote, bank: 1)
                     }
                 }
 
                 myRoot.holding = false
                 if myRoot.playCount == 1 {
-                    engine.noteOff(note: myRootMidiNote)
+                    engine.noteOff(note: myRootMidiNote, bank: 1)
                 }
                 if tapIndex == 0 {
                     highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
@@ -171,6 +171,17 @@ class ViewController: UIViewController {
                     print("Error!")
                 }
                 myRoot.isPlaying = false
+            }
+
+            if sender.state == .cancelled {
+                for (index, key) in myKeys.enumerated() {
+                    cancelAll(key: key, midiNote: MIDINoteNumber(parent.startingPitch + index + 21), bank: 1)
+                }
+//                cancelAll(key: myRoot, midiNote: myRootMidiNote, bank: 1)
+//                if tapIndex > 0 {
+//                    cancelAll(key: my3rd, midiNote: my3rdMidiNote, bank: 1)
+//                    cancelAll(key: my5th, midiNote: my5thMidiNote, bank: 1)
+//                }
             }
         }
     }
@@ -195,92 +206,84 @@ class ViewController: UIViewController {
 //        print(lockedPitch)
         
         if sender.state == .began {
-            if parent.keys[0].frame.origin.x != 0 {
-//                print(parent.keys[parent.keys.count - 1].frame.origin.x + parent.keys[parent.keys.count - 1].frame.width - parent.keys[0].frame.origin.x)
-            } else {
-//                print(parent.keys[parent.keys.count - 1].frame.origin.x + parent.keys[parent.keys.count - 1].frame.width)
-            }
-//            print(parent.keys[0].frame.origin.x)
-//            print(parent.keys[parent.keys.count - 1].frame.origin.x + parent.keys[parent.keys.count - 1].frame.width)
-            parent.layer.borderWidth = 2
-            parent.layer.borderColor = UIColor.red.cgColor
+            parent.border.layer.borderColor = UIColor.red.cgColor
+            engine.noteOn(note: lockedPitch, bank: 2)
             
-            engine.noteOn(note: lockedPitch)
             switch parent.triadNumber {
             case 1: // root major
-                engine.noteOn(note: lockedPitch + 4)
-                engine.noteOn(note: lockedPitch + 7)
+                engine.noteOn(note: lockedPitch + 4, bank: 2)
+                engine.noteOn(note: lockedPitch + 7, bank: 2)
             case 2: // root minor
-                engine.noteOn(note: lockedPitch + 3)
-                engine.noteOn(note: lockedPitch + 7)
+                engine.noteOn(note: lockedPitch + 3, bank: 2)
+                engine.noteOn(note: lockedPitch + 7, bank: 2)
             case 3: // root augmented
-                engine.noteOn(note: lockedPitch + 4)
-                engine.noteOn(note: lockedPitch + 8)
+                engine.noteOn(note: lockedPitch + 4, bank: 2)
+                engine.noteOn(note: lockedPitch + 8, bank: 2)
             case 4: // root diminished
-                engine.noteOn(note: lockedPitch + 3)
-                engine.noteOn(note: lockedPitch + 6)
+                engine.noteOn(note: lockedPitch + 3, bank: 2)
+                engine.noteOn(note: lockedPitch + 6, bank: 2)
             case 5: // min 3rd minor
-                engine.noteOn(note: lockedPitch - 3)
-                engine.noteOn(note: lockedPitch + 4)
+                engine.noteOn(note: lockedPitch - 3, bank: 2)
+                engine.noteOn(note: lockedPitch + 4, bank: 2)
             case 6: // min 3rd diminished
-                engine.noteOn(note: lockedPitch - 3)
-                engine.noteOn(note: lockedPitch + 3)
+                engine.noteOn(note: lockedPitch - 3, bank: 2)
+                engine.noteOn(note: lockedPitch + 3, bank: 2)
             case 7: // maj 3rd major
-                engine.noteOn(note: lockedPitch - 4)
-                engine.noteOn(note: lockedPitch + 3)
+                engine.noteOn(note: lockedPitch - 4, bank: 2)
+                engine.noteOn(note: lockedPitch + 3, bank: 2)
             case 8: // dim 5th diminished
-                engine.noteOn(note: lockedPitch - 6)
-                engine.noteOn(note: lockedPitch - 3)
+                engine.noteOn(note: lockedPitch - 6, bank: 2)
+                engine.noteOn(note: lockedPitch - 3, bank: 2)
             case 9: // P5 major
-                engine.noteOn(note: lockedPitch - 7)
-                engine.noteOn(note: lockedPitch - 3)
+                engine.noteOn(note: lockedPitch - 7, bank: 2)
+                engine.noteOn(note: lockedPitch - 3, bank: 2)
             case 10: // P5 minor
-                engine.noteOn(note: lockedPitch - 7)
-                engine.noteOn(note: lockedPitch - 4)
+                engine.noteOn(note: lockedPitch - 7, bank: 2)
+                engine.noteOn(note: lockedPitch - 4, bank: 2)
             default:
                 ()
             }
         }
         
-        if sender.state == .ended {
-            parent.layer.borderWidth = 0
-            parent.layer.borderColor = UIColor.black.cgColor
-            engine.noteOff(note: lockedPitch)
+        if sender.state == .ended || sender.state == .cancelled {
+            parent.border.layer.borderColor = UIColor.clear.cgColor
+            engine.noteOff(note: lockedPitch, bank: 2)
+            
             switch parent.triadNumber {
             case 1: // root major
-                engine.noteOff(note: lockedPitch + 4)
-                engine.noteOff(note: lockedPitch + 7)
+                engine.noteOff(note: lockedPitch + 4, bank: 2)
+                engine.noteOff(note: lockedPitch + 7, bank: 2)
             case 2: // root minor
-                engine.noteOff(note: lockedPitch + 3)
-                engine.noteOff(note: lockedPitch + 7)
+                engine.noteOff(note: lockedPitch + 3, bank: 2)
+                engine.noteOff(note: lockedPitch + 7, bank: 2)
             case 3: // root augmented
-                engine.noteOff(note: lockedPitch + 4)
-                engine.noteOff(note: lockedPitch + 8)
+                engine.noteOff(note: lockedPitch + 4, bank: 2)
+                engine.noteOff(note: lockedPitch + 8, bank: 2)
             case 4: // root diminished
-                engine.noteOff(note: lockedPitch + 3)
-                engine.noteOff(note: lockedPitch + 6)
+                engine.noteOff(note: lockedPitch + 3, bank: 2)
+                engine.noteOff(note: lockedPitch + 6, bank: 2)
             case 5: // min 3rd minor
-                engine.noteOff(note: lockedPitch - 3)
-                engine.noteOff(note: lockedPitch + 4)
+                engine.noteOff(note: lockedPitch - 3, bank: 2)
+                engine.noteOff(note: lockedPitch + 4, bank: 2)
             case 6: // min 3rd diminished
-                engine.noteOff(note: lockedPitch - 3)
-                engine.noteOff(note: lockedPitch + 3)
+                engine.noteOff(note: lockedPitch - 3, bank: 2)
+                engine.noteOff(note: lockedPitch + 3, bank: 2)
             case 7: // maj 3rd major
-                engine.noteOff(note: lockedPitch - 4)
-                engine.noteOff(note: lockedPitch + 3)
+                engine.noteOff(note: lockedPitch - 4, bank: 2)
+                engine.noteOff(note: lockedPitch + 3, bank: 2)
             case 8: // dim 5th diminished
-                engine.noteOff(note: lockedPitch - 6)
-                engine.noteOff(note: lockedPitch - 3)
+                engine.noteOff(note: lockedPitch - 6, bank: 2)
+                engine.noteOff(note: lockedPitch - 3, bank: 2)
             case 9: // P5 major
-                engine.noteOff(note: lockedPitch - 7)
-                engine.noteOff(note: lockedPitch - 3)
+                engine.noteOff(note: lockedPitch - 7, bank: 2)
+                engine.noteOff(note: lockedPitch - 3, bank: 2)
             case 10: // P5 minor
-                engine.noteOff(note: lockedPitch - 7)
-                engine.noteOff(note: lockedPitch - 4)
+                engine.noteOff(note: lockedPitch - 7, bank: 2)
+                engine.noteOff(note: lockedPitch - 4, bank: 2)
             default:
                 ()
-            }        }
-
+            }
+        }
     }
     
     func addChordGestureRecognizers(myKeyboard: Keyboard) {
@@ -288,6 +291,17 @@ class ViewController: UIViewController {
         let tap = UILongPressGestureRecognizer(target: self, action: #selector(highlightKeyboard(_:)))
         tap.minimumPressDuration = 0
         myKeyboard.addGestureRecognizer(tap)
+    }
+    
+    func cancelAll(key: Key, midiNote: MIDINoteNumber, bank: Int) {
+        key.holding = false
+        key.backgroundColor = key.defaultBackgroundColor
+        key.layer.borderColor = blackBorder
+        key.layer.borderWidth = 1
+        key.isPlaying = false
+        key.playCount = 0
+        key.currentHighlight = 0
+        engine.noteOff(note: midiNote, bank: 1)
     }
     
     let backgroundView = BackgroundView()
@@ -350,6 +364,7 @@ class ViewController: UIViewController {
         // bottom keyboard
         keyboards[0].frame = CGRect(x: 0, y: screenHeight - 91 / keyboards[0].myKeyboardWidthMod * screenWidth, width: screenWidth, height: 91 / keyboards[0].myKeyboardWidthMod * screenWidth)
         keyboards[0].addKeyConstraints(keys: keyboards[0].keys)
+//        keyboards[0].keyunion(key1: keyboards[0].keys[0], key2: keyboards[0].keys[1])
         
         let heightAboveBottomKeyboard = screenHeight - keyboards[0].frame.height
         
@@ -381,6 +396,10 @@ class ViewController: UIViewController {
         scaleKeyboard(myKeyboard: keyboards[8], scale: 1/5, x: 275, y: 165, xCentered: false, yCentered: false)
         scaleKeyboard(myKeyboard: keyboards[9], scale: 1/5, x: 415, y: 165, xCentered: false, yCentered: false)
         scaleKeyboard(myKeyboard: keyboards[10], scale: 1/5, x: 575, y: 165, xCentered: false, yCentered: false)
+        
+        for keyboard in keyboards[1...] {
+            keyboard.keyboardBorder(key1: keyboard.keys[0], key2: keyboard.keys[keyboard.keys.count - 1])
+        }
         
         keyboards[0].keys[12].backgroundColor = tonicHighlightColor
 //        keyboards[0].keys[12].highlightLocked = true

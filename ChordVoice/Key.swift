@@ -19,7 +19,7 @@ class Key: UIView {
     var holding = false
     var playCount = 0
     var previousBackground = UIColor()
-    var highlightLocked = false // Haven't set up yet...use to set a key so that it can't be unhighlighted, or so that the highlight colors are inverted.
+    var highlightLocked = false
     
     init() {
         super.init(frame: CGRect())

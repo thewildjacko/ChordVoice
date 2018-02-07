@@ -13,15 +13,23 @@ import AudioKit
 class AudioEngine {
     
     // Declare your nodes as instance variables
-    var bank = AKOscillatorBank()
-    var waveform = AKTable()
+    var bank1 = AKOscillatorBank()
+    var bank2 = AKOscillatorBank()
+    var mixer = AKMixer()
+    var waveform1 = AKTable()
+    var waveform2 = AKTable()
     
-    init(waveform: AKTable) {
-        self.waveform = waveform
-        self.bank = AKOscillatorBank(waveform: waveform, attackDuration: 0.0, decayDuration: 0.0, sustainLevel: 1.0, releaseDuration: 0.0, pitchBend: 0.0, vibratoDepth: 0.0, vibratoRate: 0.0)
-        self.bank.rampTime = 0.0
+    
+    init(waveform1: AKTable, waveform2: AKTable) {
+        self.waveform1 = waveform1
+        self.waveform2 = waveform2
+        self.bank1 = AKOscillatorBank(waveform: waveform1, attackDuration: 0.0, decayDuration: 0.0, sustainLevel: 1.0, releaseDuration: 0.0, pitchBend: 0.0, vibratoDepth: 0.0, vibratoRate: 0.0)
+        self.bank1.rampTime = 0.0
+        self.bank2 = AKOscillatorBank(waveform: waveform2, attackDuration: 0.0, decayDuration: 0.0, sustainLevel: 1.0, releaseDuration: 0.0, pitchBend: 0.0, vibratoDepth: 0.0, vibratoRate: 0.0)
+        self.bank2.rampTime = 0.0
+        self.mixer = AKMixer(bank1, bank2)
         
-        AudioKit.output = bank
+        AudioKit.output = mixer
         do {
             try AudioKit.start()
         } catch {
@@ -29,12 +37,26 @@ class AudioEngine {
         }
     }
     
-    func noteOn(note: MIDINoteNumber) {
-        bank.play(noteNumber: note, velocity: 80, frequency: note.midiNoteToFrequency())
+    func noteOn(note: MIDINoteNumber, bank: Int) {
+        switch bank {
+        case 1:
+            bank1.play(noteNumber: note, velocity: 80, frequency: note.midiNoteToFrequency())
+        case 2:
+            bank2.play(noteNumber: note, velocity: 80, frequency: note.midiNoteToFrequency())
+        default:
+            ()
+        }
     }
 
-    func noteOff(note: MIDINoteNumber) {
-        bank.stop(noteNumber: note)
+    func noteOff(note: MIDINoteNumber, bank: Int) {
+        switch bank {
+        case 1:
+            bank1.stop(noteNumber: note)
+        case 2:
+            bank2.stop(noteNumber: note)
+        default:
+            ()
+        }
     }
 }
 
