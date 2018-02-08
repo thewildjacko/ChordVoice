@@ -418,6 +418,13 @@ class ViewController: UIViewController {
         commonToneTriad(myKeyboard: keyboards[10], tonic: 7, root: 0, third: 3, fifth: 7, triadNumber: 10)
         
 //        backgroundView.createLine(key1: keyboards[0].keys[12], key2: Keyboard.keys[2], array: keyboards[0].keys)
+        
+        keyboards[7].borderBezier(key1Num: 0, key2Num: 1, key3Num: keyboards[7].keys.count - 2, key4Num: keyboards[7].keys.count - 1)
+        keyboards[0].borderBezier(key1Num: 8, key2Num: 9, key3Num: 14, key4Num: 15)
+        keyboards[1].borderBezier(key1Num: 0, key2Num: 1, key3Num: keyboards[1].keys.count - 2, key4Num: keyboards[1].keys.count - 1)
+        keyboards[8].borderBezier(key1Num: 0, key2Num: 1, key3Num: keyboards[8].keys.count - 2, key4Num: keyboards[8].keys.count - 1)
+        keyboards[6].borderBezier(key1Num: 0, key2Num: 1, key3Num: keyboards[6].keys.count - 2, key4Num: keyboards[6].keys.count - 1)
+
     }
 
     override func viewDidAppear(_ animated: Bool) {

@@ -26,6 +26,8 @@ class Keyboard: UIView {
     static var globalHighlightPitch = MIDINoteNumber()
     var triadNumber = Int()
     var border = UIView()
+    var borderPath: UIBezierPath!
+    var borderLayer: CAShapeLayer!
     
     static var blackBorder: CGColor = UIColor.black.cgColor
     static var keyHighlightColor: UIColor = .red
@@ -227,6 +229,107 @@ class Keyboard: UIView {
         border.layer.zPosition = 3
         self.border = border
         self.addSubview(border)
+    }
+    
+    func createBezier(key1Num: Int, key2Num: Int, key3Num: Int, key4Num: Int) {
+        borderPath = UIBezierPath()
+
+        let key1 = self.keys[key1Num].frame
+        let key2 = self.keys[key2Num].frame
+        let key3 = self.keys[key3Num].frame
+        let key4 = self.keys[key4Num].frame
+        let arcRadius = key1.height * 1/32
+        
+        let start = CGPoint(x: key1.origin.x, y: key1.origin.y)
+        
+        func bothEdgeNotesBlack() {
+            borderPath.move(to: start)
+            borderPath.addLine(to: CGPoint(x: start.x, y: key1.height * 31/32))
+            borderPath.addArc(withCenter: CGPoint(x: start.x + arcRadius, y: key1.height * 31/32), radius: arcRadius, startAngle: leftAng, endAngle: bottomAng, clockwise: false)
+            borderPath.addLine(to: CGPoint(x: key2.origin.x, y: key1.height))
+            borderPath.addLine(to: CGPoint(x: key2.origin.x, y: key2.height - arcRadius))
+            borderPath.addArc(withCenter: CGPoint(x: key2.origin.x + arcRadius, y: key2.height - arcRadius), radius: arcRadius, startAngle: leftAng, endAngle: bottomAng, clockwise: false)
+            borderPath.addLine(to: CGPoint(x: key3.origin.x + key3.width - arcRadius, y: key2.height))
+            borderPath.addArc(withCenter: CGPoint(x: key3.origin.x + key3.width - arcRadius, y: key2.height - arcRadius), radius: arcRadius, startAngle: bottomAng, endAngle: rightAng, clockwise: false)
+            borderPath.addLine(to: CGPoint(x: key3.origin.x + key3.width, y: key4.height))
+            borderPath.addLine(to: CGPoint(x: key4.origin.x + key4.width - arcRadius, y: key4.height))
+            borderPath.addArc(withCenter: CGPoint(x: key4.origin.x + key4.width - arcRadius, y: key4.height - arcRadius), radius: arcRadius, startAngle: bottomAng, endAngle: rightAng, clockwise: false)
+            borderPath.addLine(to: CGPoint(x: key4.origin.x + key4.width, y: key4.origin.y))
+            borderPath.close()
+        }
+        
+        func leftBlackRightWhite() {
+            borderPath.move(to: start)
+            borderPath.addLine(to: CGPoint(x: start.x, y: key1.height * 31/32))
+            borderPath.addArc(withCenter: CGPoint(x: start.x + arcRadius, y: key1.height * 31/32), radius: arcRadius, startAngle: leftAng, endAngle: bottomAng, clockwise: false)
+            borderPath.addLine(to: CGPoint(x: key2.origin.x, y: key1.height))
+            borderPath.addLine(to: CGPoint(x: key2.origin.x, y: key2.height - arcRadius))
+            borderPath.addArc(withCenter: CGPoint(x: key2.origin.x + arcRadius, y: key2.height - arcRadius), radius: arcRadius, startAngle: leftAng, endAngle: bottomAng, clockwise: false)
+            borderPath.addLine(to: CGPoint(x: key4.origin.x + key4.width - arcRadius, y: key4.height))
+            borderPath.addArc(withCenter: CGPoint(x: key4.origin.x + key4.width - arcRadius, y: key4.height - arcRadius), radius: arcRadius, startAngle: bottomAng, endAngle: rightAng, clockwise: false)
+            borderPath.addLine(to: CGPoint(x: key4.origin.x + key4.width, y: key4.origin.y))
+            borderPath.close()
+        }
+        
+        func leftWhiteRightBlack() {
+            borderPath.move(to: start)
+            borderPath.addLine(to: CGPoint(x: start.x, y: key1.height * 31/32))
+            borderPath.addArc(withCenter: CGPoint(x: start.x + arcRadius, y: key1.height * 31/32), radius: arcRadius, startAngle: leftAng, endAngle: bottomAng, clockwise: false)
+            borderPath.addLine(to: CGPoint(x: key3.origin.x + key3.width - arcRadius, y: key3.height))
+            borderPath.addArc(withCenter: CGPoint(x: key3.origin.x + key3.width - arcRadius, y: key3.height - arcRadius), radius: arcRadius, startAngle: bottomAng, endAngle: rightAng, clockwise: false)
+            borderPath.addLine(to: CGPoint(x: key3.origin.x + key3.width, y: key4.height))
+            borderPath.addLine(to: CGPoint(x: key4.origin.x + key4.width - arcRadius, y: key4.height))
+            borderPath.addArc(withCenter: CGPoint(x: key4.origin.x + key4.width - arcRadius, y: key4.height - arcRadius), radius: arcRadius, startAngle: bottomAng, endAngle: rightAng, clockwise: false)
+            borderPath.addLine(to: CGPoint(x: key4.origin.x + key4.width, y: key4.origin.y))
+            borderPath.close()
+        }
+            
+        func bothEdgeNotesWhite() {
+            borderPath.move(to: start)
+            borderPath.addLine(to: CGPoint(x: start.x, y: key1.height * 31/32))
+            borderPath.addArc(withCenter: CGPoint(x: start.x + arcRadius, y: key1.height * 31/32), radius: arcRadius, startAngle: leftAng, endAngle: bottomAng, clockwise: false)
+            borderPath.addLine(to: CGPoint(x: key4.origin.x + key4.width - arcRadius, y: key4.height))
+            borderPath.addArc(withCenter: CGPoint(x: key4.origin.x + key4.width - arcRadius, y: key4.height - arcRadius), radius: arcRadius, startAngle: bottomAng, endAngle: rightAng, clockwise: false)
+            borderPath.addLine(to: CGPoint(x: key4.origin.x + key4.width, y: key4.origin.y))
+            borderPath.close()
+        }
+        
+        switch self.keys[key1Num].keyType {
+        case 2, 5, 7, 10, 12: // 1st key is black
+            switch self.keys[key4Num].keyType {
+                case 2, 5, 7, 10, 12: // last key is black
+                bothEdgeNotesBlack()
+            case 1, 3, 4, 6, 8, 9, 11:
+                leftBlackRightWhite() // last key is white
+            default:
+                ()
+            }
+        case 1, 3, 4, 6, 8, 9, 11: // 1st key is white
+            switch self.keys[key4Num].keyType {
+            case 2, 5, 7, 10, 12: // last key is black
+                leftWhiteRightBlack()
+            case 1, 3, 4, 6, 8, 9, 11: // last key is white
+                bothEdgeNotesWhite()
+            default:
+                ()
+            }
+        default:
+            ()
+        }
+    }
+
+    func borderBezier(key1Num: Int, key2Num: Int, key3Num: Int, key4Num: Int) {
+        self.createBezier(key1Num: key1Num, key2Num: key2Num, key3Num: key3Num, key4Num: key4Num)
+        
+        let borderLayer = CAShapeLayer()
+        borderLayer.zPosition = 4
+        borderLayer.path = self.borderPath.cgPath
+        
+        borderLayer.fillColor = UIColor.clear.cgColor
+        borderLayer.strokeColor = UIColor.red.cgColor
+        borderLayer.lineWidth = 3.0
+        self.borderLayer = borderLayer
+        self.layer.addSublayer(self.borderLayer)
     }
     
     func keyunion(key1: Key, key2: Key) {

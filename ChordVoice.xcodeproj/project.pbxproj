@@ -20,6 +20,7 @@
 		1D1660B12027A435002BB542 /* AudioKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1D1660AE2027A435002BB542 /* AudioKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1D1660B22027A435002BB542 /* AudioKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D1660AF2027A435002BB542 /* AudioKitUI.framework */; };
 		1D1660B32027A435002BB542 /* AudioKitUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1D1660AF2027A435002BB542 /* AudioKitUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1D197EEB202CB4B100C4F0CF /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D197EEA202CB4B100C4F0CF /* Math.swift */; };
 		1D9476512028BB2D002029AE /* HighlightKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D9476502028BB2D002029AE /* HighlightKeys.swift */; };
 		1D9476532028D66E002029AE /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D9476522028D66E002029AE /* Colors.swift */; };
 		1D95ABBB202A31F700E594D1 /* CommonToneKeyboards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D95ABBA202A31F700E594D1 /* CommonToneKeyboards.swift */; };
@@ -54,6 +55,7 @@
 		1D1660A92027A3D7002BB542 /* Key.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
 		1D1660AE2027A435002BB542 /* AudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AudioKit.framework; sourceTree = "<group>"; };
 		1D1660AF2027A435002BB542 /* AudioKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AudioKitUI.framework; sourceTree = "<group>"; };
+		1D197EEA202CB4B100C4F0CF /* Math.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
 		1D9476502028BB2D002029AE /* HighlightKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightKeys.swift; sourceTree = "<group>"; };
 		1D9476522028D66E002029AE /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		1D95ABBA202A31F700E594D1 /* CommonToneKeyboards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonToneKeyboards.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 				1D9476502028BB2D002029AE /* HighlightKeys.swift */,
 				1D95ABBA202A31F700E594D1 /* CommonToneKeyboards.swift */,
 				1D9476522028D66E002029AE /* Colors.swift */,
+				1D197EEA202CB4B100C4F0CF /* Math.swift */,
 				1D1660982027A381002BB542 /* Main.storyboard */,
 				1D16609B2027A381002BB542 /* Assets.xcassets */,
 				1D16609D2027A381002BB542 /* LaunchScreen.storyboard */,
@@ -192,6 +195,7 @@
 				1D1660AB2027A3D7002BB542 /* BackgroundView.swift in Sources */,
 				1D1660952027A381002BB542 /* AppDelegate.swift in Sources */,
 				1D1660AD2027A3D7002BB542 /* Key.swift in Sources */,
+				1D197EEB202CB4B100C4F0CF /* Math.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
