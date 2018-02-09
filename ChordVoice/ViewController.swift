@@ -27,6 +27,13 @@ class ViewController: UIViewController {
     var tapIndex = 0
     var keyboardIndex = 1
     var keyboards = [Keyboard]()
+    var masterKeyboard: Keyboard!
+    var masterKeys = [Key]()
+    var masterHighlightKey = Int()
+    var chordCount = 0
+    var chordBorders = [CAShapeLayer]()
+    var masterChordBorders = [CAShapeLayer]()
+    
     let engine = AudioEngine(waveform1: AKTable(.sawtooth), waveform2: AKTable(.square))
     
     @objc func handleTap(_ sender: UITapGestureRecognizer) {
@@ -105,7 +112,7 @@ class ViewController: UIViewController {
                         my3rdMidiNote = MIDINoteNumber(midiRootOffset - chord![3])
                         my5thMidiNote = MIDINoteNumber(midiRootOffset - chord![2])
                     }
-                    print(myRootMidiNote, my3rdMidiNote, my5thMidiNote)
+//                    print(myRootMidiNote, my3rdMidiNote, my5thMidiNote)
                 }
                 
                 // addRemove == true, highlight; addRemove == false, remove highlights
@@ -200,86 +207,111 @@ class ViewController: UIViewController {
         addLongTaps(myKeysArray: myKeyboard.blackKeys)
     }
     
+   
+    
     @objc func highlightKeyboard(_ sender: UITapGestureRecognizer) {
         let parent: Keyboard = (sender.view as! Keyboard)
         let lockedPitch = parent.highlightPitch
 //        print(lockedPitch)
         
+        func toggleBorders(myBorderLayer: CAShapeLayer, color: CGColor) {
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
+            myBorderLayer.strokeColor = color
+            CATransaction.commit()
+        }
+        
+        func toggleBordersAndNote(note1: Int, note2: Int, noteOn: Bool) {
+            var myNote = MIDINoteNumber()
+            
+            func ifNegative(note: Int) -> MIDINoteNumber {
+                if note > 0 {
+                    myNote = lockedPitch + MIDINoteNumber(note)
+                } else {
+                    myNote = lockedPitch - MIDINoteNumber(abs(note))
+                }
+                return myNote
+            }
+            var color: CGColor!
+            if noteOn {
+                color = UIColor.green.cgColor
+                engine.noteOn(note: ifNegative(note: note1), bank: 2)
+                engine.noteOn(note: ifNegative(note: note2), bank: 2)
+            } else {
+                color = UIColor.clear.cgColor
+                engine.noteOff(note: ifNegative(note: note1), bank: 2)
+                engine.noteOff(note: ifNegative(note: note2), bank: 2)
+            }
+            toggleBorders(myBorderLayer: masterChordBorders[parent.triadNumber - 1], color: color)
+            print(parent.triadNumber)
+        }
+        
         if sender.state == .began {
-            parent.border.layer.borderColor = UIColor.red.cgColor
+            chordCount += 1
+
+            toggleBorders(myBorderLayer: parent.borderLayer, color: UIColor.green.cgColor)
+//            parent.border.layer.borderColor = UIColor.red.cgColor
             engine.noteOn(note: lockedPitch, bank: 2)
             
             switch parent.triadNumber {
             case 1: // root major
-                engine.noteOn(note: lockedPitch + 4, bank: 2)
-                engine.noteOn(note: lockedPitch + 7, bank: 2)
+                toggleBordersAndNote(note1: 4, note2: 7, noteOn: true)
             case 2: // root minor
-                engine.noteOn(note: lockedPitch + 3, bank: 2)
-                engine.noteOn(note: lockedPitch + 7, bank: 2)
+                toggleBordersAndNote(note1: 3, note2: 7, noteOn: true)
             case 3: // root augmented
-                engine.noteOn(note: lockedPitch + 4, bank: 2)
-                engine.noteOn(note: lockedPitch + 8, bank: 2)
+                toggleBordersAndNote(note1: 4, note2: 8, noteOn: true)
             case 4: // root diminished
-                engine.noteOn(note: lockedPitch + 3, bank: 2)
-                engine.noteOn(note: lockedPitch + 6, bank: 2)
+                toggleBordersAndNote(note1: 3, note2: 6, noteOn: true)
             case 5: // min 3rd minor
-                engine.noteOn(note: lockedPitch - 3, bank: 2)
-                engine.noteOn(note: lockedPitch + 4, bank: 2)
+                toggleBordersAndNote(note1: -3, note2: 4, noteOn: true)
             case 6: // min 3rd diminished
-                engine.noteOn(note: lockedPitch - 3, bank: 2)
-                engine.noteOn(note: lockedPitch + 3, bank: 2)
+                toggleBordersAndNote(note1: -3, note2: 3, noteOn: true)
             case 7: // maj 3rd major
-                engine.noteOn(note: lockedPitch - 4, bank: 2)
-                engine.noteOn(note: lockedPitch + 3, bank: 2)
+                toggleBordersAndNote(note1: -4, note2: 3, noteOn: true)
             case 8: // dim 5th diminished
-                engine.noteOn(note: lockedPitch - 6, bank: 2)
-                engine.noteOn(note: lockedPitch - 3, bank: 2)
+                toggleBordersAndNote(note1: -6, note2: -3, noteOn: true)
             case 9: // P5 major
-                engine.noteOn(note: lockedPitch - 7, bank: 2)
-                engine.noteOn(note: lockedPitch - 3, bank: 2)
+                toggleBordersAndNote(note1: -7, note2: -3, noteOn: true)
             case 10: // P5 minor
-                engine.noteOn(note: lockedPitch - 7, bank: 2)
-                engine.noteOn(note: lockedPitch - 4, bank: 2)
+                toggleBordersAndNote(note1: -7, note2: -4, noteOn: true)
             default:
                 ()
             }
         }
         
         if sender.state == .ended || sender.state == .cancelled {
-            parent.border.layer.borderColor = UIColor.clear.cgColor
+            if sender.state == .ended {
+                chordCount -= 1
+            }
+            
+            if sender.state == .cancelled {
+                chordCount = 0
+            }
+
+            toggleBorders(myBorderLayer: parent.borderLayer, color: UIColor.clear.cgColor)
             engine.noteOff(note: lockedPitch, bank: 2)
             
             switch parent.triadNumber {
             case 1: // root major
-                engine.noteOff(note: lockedPitch + 4, bank: 2)
-                engine.noteOff(note: lockedPitch + 7, bank: 2)
+                toggleBordersAndNote(note1: 4, note2: 7, noteOn: false)
             case 2: // root minor
-                engine.noteOff(note: lockedPitch + 3, bank: 2)
-                engine.noteOff(note: lockedPitch + 7, bank: 2)
+                toggleBordersAndNote(note1: 3, note2: 7, noteOn: false)
             case 3: // root augmented
-                engine.noteOff(note: lockedPitch + 4, bank: 2)
-                engine.noteOff(note: lockedPitch + 8, bank: 2)
+                toggleBordersAndNote(note1: 4, note2: 8, noteOn: false)
             case 4: // root diminished
-                engine.noteOff(note: lockedPitch + 3, bank: 2)
-                engine.noteOff(note: lockedPitch + 6, bank: 2)
+                toggleBordersAndNote(note1: 3, note2: 6, noteOn: false)
             case 5: // min 3rd minor
-                engine.noteOff(note: lockedPitch - 3, bank: 2)
-                engine.noteOff(note: lockedPitch + 4, bank: 2)
+                toggleBordersAndNote(note1: -3, note2: 4, noteOn: false)
             case 6: // min 3rd diminished
-                engine.noteOff(note: lockedPitch - 3, bank: 2)
-                engine.noteOff(note: lockedPitch + 3, bank: 2)
+                toggleBordersAndNote(note1: -3, note2: 3, noteOn: false)
             case 7: // maj 3rd major
-                engine.noteOff(note: lockedPitch - 4, bank: 2)
-                engine.noteOff(note: lockedPitch + 3, bank: 2)
+                toggleBordersAndNote(note1: -4, note2: 3, noteOn: false)
             case 8: // dim 5th diminished
-                engine.noteOff(note: lockedPitch - 6, bank: 2)
-                engine.noteOff(note: lockedPitch - 3, bank: 2)
+                toggleBordersAndNote(note1: -6, note2: -3, noteOn: false)
             case 9: // P5 major
-                engine.noteOff(note: lockedPitch - 7, bank: 2)
-                engine.noteOff(note: lockedPitch - 3, bank: 2)
+                toggleBordersAndNote(note1: -7, note2: -3, noteOn: false)
             case 10: // P5 minor
-                engine.noteOff(note: lockedPitch - 7, bank: 2)
-                engine.noteOff(note: lockedPitch - 4, bank: 2)
+                toggleBordersAndNote(note1: -7, note2: -4, noteOn: false)
             default:
                 ()
             }
@@ -307,6 +339,157 @@ class ViewController: UIViewController {
     
     let backgroundView = BackgroundView()
     
+    func edgeColors(key1: Key, key2: Key) -> Int {
+        var edgeColors = 0
+        switch key1.keyType {
+        case 2, 5, 7, 10, 12: // 1st key is black
+            switch key2.keyType {
+            case 2, 5, 7, 10, 12: // last key is black
+                edgeColors = 1
+            case 1, 3, 4, 6, 8, 9, 11:
+                edgeColors = 2 // last key is white
+            default:
+                ()
+            }
+        case 1, 3, 4, 6, 8, 9, 11: // 1st key is white
+            switch key2.keyType {
+            case 2, 5, 7, 10, 12: // last key is black
+                edgeColors = 3
+            case 1, 3, 4, 6, 8, 9, 11: // last key is white
+                edgeColors = 4
+            default:
+                ()
+            }
+        default:
+            ()
+        }
+        return edgeColors
+    }
+    
+    func createBezier(key1Num: Int, key2Num: Int, key3Num: Int, key4Num: Int, myKeyboard: Keyboard) {
+        myKeyboard.borderPath = UIBezierPath()
+        
+        let key1 = myKeyboard.keys[key1Num]
+        let key2 = myKeyboard.keys[key2Num]
+        let key3 = myKeyboard.keys[key3Num]
+        let key4 = myKeyboard.keys[key4Num]
+        
+        let frame1 = myKeyboard.keys[key1Num].frame
+        let frame2 = myKeyboard.keys[key2Num].frame
+        let frame3 = myKeyboard.keys[key3Num].frame
+        let frame4 = myKeyboard.keys[key4Num].frame
+        
+        let x1 = frame1.origin.x, y1 = frame1.origin.y, width1 = frame1.width, height1 = frame1.height
+        let x2 = frame2.origin.x, y2 = frame2.origin.y, width2 = frame2.width, height2 = frame2.height
+        let x3 = frame3.origin.x, y3 = frame3.origin.y, width3 = frame3.width, height3 = frame3.height
+        let x4 = frame4.origin.x, y4 = frame4.origin.y, width4 = frame4.width, height4 = frame4.height
+        
+        let arcRadius = height1 * 1/32
+        
+        func startPath() {
+            myKeyboard.borderPath.move(to: CGPoint(x: x1, y: y1))
+            myKeyboard.borderPath.addLine(to: CGPoint(x: x1, y: height1 * 31/32))
+            myKeyboard.borderPath.addArc(withCenter: CGPoint(x: x1 + arcRadius, y: height1 * 31/32), radius: arcRadius, startAngle: leftAng, endAngle: bottomAng, clockwise: false)
+        }
+        
+        func leftIsBlack() {
+            myKeyboard.borderPath.addLine(to: CGPoint(x: x2, y: height1))
+            myKeyboard.borderPath.addLine(to: CGPoint(x: x2, y: height2 - arcRadius))
+            myKeyboard.borderPath.addArc(withCenter: CGPoint(x: x2 + arcRadius, y: height2 - arcRadius), radius: arcRadius, startAngle: leftAng, endAngle: bottomAng, clockwise: false)
+        }
+        
+        func rightIsBlack() {
+            myKeyboard.borderPath.addLine(to: CGPoint(x: x3 + width3 - arcRadius, y: height3))
+            myKeyboard.borderPath.addArc(withCenter: CGPoint(x: x3 + width3 - arcRadius, y: height2 - arcRadius), radius: arcRadius, startAngle: bottomAng, endAngle: rightAng, clockwise: false)
+            myKeyboard.borderPath.addLine(to: CGPoint(x: x3 + width3, y: height4))
+        }
+        
+        func endPath() {
+            myKeyboard.borderPath.addLine(to: CGPoint(x: x4 + width4 - arcRadius, y: height4))
+            myKeyboard.borderPath.addArc(withCenter: CGPoint(x: x4 + width4 - arcRadius, y: height4 - arcRadius), radius: arcRadius, startAngle: bottomAng, endAngle: rightAng, clockwise: false)
+            myKeyboard.borderPath.addLine(to: CGPoint(x: x4 + width4, y: y4))
+            myKeyboard.borderPath.close()
+        }
+        
+        func bothEdgeNotesBlack() {
+            startPath()
+            leftIsBlack()
+            rightIsBlack()
+            endPath()
+        }
+        
+        func leftBlackRightWhite() {
+            startPath()
+            leftIsBlack()
+            endPath()
+        }
+        
+        func leftWhiteRightBlack() {
+            startPath()
+            rightIsBlack()
+            endPath()
+        }
+        
+        func bothEdgeNotesWhite() {
+            startPath()
+            endPath()
+        }
+        
+        switch edgeColors(key1: key1, key2: key4) {
+        case 1:
+            bothEdgeNotesBlack()
+        case 2:
+            leftBlackRightWhite()
+        case 3:
+            leftWhiteRightBlack()
+        case 4:
+            bothEdgeNotesWhite()
+        default:
+            ()
+        }
+    }
+    
+    func borderBezier(key1Num: Int, key2Num: Int, key3Num: Int, key4Num: Int, myKeyboard: Keyboard) {
+        createBezier(key1Num: key1Num, key2Num: key2Num, key3Num: key3Num, key4Num: key4Num, myKeyboard: myKeyboard)
+        
+        let borderLayer = CAShapeLayer()
+        borderLayer.zPosition = 4
+        borderLayer.path = myKeyboard.borderPath.cgPath
+        
+        borderLayer.fillColor = UIColor.clear.cgColor
+        borderLayer.strokeColor = UIColor.clear.cgColor
+        borderLayer.lineWidth = 4.0
+        myKeyboard.borderLayer = borderLayer
+
+        if myKeyboard.triadNumber > 0 {
+            chordBorders.append(borderLayer)
+            myKeyboard.layer.addSublayer(chordBorders[myKeyboard.triadNumber - 1])
+            switch myKeyboard.triadNumber {
+            case 1, 2: // root major, root minor
+                borderBezier(key1Num: masterHighlightKey, key2Num: masterHighlightKey + 1, key3Num: masterHighlightKey + 6, key4Num: masterHighlightKey + 7, myKeyboard: masterKeyboard)
+            case 3: // root augmented
+                borderBezier(key1Num: masterHighlightKey, key2Num: masterHighlightKey + 1, key3Num: masterHighlightKey + 7, key4Num: masterHighlightKey + 8, myKeyboard: masterKeyboard)
+            case 4: // root diminished
+                borderBezier(key1Num: masterHighlightKey, key2Num: masterHighlightKey + 1, key3Num: masterHighlightKey + 5, key4Num: masterHighlightKey + 6, myKeyboard: masterKeyboard)
+            case 5: // min 3rd minor
+                borderBezier(key1Num: masterHighlightKey - 3, key2Num: masterHighlightKey - 2, key3Num: masterHighlightKey + 3, key4Num: masterHighlightKey + 4, myKeyboard: masterKeyboard)
+            case 6: // min 3rd diminished
+                borderBezier(key1Num: masterHighlightKey - 3, key2Num: masterHighlightKey - 2, key3Num: masterHighlightKey + 2, key4Num: masterHighlightKey + 3, myKeyboard: masterKeyboard)
+            case 7: // maj 3rd major
+                borderBezier(key1Num: masterHighlightKey - 4, key2Num: masterHighlightKey - 3, key3Num: masterHighlightKey + 2, key4Num: masterHighlightKey + 3, myKeyboard: masterKeyboard)
+            case 8: // dim 5th diminished
+                borderBezier(key1Num: masterHighlightKey - 6, key2Num: masterHighlightKey - 5, key3Num: masterHighlightKey - 1, key4Num: masterHighlightKey, myKeyboard: masterKeyboard)
+            case 9, 10: // P5 major, // P5 minor
+                borderBezier(key1Num: masterHighlightKey - 7, key2Num: masterHighlightKey - 6, key3Num: masterHighlightKey + 1, key4Num: masterHighlightKey, myKeyboard: masterKeyboard)
+            default:
+                ()
+            }
+            masterKeyboard.layer.addSublayer(masterChordBorders[myKeyboard.triadNumber - 1])
+        } else {
+            masterChordBorders.append(borderLayer)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -319,21 +502,29 @@ class ViewController: UIViewController {
         
         func addKeyboard(initialKey: Int, startingOctave: Int, numberOfKeys: Int, highlightLockKey: Int) {
             let myKeyboard = Keyboard(initialKey: initialKey, startingOctave: startingOctave, numberOfKeys: numberOfKeys)
-            myKeyboard.tag = keyboardIndex
-            //        print(myKeyboard.tag)
-            if keyboards.count < 8 {
-                keyboardIndex += 1
-            } else if keyboards.count == 8 {
-                keyboardIndex += 991
-            } else {
-                keyboardIndex += 101
+            myKeyboard.highlightKey = highlightLockKey
+            func tagAppendAndSort() {
+                myKeyboard.tag = keyboardIndex
+                //        print(myKeyboard.tag)
+                if keyboards.count < 8 {
+                    keyboardIndex += 1
+                } else if keyboards.count == 8 {
+                    keyboardIndex += 991
+                } else {
+                    keyboardIndex += 101
+                }
+                if highlightLockKey >= 0 {
+                    masterKeyboard = myKeyboard
+                    masterKeyboard.addKeys(highlightLockKey: highlightLockKey)
+                    keyboards.append(masterKeyboard)
+                    backgroundView.addSubview(masterKeyboard)
+                } else {
+                    myKeyboard.addKeys(highlightLockKey: highlightLockKey)
+                    keyboards.append(myKeyboard)
+                    backgroundView.addSubview(myKeyboard)
+                }
             }
-            backgroundView.addSubview(myKeyboard)
-            keyboards.append(myKeyboard)
-            myKeyboard.addKeys(highlightLockKey: highlightLockKey)
-            if highlightLockKey > 1 {
-                
-            }
+            tagAppendAndSort()
         }
         
         view.addSubview(backgroundView)
@@ -341,7 +532,7 @@ class ViewController: UIViewController {
         view.sendSubview(toBack: backgroundView)
         
         addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 37, highlightLockKey: 12)
-//        print(keyboards[0].startingPitch)
+//        print(masterKeyboard.startingPitch)
         addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
         addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
         addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 9, highlightLockKey: -1)
@@ -353,7 +544,7 @@ class ViewController: UIViewController {
         addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
         addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
         
-        addTapGestureRecognizers(myKeyboard: keyboards[0])
+        addTapGestureRecognizers(myKeyboard: masterKeyboard)
         
         keyboards[1...].forEach {addChordGestureRecognizers(myKeyboard: $0)}
     }
@@ -363,11 +554,15 @@ class ViewController: UIViewController {
         let screenHeight = view.frame.height
         
         // bottom keyboard
-        keyboards[0].frame = CGRect(x: 0, y: screenHeight - 91 / keyboards[0].myKeyboardWidthMod * screenWidth, width: screenWidth, height: 91 / keyboards[0].myKeyboardWidthMod * screenWidth)
-        keyboards[0].addKeyConstraints(keys: keyboards[0].keys)
-//        keyboards[0].keyunion(key1: keyboards[0].keys[0], key2: keyboards[0].keys[1])
+        masterKeyboard.frame = CGRect(x: 0, y: screenHeight - 91 / masterKeyboard.myKeyboardWidthMod * screenWidth, width: screenWidth, height: 91 / masterKeyboard.myKeyboardWidthMod * screenWidth)
+        masterKeyboard.addKeyConstraints(keys: masterKeyboard.keys)
         
-        let heightAboveBottomKeyboard = screenHeight - keyboards[0].frame.height
+        if masterKeyboard.highlightPitch > 0 {
+            masterKeyboard.keys[masterKeyboard.highlightKey].backgroundColor = tonicHighlightColor
+            masterKeyboard.keys[masterKeyboard.highlightKey].defaultBackgroundColor = tonicHighlightColor
+        }
+
+        let heightAboveBottomKeyboard = screenHeight - masterKeyboard.frame.height
         
         func scaleKeyboard(myKeyboard: Keyboard, scale: CGFloat, x: CGFloat, y: CGFloat, xCentered: Bool, yCentered: Bool) {
             myKeyboard.scale = scale
@@ -387,6 +582,9 @@ class ViewController: UIViewController {
             myKeyboard.addKeyConstraints(keys: myKeyboard.keys)
         }
         
+        masterKeys = masterKeyboard.keys
+        masterHighlightKey = masterKeyboard.highlightKey
+        
         scaleKeyboard(myKeyboard: keyboards[1], scale: 1/5, x: 15, y: 75, xCentered: false, yCentered: false)
         scaleKeyboard(myKeyboard: keyboards[2], scale: 1/5, x: 145, y: 75, xCentered: false, yCentered: false)
         scaleKeyboard(myKeyboard: keyboards[3], scale: 1/5, x: 275, y: 75, xCentered: false, yCentered: false)
@@ -402,10 +600,7 @@ class ViewController: UIViewController {
             keyboard.keyboardBorder(key1: keyboard.keys[0], key2: keyboard.keys[keyboard.keys.count - 1])
         }
         
-        keyboards[0].keys[12].backgroundColor = tonicHighlightColor
-//        keyboards[0].keys[12].highlightLocked = true
-        keyboards[0].keys[12].defaultBackgroundColor = tonicHighlightColor
-        
+
         commonToneTriad(myKeyboard: keyboards[1], tonic: 0, root: 0, third: 4, fifth: 7, triadNumber: 1)
         commonToneTriad(myKeyboard: keyboards[2], tonic: 0, root: 0, third: 3, fifth: 7, triadNumber: 2)
         commonToneTriad(myKeyboard: keyboards[3], tonic: 0, root: 0, third: 4, fifth: 8, triadNumber: 3)
@@ -417,18 +612,16 @@ class ViewController: UIViewController {
         commonToneTriad(myKeyboard: keyboards[9], tonic: 7, root: 0, third: 4, fifth: 7, triadNumber: 9)
         commonToneTriad(myKeyboard: keyboards[10], tonic: 7, root: 0, third: 3, fifth: 7, triadNumber: 10)
         
-//        backgroundView.createLine(key1: keyboards[0].keys[12], key2: Keyboard.keys[2], array: keyboards[0].keys)
-        
-        keyboards[7].borderBezier(key1Num: 0, key2Num: 1, key3Num: keyboards[7].keys.count - 2, key4Num: keyboards[7].keys.count - 1)
-        keyboards[0].borderBezier(key1Num: 8, key2Num: 9, key3Num: 14, key4Num: 15)
-        keyboards[1].borderBezier(key1Num: 0, key2Num: 1, key3Num: keyboards[1].keys.count - 2, key4Num: keyboards[1].keys.count - 1)
-        keyboards[8].borderBezier(key1Num: 0, key2Num: 1, key3Num: keyboards[8].keys.count - 2, key4Num: keyboards[8].keys.count - 1)
-        keyboards[6].borderBezier(key1Num: 0, key2Num: 1, key3Num: keyboards[6].keys.count - 2, key4Num: keyboards[6].keys.count - 1)
-
+//        backgroundView.createLine(key1: masterKeyboard.keys[12], key2: Keyboard.keys[2], array: masterKeyboard.keys)
+//        print(masterKeyboard.highlightPitch)
     }
 
     override func viewDidAppear(_ animated: Bool) {
+        for keyboard in keyboards[1...] {
+            borderBezier(key1Num: 0, key2Num: 1, key3Num: keyboard.keys.count - 2, key4Num: keyboard.keys.count - 1, myKeyboard: keyboard)
+        }
         
+
     }
     
     override var shouldAutorotate: Bool {

@@ -88,22 +88,6 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
         myKey.layer.borderWidth = width
     }
     
-//    func addShadow(add: Bool) {
-//        if add {
-//            myKey.layer.shadowColor = purpleShadow.cgColor
-//            myKey.layer.shadowOpacity = 1
-//            myKey.layer.shadowOffset = CGSize.zero
-//            myKey.layer.shadowRadius = 10
-//            myKey.layer.shadowPath = UIBezierPath(rect: myKey.bounds).cgPath
-//        } else {
-//            myKey.layer.shadowColor = UIColor.clear.cgColor
-//            myKey.layer.shadowOpacity = 0
-//            myKey.layer.shadowOffset = CGSize.zero
-//            myKey.layer.shadowRadius = 0
-//            myKey.layer.shadowPath = nil
-//        }
-//    }
-    
     if myKey.currentHighlight == 0 {
         goHighlight(currentHighlightDelta: 1, newHighlightColor: highlightColor)
         if myKey != myRoot && myKey.highlightLocked {

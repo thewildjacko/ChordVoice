@@ -22,12 +22,14 @@ class Keyboard: UIView {
     var myLayoutConstraints = [NSLayoutConstraint]()
     var myKeyboardWidthMod: CGFloat = 0
     var startingPitch = Int()
+    var highlightKey = Int()
     var highlightPitch = MIDINoteNumber()
     static var globalHighlightPitch = MIDINoteNumber()
     var triadNumber = Int()
     var border = UIView()
     var borderPath: UIBezierPath!
     var borderLayer: CAShapeLayer!
+    var chordBorderColors: [UIColor] = [.blue, .green , .purple, .orange, .yellow]
     
     static var blackBorder: CGColor = UIColor.black.cgColor
     static var keyHighlightColor: UIColor = .red
@@ -39,6 +41,7 @@ class Keyboard: UIView {
     static var rootKeyHighlightColor: UIColor = .green
     static var rootBorderHighlightColor: CGColor = UIColor.green.cgColor
     static var thirdAndFifthHighlightColor: UIColor = lavender
+    
     
     var scale: CGFloat = 1.0
     
@@ -116,10 +119,27 @@ class Keyboard: UIView {
             var pinToTop = NSLayoutConstraint()
             //                key.layer.cornerRadius = 5
             
+            func setHighLightLockColor(key: Key, color: UIColor) {
+                if self.highlightKey > 0 {
+                    if key == keys[highlightKey] {
+                        key.backgroundColor = Keyboard.tonicHighlightColor
+                        key.defaultBackgroundColor = Keyboard.tonicHighlightColor
+                    } else {
+                        key.backgroundColor = color
+                        key.defaultBackgroundColor = color
+                    }
+                } else {
+                    key.backgroundColor = color
+                    key.defaultBackgroundColor = color
+                }
+                
+            }
+            
             switch key.keyType {
             case 1, 4, 8, 11:
                 key.layer.zPosition = 1
-                key.defaultBackgroundColor = .white
+                setHighLightLockColor(key: key, color: .white)
+//                key.defaultBackgroundColor = .white
                 //                    key.backgroundColor = .blue
                 key.backgroundColor = key.defaultBackgroundColor
                 key.layer.borderColor = UIColor.black.cgColor
@@ -137,7 +157,8 @@ class Keyboard: UIView {
                 ()
             case 2, 5, 7, 10, 12:
                 key.layer.zPosition = 2
-                key.defaultBackgroundColor = .darkGray
+                setHighLightLockColor(key: key, color: .darkGray)
+//                key.defaultBackgroundColor = .darkGray
                 self.bringSubview(toFront: key)
                 //                    key.backgroundColor = .gray
                 key.backgroundColor = key.defaultBackgroundColor
@@ -229,124 +250,6 @@ class Keyboard: UIView {
         border.layer.zPosition = 3
         self.border = border
         self.addSubview(border)
-    }
-    
-    func createBezier(key1Num: Int, key2Num: Int, key3Num: Int, key4Num: Int) {
-        borderPath = UIBezierPath()
-
-        let key1 = self.keys[key1Num]
-        let key2 = self.keys[key2Num]
-        let key3 = self.keys[key3Num]
-        let key4 = self.keys[key4Num]
-
-        let frame1 = self.keys[key1Num].frame
-        let frame2 = self.keys[key2Num].frame
-        let frame3 = self.keys[key3Num].frame
-        let frame4 = self.keys[key4Num].frame
-
-        let x1 = frame1.origin.x, y1 = frame1.origin.y, width1 = frame1.width, height1 = frame1.height
-        let x2 = frame2.origin.x, y2 = frame2.origin.y, width2 = frame2.width, height2 = frame2.height
-        let x3 = frame3.origin.x, y3 = frame3.origin.y, width3 = frame3.width, height3 = frame3.height
-        let x4 = frame4.origin.x, y4 = frame4.origin.y, width4 = frame4.width, height4 = frame4.height
-
-        let arcRadius = height1 * 1/32
-        
-        func startPath() {
-            borderPath.move(to: CGPoint(x: x1, y: y1))
-            borderPath.addLine(to: CGPoint(x: x1, y: height1 * 31/32))
-            borderPath.addArc(withCenter: CGPoint(x: x1 + arcRadius, y: height1 * 31/32), radius: arcRadius, startAngle: leftAng, endAngle: bottomAng, clockwise: false)
-        }
-        
-        func leftIsBlack() {
-            borderPath.addLine(to: CGPoint(x: x2, y: height1))
-            borderPath.addLine(to: CGPoint(x: x2, y: height2 - arcRadius))
-            borderPath.addArc(withCenter: CGPoint(x: x2 + arcRadius, y: height2 - arcRadius), radius: arcRadius, startAngle: leftAng, endAngle: bottomAng, clockwise: false)
-        }
-        
-        func rightIsBlack() {
-            borderPath.addLine(to: CGPoint(x: x3 + width3 - arcRadius, y: height3))
-            borderPath.addArc(withCenter: CGPoint(x: x3 + width3 - arcRadius, y: height2 - arcRadius), radius: arcRadius, startAngle: bottomAng, endAngle: rightAng, clockwise: false)
-            borderPath.addLine(to: CGPoint(x: x3 + width3, y: height4))
-        }
-        
-        func endPath() {
-            borderPath.addLine(to: CGPoint(x: x4 + width4 - arcRadius, y: height4))
-            borderPath.addArc(withCenter: CGPoint(x: x4 + width4 - arcRadius, y: height4 - arcRadius), radius: arcRadius, startAngle: bottomAng, endAngle: rightAng, clockwise: false)
-            borderPath.addLine(to: CGPoint(x: x4 + width4, y: y4))
-            borderPath.close()
-        }
-        
-        func bothEdgeNotesBlack() {
-            startPath()
-            leftIsBlack()
-            rightIsBlack()
-            endPath()
-        }
-        
-        func leftBlackRightWhite() {
-            startPath()
-            leftIsBlack()
-            endPath()
-        }
-        
-        func leftWhiteRightBlack() {
-            startPath()
-            rightIsBlack()
-            endPath()
-        }
-            
-        func bothEdgeNotesWhite() {
-            startPath()
-            endPath()
-        }
-        
-        switch key1.keyType {
-        case 2, 5, 7, 10, 12: // 1st key is black
-            switch key4.keyType {
-                case 2, 5, 7, 10, 12: // last key is black
-                bothEdgeNotesBlack()
-            case 1, 3, 4, 6, 8, 9, 11:
-                leftBlackRightWhite() // last key is white
-            default:
-                ()
-            }
-        case 1, 3, 4, 6, 8, 9, 11: // 1st key is white
-            switch key4.keyType {
-            case 2, 5, 7, 10, 12: // last key is black
-                leftWhiteRightBlack()
-            case 1, 3, 4, 6, 8, 9, 11: // last key is white
-                bothEdgeNotesWhite()
-            default:
-                ()
-            }
-        default:
-            ()
-        }
-    }
-
-    func borderBezier(key1Num: Int, key2Num: Int, key3Num: Int, key4Num: Int) {
-        self.createBezier(key1Num: key1Num, key2Num: key2Num, key3Num: key3Num, key4Num: key4Num)
-        
-        let borderLayer = CAShapeLayer()
-        borderLayer.zPosition = 4
-        borderLayer.path = self.borderPath.cgPath
-        
-        borderLayer.fillColor = UIColor.clear.cgColor
-        borderLayer.strokeColor = UIColor.red.cgColor
-        borderLayer.lineWidth = 3.0
-        self.borderLayer = borderLayer
-        self.layer.addSublayer(self.borderLayer)
-    }
-    
-    func keyunion(key1: Key, key2: Key) {
-        let keyFrame = key1.frame.union(key2.frame)
-        let key = Key()
-        key.frame = keyFrame
-        key.backgroundColor = .yellow
-        key.layer.borderColor = Keyboard.blackBorder
-        key.layer.borderWidth = 2
-        key.layer.zPosition = 3
-        self.addSubview(key)
     }
     
     required init?(coder aDecoder: NSCoder) {
