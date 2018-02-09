@@ -26,10 +26,9 @@ class Keyboard: UIView {
     var highlightPitch = MIDINoteNumber()
     static var globalHighlightPitch = MIDINoteNumber()
     var triadNumber = Int()
-    var border = UIView()
     var borderPath: UIBezierPath!
     var borderLayer: CAShapeLayer!
-    var chordBorderColors: [UIColor] = [.blue, .green , .purple, .orange, .yellow]
+    var borderLayerColor = UIColor()
     
     static var blackBorder: CGColor = UIColor.black.cgColor
     static var keyHighlightColor: UIColor = .red
@@ -40,7 +39,7 @@ class Keyboard: UIView {
     static var tonicBorderHighlightColor: CGColor = UIColor.magenta.cgColor
     static var rootKeyHighlightColor: UIColor = .green
     static var rootBorderHighlightColor: CGColor = UIColor.green.cgColor
-    static var thirdAndFifthHighlightColor: UIColor = lavender
+    static var thirdAndFifthHighlightColor: UIColor = .cyan
     
     
     var scale: CGFloat = 1.0
@@ -231,25 +230,6 @@ class Keyboard: UIView {
         }
         
         NSLayoutConstraint.activate(myLayoutConstraints)
-    }
-    
-    func keyboardBorder(key1: Key, key2: Key) {
-        let origin = key1.frame.origin
-        let leftX = key1.frame.origin.x
-        let rightX = key2.frame.origin.x + key2.frame.width
-        let width = rightX - leftX
-        let height = self.frame.height
-        let size: CGSize = CGSize(width: width, height: height)
-        let border = UIView()
-        let borderFrame = CGRect(origin: origin, size: size)
-        
-        border.frame = borderFrame
-        border.backgroundColor = .clear
-        border.layer.borderColor = UIColor.clear.cgColor
-        border.layer.borderWidth = 2
-        border.layer.zPosition = 3
-        self.border = border
-        self.addSubview(border)
     }
     
     required init?(coder aDecoder: NSCoder) {

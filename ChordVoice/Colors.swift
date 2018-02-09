@@ -27,7 +27,12 @@ let processCyan = UIColor(red: 0x00, green: 0xB7, blue: 0xEB)
 let electricBlue = UIColor(red: 0x7D, green: 0xF9, blue: 0xFF)
 let purpleShadow = UIColor(red: 0x80, green: 0x00, blue: 0xFF)
 let lavender = UIColor(red: 0xE6, green: 0xE6, blue: 0xFA)
+let lightPurple = UIColor(red: 0xCE, green: 0x63, blue: 0xFF)
 let orange = UIColor(red: 0xFF, green: 0x7F, blue: 0x00)
+let clearColor = UIColor.clear
+let darkerGreen = UIColor(red: 0x23, green: 0x9C, blue: 0x04)
+let darkerYellow = UIColor(red: 0xFF, green: 0xC8, blue: 0x24)
+let darkerBlue = UIColor(red: 0x48, green: 0x6D, blue: 0xFF)
 
 var blackBorder: CGColor = UIColor.black.cgColor
 var keyHighlightColor: UIColor = .red
@@ -38,5 +43,24 @@ var tonicHighlightColor: UIColor = .magenta
 var tonicBorderHighlightColor: CGColor = UIColor.magenta.cgColor
 var rootKeyHighlightColor: UIColor = .green
 var rootBorderHighlightColor: CGColor = UIColor.green.cgColor
-var thirdAndFifthHighlightColor: UIColor = lavender
+var thirdAndFifthHighlightColor: UIColor = .cyan
+
+
+func printColorName(color: UIColor) {
+    switch color {
+    case UIColor.blue:
+        print("Color is blue")
+    case UIColor.green:
+        print("Color is green")
+    case UIColor.purple:
+        print("Color is purple")
+    case orange:
+        print("Color is orange")
+    case UIColor.yellow:
+        print("Color is yellow")
+    default:
+        ()
+    }
+}
+
 

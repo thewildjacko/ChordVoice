@@ -33,6 +33,7 @@ class ViewController: UIViewController {
     var chordCount = 0
     var chordBorders = [CAShapeLayer]()
     var masterChordBorders = [CAShapeLayer]()
+    var chordBorderColors: [UIColor] = [darkerYellow, lightPurple, darkerGreen, .orange, darkerBlue]
     
     let engine = AudioEngine(waveform1: AKTable(.sawtooth), waveform2: AKTable(.square))
     
@@ -214,14 +215,16 @@ class ViewController: UIViewController {
         let lockedPitch = parent.highlightPitch
 //        print(lockedPitch)
         
-        func toggleBorders(myBorderLayer: CAShapeLayer, color: CGColor) {
+        func toggleBorders(myBorderLayer: CAShapeLayer, color: CGColor, opacity: Float) {
             CATransaction.begin()
             CATransaction.setDisableActions(true)
             myBorderLayer.strokeColor = color
+            myBorderLayer.fillColor = color
+            myBorderLayer.opacity = opacity
             CATransaction.commit()
         }
         
-        func toggleBordersAndNote(note1: Int, note2: Int, noteOn: Bool) {
+        func toggleBordersAndNote(note1: Int, note2: Int, noteOn: Bool, myColor: UIColor) {
             var myNote = MIDINoteNumber()
             
             func ifNegative(note: Int) -> MIDINoteNumber {
@@ -233,85 +236,106 @@ class ViewController: UIViewController {
                 return myNote
             }
             var color: CGColor!
+            var opacity = Float()
+            
             if noteOn {
-                color = UIColor.green.cgColor
+                color = myColor.cgColor
+                opacity = 0.5
                 engine.noteOn(note: ifNegative(note: note1), bank: 2)
                 engine.noteOn(note: ifNegative(note: note2), bank: 2)
             } else {
-                color = UIColor.clear.cgColor
+                color = clearColor.cgColor
+                opacity = 0.0
                 engine.noteOff(note: ifNegative(note: note1), bank: 2)
                 engine.noteOff(note: ifNegative(note: note2), bank: 2)
             }
-            toggleBorders(myBorderLayer: masterChordBorders[parent.triadNumber - 1], color: color)
-            print(parent.triadNumber)
+            toggleBorders(myBorderLayer: masterChordBorders[parent.triadNumber - 1], color: color, opacity: opacity)
+//            print(parent.triadNumber)
         }
         
         if sender.state == .began {
             chordCount += 1
+            parent.borderLayerColor = chordBorderColors[0]
+            parent.borderLayer.fillColor = chordBorderColors[0].cgColor
+            parent.borderLayer.opacity = 0.5
+            let myColor = parent.borderLayerColor
+//            printColorName(color: parent.borderLayerColor)
+//            print(parent.keys[0].keyType)
+            chordBorderColors.removeFirst()
 
-            toggleBorders(myBorderLayer: parent.borderLayer, color: UIColor.green.cgColor)
+            toggleBorders(myBorderLayer: parent.borderLayer, color: myColor.cgColor, opacity: 0.5)
 //            parent.border.layer.borderColor = UIColor.red.cgColor
             engine.noteOn(note: lockedPitch, bank: 2)
             
             switch parent.triadNumber {
             case 1: // root major
-                toggleBordersAndNote(note1: 4, note2: 7, noteOn: true)
+                toggleBordersAndNote(note1: 4, note2: 7, noteOn: true, myColor: myColor)
             case 2: // root minor
-                toggleBordersAndNote(note1: 3, note2: 7, noteOn: true)
+                toggleBordersAndNote(note1: 3, note2: 7, noteOn: true, myColor: myColor)
             case 3: // root augmented
-                toggleBordersAndNote(note1: 4, note2: 8, noteOn: true)
+                toggleBordersAndNote(note1: 4, note2: 8, noteOn: true, myColor: myColor)
             case 4: // root diminished
-                toggleBordersAndNote(note1: 3, note2: 6, noteOn: true)
+                toggleBordersAndNote(note1: 3, note2: 6, noteOn: true, myColor: myColor)
             case 5: // min 3rd minor
-                toggleBordersAndNote(note1: -3, note2: 4, noteOn: true)
+                toggleBordersAndNote(note1: -3, note2: 4, noteOn: true, myColor: myColor)
             case 6: // min 3rd diminished
-                toggleBordersAndNote(note1: -3, note2: 3, noteOn: true)
+                toggleBordersAndNote(note1: -3, note2: 3, noteOn: true, myColor: myColor)
             case 7: // maj 3rd major
-                toggleBordersAndNote(note1: -4, note2: 3, noteOn: true)
+                toggleBordersAndNote(note1: -4, note2: 3, noteOn: true, myColor: myColor)
             case 8: // dim 5th diminished
-                toggleBordersAndNote(note1: -6, note2: -3, noteOn: true)
+                toggleBordersAndNote(note1: -6, note2: -3, noteOn: true, myColor: myColor)
             case 9: // P5 major
-                toggleBordersAndNote(note1: -7, note2: -3, noteOn: true)
+                toggleBordersAndNote(note1: -7, note2: -3, noteOn: true, myColor: myColor)
             case 10: // P5 minor
-                toggleBordersAndNote(note1: -7, note2: -4, noteOn: true)
+                toggleBordersAndNote(note1: -7, note2: -4, noteOn: true, myColor: myColor)
             default:
                 ()
             }
         }
         
         if sender.state == .ended || sender.state == .cancelled {
+            
             if sender.state == .ended {
+                chordBorderColors.insert(parent.borderLayerColor, at: 0)
+                parent.borderLayerColor = clearColor
+                parent.borderLayer.fillColor = clearColor.cgColor
+                parent.borderLayer.opacity = 0.0
+
                 chordCount -= 1
+                if chordCount == 0 {
+                    chordBorderColors = [darkerYellow, lightPurple, darkerGreen, .orange, darkerBlue]
+                }
             }
             
             if sender.state == .cancelled {
+                chordBorderColors = [darkerYellow, lightPurple, darkerGreen, .orange, darkerBlue]
                 chordCount = 0
             }
-
-            toggleBorders(myBorderLayer: parent.borderLayer, color: UIColor.clear.cgColor)
+            
+            toggleBorders(myBorderLayer: parent.borderLayer, color: clearColor.cgColor, opacity: 0.0)
             engine.noteOff(note: lockedPitch, bank: 2)
             
             switch parent.triadNumber {
             case 1: // root major
-                toggleBordersAndNote(note1: 4, note2: 7, noteOn: false)
+                toggleBordersAndNote(note1: 4, note2: 7, noteOn: false, myColor: clearColor)
             case 2: // root minor
-                toggleBordersAndNote(note1: 3, note2: 7, noteOn: false)
+                toggleBordersAndNote(note1: 3, note2: 7, noteOn: false, myColor: clearColor)
             case 3: // root augmented
-                toggleBordersAndNote(note1: 4, note2: 8, noteOn: false)
+                toggleBordersAndNote(note1: 4, note2: 8, noteOn: false, myColor: clearColor)
             case 4: // root diminished
-                toggleBordersAndNote(note1: 3, note2: 6, noteOn: false)
+                toggleBordersAndNote(note1: 3, note2: 6, noteOn: false, myColor: clearColor)
             case 5: // min 3rd minor
-                toggleBordersAndNote(note1: -3, note2: 4, noteOn: false)
+                toggleBordersAndNote(note1: -3, note2: 4, noteOn: false, myColor: clearColor)
             case 6: // min 3rd diminished
-                toggleBordersAndNote(note1: -3, note2: 3, noteOn: false)
+                toggleBordersAndNote(note1: -3, note2: 3, noteOn: false, myColor: clearColor)
             case 7: // maj 3rd major
-                toggleBordersAndNote(note1: -4, note2: 3, noteOn: false)
+                toggleBordersAndNote(note1: -4, note2: 3, noteOn: false, myColor: clearColor)
             case 8: // dim 5th diminished
-                toggleBordersAndNote(note1: -6, note2: -3, noteOn: false)
+                toggleBordersAndNote(note1: -6, note2: -3, noteOn: false, myColor: clearColor)
             case 9: // P5 major
-                toggleBordersAndNote(note1: -7, note2: -3, noteOn: false)
+                toggleBordersAndNote(note1: -7, note2: -3, noteOn: false, myColor: clearColor)
             case 10: // P5 minor
-                toggleBordersAndNote(note1: -7, note2: -4, noteOn: false)
+                toggleBordersAndNote(note1: -7, note2: -4, noteOn: false, myColor: clearColor)
             default:
                 ()
             }
@@ -400,7 +424,7 @@ class ViewController: UIViewController {
         
         func rightIsBlack() {
             myKeyboard.borderPath.addLine(to: CGPoint(x: x3 + width3 - arcRadius, y: height3))
-            myKeyboard.borderPath.addArc(withCenter: CGPoint(x: x3 + width3 - arcRadius, y: height2 - arcRadius), radius: arcRadius, startAngle: bottomAng, endAngle: rightAng, clockwise: false)
+            myKeyboard.borderPath.addArc(withCenter: CGPoint(x: x3 + width3 - arcRadius, y: height3 - arcRadius), radius: arcRadius, startAngle: bottomAng, endAngle: rightAng, clockwise: false)
             myKeyboard.borderPath.addLine(to: CGPoint(x: x3 + width3, y: height4))
         }
         
@@ -456,12 +480,12 @@ class ViewController: UIViewController {
         borderLayer.zPosition = 4
         borderLayer.path = myKeyboard.borderPath.cgPath
         
-        borderLayer.fillColor = UIColor.clear.cgColor
-        borderLayer.strokeColor = UIColor.clear.cgColor
-        borderLayer.lineWidth = 4.0
+        borderLayer.fillColor = clearColor.cgColor
+        borderLayer.strokeColor = clearColor.cgColor
         myKeyboard.borderLayer = borderLayer
 
         if myKeyboard.triadNumber > 0 {
+            borderLayer.lineWidth = 4.0
             chordBorders.append(borderLayer)
             myKeyboard.layer.addSublayer(chordBorders[myKeyboard.triadNumber - 1])
             switch myKeyboard.triadNumber {
@@ -486,6 +510,7 @@ class ViewController: UIViewController {
             }
             masterKeyboard.layer.addSublayer(masterChordBorders[myKeyboard.triadNumber - 1])
         } else {
+            borderLayer.lineWidth = 8.0
             masterChordBorders.append(borderLayer)
         }
     }
@@ -595,11 +620,6 @@ class ViewController: UIViewController {
         scaleKeyboard(myKeyboard: keyboards[8], scale: 1/5, x: 275, y: 165, xCentered: false, yCentered: false)
         scaleKeyboard(myKeyboard: keyboards[9], scale: 1/5, x: 415, y: 165, xCentered: false, yCentered: false)
         scaleKeyboard(myKeyboard: keyboards[10], scale: 1/5, x: 575, y: 165, xCentered: false, yCentered: false)
-        
-        for keyboard in keyboards[1...] {
-            keyboard.keyboardBorder(key1: keyboard.keys[0], key2: keyboard.keys[keyboard.keys.count - 1])
-        }
-        
 
         commonToneTriad(myKeyboard: keyboards[1], tonic: 0, root: 0, third: 4, fifth: 7, triadNumber: 1)
         commonToneTriad(myKeyboard: keyboards[2], tonic: 0, root: 0, third: 3, fifth: 7, triadNumber: 2)
