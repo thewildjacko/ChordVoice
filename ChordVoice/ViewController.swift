@@ -70,7 +70,7 @@ class ViewController: UIViewController {
             let unison = 0, min2nd = 1, maj2nd = 2, min3rd = 3, maj3rd = 4, P4th = 5, tritone = 6, P5th = 7, min6th = 8, maj6th = 9, min7th = 10, maj7th = 11, octave = 12
             let simpleIntervals = [unison, min2nd, maj2nd, min3rd, maj3rd, P4th, tritone, P5th, min6th, maj6th, min7th, maj7th, octave]
             
-            // 0: single notes, 1: major triads, 2: minor triads, 3: aug triads, 4: dim triads, 5: sus4 triad, 6: sus2 triad
+            // -1: notes off, 0: single notes, 1: major triads, 2: minor triads, 3: aug triads, 4: dim triads, 5: sus4 triad, 6: sus2 triad
             
             let chordInversionOuterBounds = [1: [8, 9, 10], 2: [8, 10, 9], 3: [9, 9, 9], 4: [7, 10, 10], 5: [8, 8, 11], 6: [8, 11, 8]]
             let chordUpperOffsets = [1: [8, 5], 2: [8, 4], 3: [9, 5], 4: [7, 4], 5: [8, 6], 6: [8, 3]]
@@ -185,11 +185,6 @@ class ViewController: UIViewController {
                 for (index, key) in myKeys.enumerated() {
                     cancelAll(key: key, midiNote: MIDINoteNumber(parent.startingPitch + index + 21), bank: 1)
                 }
-//                cancelAll(key: myRoot, midiNote: myRootMidiNote, bank: 1)
-//                if tapIndex > 0 {
-//                    cancelAll(key: my3rd, midiNote: my3rdMidiNote, bank: 1)
-//                    cancelAll(key: my5th, midiNote: my5thMidiNote, bank: 1)
-//                }
             }
         }
     }
@@ -255,39 +250,58 @@ class ViewController: UIViewController {
         
         if sender.state == .began {
             chordCount += 1
-            parent.borderLayerColor = chordBorderColors[0]
-            parent.borderLayer.fillColor = chordBorderColors[0].cgColor
+            var theColor = UIColor()
+            
+            switch parent.triadNumber {
+            case 1, 7, 9:
+                theColor = darkerYellow
+            case 2, 5, 10:
+                theColor = darkerBlue
+            case 3:
+                theColor = .orange
+            case 4, 6, 8:
+                theColor = lightPurple
+            default:
+                ()
+            }
+//            parent.borderLayerColor = chordBorderColors[0]
+//            parent.borderLayer.fillColor = chordBorderColors[0].cgColor
+            parent.borderLayerColor = theColor
+            parent.borderLayer.fillColor = theColor.cgColor
+
             parent.borderLayer.opacity = 0.5
-            let myColor = parent.borderLayerColor
+//            let myColor = parent.borderLayerColor
 //            printColorName(color: parent.borderLayerColor)
 //            print(parent.keys[0].keyType)
             chordBorderColors.removeFirst()
 
-            toggleBorders(myBorderLayer: parent.borderLayer, color: myColor.cgColor, opacity: 0.5)
+//            toggleBorders(myBorderLayer: parent.borderLayer, color: myColor.cgColor, opacity: 0.5)
+            toggleBorders(myBorderLayer: parent.borderLayer, color: theColor.cgColor, opacity: 0.5)
 //            parent.border.layer.borderColor = UIColor.red.cgColor
             engine.noteOn(note: lockedPitch, bank: 2)
             
+            // [darkerYellow, lightPurple, darkerGreen, .orange, darkerBlue]
             switch parent.triadNumber {
             case 1: // root major
-                toggleBordersAndNote(note1: 4, note2: 7, noteOn: true, myColor: myColor)
+                toggleBordersAndNote(note1: 4, note2: 7, noteOn: true, myColor: theColor)
             case 2: // root minor
-                toggleBordersAndNote(note1: 3, note2: 7, noteOn: true, myColor: myColor)
+                toggleBordersAndNote(note1: 3, note2: 7, noteOn: true, myColor: theColor)
             case 3: // root augmented
-                toggleBordersAndNote(note1: 4, note2: 8, noteOn: true, myColor: myColor)
+                toggleBordersAndNote(note1: 4, note2: 8, noteOn: true, myColor: theColor)
             case 4: // root diminished
-                toggleBordersAndNote(note1: 3, note2: 6, noteOn: true, myColor: myColor)
+                toggleBordersAndNote(note1: 3, note2: 6, noteOn: true, myColor: theColor)
             case 5: // min 3rd minor
-                toggleBordersAndNote(note1: -3, note2: 4, noteOn: true, myColor: myColor)
+                toggleBordersAndNote(note1: -3, note2: 4, noteOn: true, myColor: theColor)
             case 6: // min 3rd diminished
-                toggleBordersAndNote(note1: -3, note2: 3, noteOn: true, myColor: myColor)
+                toggleBordersAndNote(note1: -3, note2: 3, noteOn: true, myColor: theColor)
             case 7: // maj 3rd major
-                toggleBordersAndNote(note1: -4, note2: 3, noteOn: true, myColor: myColor)
+                toggleBordersAndNote(note1: -4, note2: 3, noteOn: true, myColor: theColor)
             case 8: // dim 5th diminished
-                toggleBordersAndNote(note1: -6, note2: -3, noteOn: true, myColor: myColor)
+                toggleBordersAndNote(note1: -6, note2: -3, noteOn: true, myColor: theColor)
             case 9: // P5 major
-                toggleBordersAndNote(note1: -7, note2: -3, noteOn: true, myColor: myColor)
+                toggleBordersAndNote(note1: -7, note2: -3, noteOn: true, myColor: theColor)
             case 10: // P5 minor
-                toggleBordersAndNote(note1: -7, note2: -4, noteOn: true, myColor: myColor)
+                toggleBordersAndNote(note1: -7, note2: -4, noteOn: true, myColor: theColor)
             default:
                 ()
             }

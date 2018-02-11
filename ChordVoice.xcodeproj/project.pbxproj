@@ -24,6 +24,7 @@
 		1D9476512028BB2D002029AE /* HighlightKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D9476502028BB2D002029AE /* HighlightKeys.swift */; };
 		1D9476532028D66E002029AE /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D9476522028D66E002029AE /* Colors.swift */; };
 		1D95ABBB202A31F700E594D1 /* CommonToneKeyboards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D95ABBA202A31F700E594D1 /* CommonToneKeyboards.swift */; };
+		1DC26431202F7891000DCE18 /* Outline.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 1DC26430202F7891000DCE18 /* Outline.rtf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -59,6 +60,7 @@
 		1D9476502028BB2D002029AE /* HighlightKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightKeys.swift; sourceTree = "<group>"; };
 		1D9476522028D66E002029AE /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		1D95ABBA202A31F700E594D1 /* CommonToneKeyboards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonToneKeyboards.swift; sourceTree = "<group>"; };
+		1DC26430202F7891000DCE18 /* Outline.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Outline.rtf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +99,7 @@
 			children = (
 				1D1660942027A381002BB542 /* AppDelegate.swift */,
 				1D1660962027A381002BB542 /* ViewController.swift */,
+				1DC26430202F7891000DCE18 /* Outline.rtf */,
 				1D1660A62027A3D7002BB542 /* AudioEngine.swift */,
 				1D1660A82027A3D7002BB542 /* Keyboard.swift */,
 				1D1660A92027A3D7002BB542 /* Key.swift */,
@@ -174,6 +177,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D16609F2027A381002BB542 /* LaunchScreen.storyboard in Resources */,
+				1DC26431202F7891000DCE18 /* Outline.rtf in Resources */,
 				1D16609C2027A381002BB542 /* Assets.xcassets in Resources */,
 				1D16609A2027A381002BB542 /* Main.storyboard in Resources */,
 			);
