@@ -7,6 +7,9 @@
 //
 
 // MARK: - Methods (Integer)
+
+import Foundation
+
 public extension Array where Element: Numeric {
 	
 	/// SwifterSwift: Sum of all elements in array.

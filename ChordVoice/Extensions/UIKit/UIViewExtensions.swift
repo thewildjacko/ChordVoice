@@ -185,6 +185,17 @@ public extension UIView {
 		}
 		return nil
 	}
+    
+//    internal var parentKeyboardView: Keyboard? {
+//        weak var parentResponder: UIResponder? = self
+//        while parentResponder != nil {
+//            parentResponder = parentResponder!.next
+//            if let keyboard = parentResponder as? Keyboard {
+//                return keyboard
+//            }
+//        }
+//        return nil
+//    }
 	
 	/// SwifterSwift: Width of view.
 	public var width: CGFloat {
