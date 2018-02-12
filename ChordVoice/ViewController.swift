@@ -39,33 +39,48 @@ class ViewController: UIViewController {
     
     @objc func handleTap(_ sender: UITapGestureRecognizer) {
         if tapIndex != -1 {
-            let view: UIView = sender.view!
-            let parent: Keyboard = (sender.view?.superview! as! Keyboard)
-            var myTagString: String = String(view.tag)
-            var myTagCount = myTagString.count
-            let myNSTag = NSString(string: myTagString)
-            var myKeyboardTag: NSString
+            let view = sender.view!
+            let tag = view.tag
+            let parent = view.parentKeyboardView
+            let digits = tag.digits
+            var myTagString = String(tag)
+            var myTagCount = tag.digitsCount
+            var myKeyboardTag = Int()
+            
             if myTagCount <= 3 {
-                myKeyboardTag = NSString(string: myNSTag.substring(to: 1)) as NSString
+                myKeyboardTag = tag.digits[0] - 1
             } else {
-                myKeyboardTag = NSString(string: myNSTag.substring(to: 2)) as NSString
+                myKeyboardTag = "\(digits[0])\(digits[1])".int! - 1
             }
-            let myKeyboardTagInt = Int(myKeyboardTag as String)! - 1
             
-            let myKeyboard = self.keyboards[myKeyboardTagInt]
-            let myCount = self.keyboards[myKeyboardTagInt].keys.count
-            let myKeys = self.keyboards[myKeyboardTagInt].keys
+            let myKeyboard = self.keyboards[myKeyboardTag]
+            let myCount = self.keyboards[myKeyboardTag].keys.count
+            let myKeys = self.keyboards[myKeyboardTag].keys
+            
             myTagString.remove(at: myTagString.startIndex)
-            
-            var myTag: Int
+            var myTag = Int()
             
             if myKeyboard.tag < 1000 {
-                myTag = Int(myTagString)!
+                myTag = myTagString.int!
                 //            print("myTag is \(myTag)")
             } else {
-                myTag = Int(String(NSString(string: myTagString).substring(from: 3)))!
-                //            print("myTag is \(myTag)")
+                var length = Int()
+                if myTagString.count < 5 {
+                    length = 1
+                } else {
+                    length = 2
+                }
+                myTag = myTagString.slicing(from: 3, length: length)!.int!
             }
+            
+//            if sender.state == .began {
+//                print("tag is \(tag)")
+//                print("tag digits are \(digits)")
+//                print("myTagCount is \(myTagCount)")
+//                print("myTagString is \(myTagString)")
+//                print("myKeyboardTag is \(myKeyboardTag)")
+//                print("myTag is \(myTag)")
+//            }
             
             let unison = 0, min2nd = 1, maj2nd = 2, min3rd = 3, maj3rd = 4, P4th = 5, tritone = 6, P5th = 7, min6th = 8, maj6th = 9, min7th = 10, maj7th = 11, octave = 12
             let simpleIntervals = [unison, min2nd, maj2nd, min3rd, maj3rd, P4th, tritone, P5th, min6th, maj6th, min7th, maj7th, octave]
@@ -77,7 +92,7 @@ class ViewController: UIViewController {
             let chordInversions = [1: [4, 7, 5, 8], 2: [3, 7, 5, 9], 3: [4, 8, 4, 8], 4: [3, 6, 6, 9], 5: [5, 7, 5, 7], 6: [2, 7, 5, 10]]
 
             let myRoot = myKeys[myTag]
-            let midiRootOffset = parent.startingPitch + myTag + 21
+            let midiRootOffset = parent!.startingPitch + myTag + 21
             let myRootMidiNote = MIDINoteNumber(midiRootOffset)
             
             var my3rd = Key()
@@ -183,7 +198,7 @@ class ViewController: UIViewController {
 
             if sender.state == .cancelled {
                 for (index, key) in myKeys.enumerated() {
-                    cancelAll(key: key, midiNote: MIDINoteNumber(parent.startingPitch + index + 21), bank: 1)
+                    cancelAll(key: key, midiNote: MIDINoteNumber(parent!.startingPitch + index + 21), bank: 1)
                 }
             }
         }
@@ -371,7 +386,7 @@ class ViewController: UIViewController {
         key.isPlaying = false
         key.playCount = 0
         key.currentHighlight = 0
-        addShadow(add: false, key: key)
+        addKeyShadow(add: false, key: key)
         engine.noteOff(note: midiNote, bank: 1)
     }
     

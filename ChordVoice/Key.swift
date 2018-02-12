@@ -9,6 +9,19 @@
 
 import UIKit
 
+public extension UIView {
+    internal var parentKeyboardView: Keyboard? {
+        weak var parentResponder: UIResponder? = self
+        while parentResponder != nil {
+            parentResponder = parentResponder!.next
+            if let keyboard = parentResponder as? Keyboard {
+                return keyboard
+            }
+        }
+        return nil
+    }
+}
+
 class Key: UIView {
     var keyType = 0
     /// 1 is A, 2 is A#/Bb, 3 is B ... 12 is G#/Ab

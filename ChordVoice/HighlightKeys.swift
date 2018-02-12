@@ -10,7 +10,7 @@ import Foundation
 import AudioKit
 import AudioKitUI
 
-func addShadow(add: Bool, key: Key) {
+func addKeyShadow(add: Bool, key: Key) {
     if add {
         key.layer.shadowColor = purpleShadow.cgColor
         key.layer.shadowOpacity = 1
@@ -129,7 +129,7 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
                     goHighlight(currentHighlightDelta: -1, newHighlightColor: secondKeyHighlightColor)
                     borderIt(color: shared3rdOr5thBorderColor, width: 4)
                 }
-                addShadow(add: false, key: myKey)
+                addKeyShadow(add: false, key: myKey)
             default:
                 ()
             }
@@ -160,7 +160,7 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
                 }
             case 3:
                 goHighlight(currentHighlightDelta: 1, newHighlightColor: keyHighlightColor)
-                addShadow(add: true, key: myKey)
+                addKeyShadow(add: true, key: myKey)
             default:
                 ()
             }
