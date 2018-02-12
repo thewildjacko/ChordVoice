@@ -27,15 +27,15 @@ class BackgroundView: UIView {
         
 //        for key in array {
 ////            print("key center is \(key.convert(key.center, to: self.superview!))")
-//            print("key center is \(key.center), origin is \(key.frame.origin)")
+//            print("key center is \(key.center), origin is \(key.origin)")
 //        } // print out center coordinates for both key1 and key2
         
         let p1x = key1.center.x
-        let p1y = key1.convert(key1.frame.origin, to: self.superview!).y
+        let p1y = key1.convert(key1.origin, to: self.superview!).y
         let p2x = key2.convert(key2.center, to: self.superview!).x
-        let p2y = key2.convert(key2.frame.origin, to: self.superview!).y + key2.frame.height
-        //            let p1 = key1.frame.origin
-        //            let p2 = key2.frame.origin
+        let p2y = key2.convert(key2.origin, to: self.superview!).y + key2.height
+        //            let p1 = key1.origin
+        //            let p2 = key2.origin
         
         //            print(p1)
         path.move(to: CGPoint(x: p1x, y: p1y))

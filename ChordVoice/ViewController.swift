@@ -14,13 +14,10 @@ class ViewController: UIViewController {
     
     @IBAction func setOrRemoveHighlights(_ sender: AnyObject) {
 //        print(sender.tag)
-        let myNSTag = NSString(string: String(sender.tag))
-        if myNSTag == "200000" {
+        if sender.tag == 200000 {
             tapIndex = -1
         } else {
-            let myButtonTag = String(NSString(string: myNSTag.substring(from: 5)))
-//            print(myButtonTag)
-            tapIndex = Int(myButtonTag)!
+            tapIndex = sender.tag.digits[5]
         }
     }
     
@@ -381,7 +378,7 @@ class ViewController: UIViewController {
         key.holding = false
         key.backgroundColor = key.defaultBackgroundColor
         key.borderColor = blackBorder
-        key.layer.borderWidth = 1
+        key.borderWidth = 1
         key.isPlaying = false
         key.playCount = 0
         key.currentHighlight = 0

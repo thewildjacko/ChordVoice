@@ -213,7 +213,6 @@
 		1D1660932027A381002BB542 /* ChordVoice */ = {
 			isa = PBXGroup;
 			children = (
-				1D337CD020323DC90016DE24 /* Extensions */,
 				1D1660942027A381002BB542 /* AppDelegate.swift */,
 				1D1660962027A381002BB542 /* ViewController.swift */,
 				1DC26430202F7891000DCE18 /* Outline.rtf */,
@@ -226,6 +225,7 @@
 				1D9476522028D66E002029AE /* Colors.swift */,
 				1D197EEA202CB4B100C4F0CF /* Math.swift */,
 				1D1660982027A381002BB542 /* Main.storyboard */,
+				1D337CD020323DC90016DE24 /* Extensions */,
 				1D16609B2027A381002BB542 /* Assets.xcassets */,
 				1D16609D2027A381002BB542 /* LaunchScreen.storyboard */,
 				1D1660A02027A381002BB542 /* Info.plist */,

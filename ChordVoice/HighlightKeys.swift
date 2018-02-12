@@ -12,16 +12,10 @@ import AudioKitUI
 
 func addKeyShadow(add: Bool, key: Key) {
     if add {
-        key.layer.shadowColor = purpleShadow.cgColor
-        key.layer.shadowOpacity = 1
-        key.layer.shadowOffset = CGSize.zero
-        key.layer.shadowRadius = 10
+        key.addShadow(ofColor: purpleShadow, radius: 10, offset: CGSize.zero, opacity: 1.0)
         key.layer.shadowPath = UIBezierPath(rect: key.bounds).cgPath
     } else {
-        key.layer.shadowColor = UIColor.clear.cgColor
-        key.layer.shadowOpacity = 0
-        key.layer.shadowOffset = CGSize.zero
-        key.layer.shadowRadius = 0
+        key.addShadow(ofColor: .clear, radius: 0, offset: CGSize.zero, opacity: 0)
         key.layer.shadowPath = nil
     }
 }
@@ -85,7 +79,7 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
     
     func borderIt(color: UIColor, width: CGFloat) {
         myKey.borderColor = color
-        myKey.layer.borderWidth = width
+        myKey.borderWidth = width
     }
     
     if myKey.currentHighlight == 0 {

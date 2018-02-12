@@ -71,7 +71,7 @@ class Keyboard: UIView {
             var keyNum = Int()
             let timesIn = Int(counter/12)
             let key = Key()
-            key.tag = Int("\(self.tag)\(counter - initialKey)")!
+            key.tag = "\(self.tag)\(counter - initialKey)".int!
             
             if counter <= 12 {
                 keyNum = counter
@@ -116,9 +116,9 @@ class Keyboard: UIView {
         
         for (index, key) in keys.enumerated() {
             key.translatesAutoresizingMaskIntoConstraints = false
-            key.layer.borderWidth = 1
+            key.borderWidth = 1
             
-            let myWidth = self.frame.width
+            let myWidth = self.width
             
             var widthConstraints = NSLayoutConstraint()
             var heightConstraints = NSLayoutConstraint()
@@ -126,7 +126,7 @@ class Keyboard: UIView {
             var pinToLeftKeyboardEdge = NSLayoutConstraint()
             var pinToBottom = NSLayoutConstraint()
             var pinToTop = NSLayoutConstraint()
-            //                key.layer.cornerRadius = 5
+            //                key.cornerRadius = 5
             
             func setHighLightLockColor(key: Key, color: UIColor) {
                 if self.highlightKey > 0 {
@@ -153,9 +153,9 @@ class Keyboard: UIView {
                 key.backgroundColor = key.defaultBackgroundColor
                 key.borderColor = UIColor.black
                 if self.scale == 1 {
-                    key.layer.cornerRadius = 5.0
+                    key.cornerRadius = 5.0
                 } else {
-                    key.layer.cornerRadius = 10 * self.scale
+                    key.cornerRadius = 10 * self.scale
                 }
                 
                 
@@ -173,9 +173,9 @@ class Keyboard: UIView {
                 key.backgroundColor = key.defaultBackgroundColor
                 key.borderColor = UIColor.black
                 if self.scale == 1 {
-                    key.layer.cornerRadius = 2.5
+                    key.cornerRadius = 2.5
                 } else {
-                    key.layer.cornerRadius = 10 * self.scale
+                    key.cornerRadius = 10 * self.scale
                 }
                 widthConstraints = NSLayoutConstraint(item: key, attribute: .width, relatedBy: .equal, toItem: self, attribute: .width, multiplier: 14/myKeyboardWidthMod, constant: 0)
                 heightConstraints = NSLayoutConstraint(item: key, attribute: .height, relatedBy: .equal, toItem: key, attribute: .width, multiplier: 52/14, constant: 0)
@@ -188,9 +188,9 @@ class Keyboard: UIView {
                 key.backgroundColor = key.defaultBackgroundColor
                 key.borderColor = UIColor.black
                 if self.scale == 1 {
-                    key.layer.cornerRadius = 5.0
+                    key.cornerRadius = 5.0
                 } else {
-                    key.layer.cornerRadius = 10 * self.scale
+                    key.cornerRadius = 10 * self.scale
                 }
                 
                 widthConstraints = NSLayoutConstraint(item: key, attribute: .width, relatedBy: .equal, toItem: self, attribute: .width, multiplier: 24/myKeyboardWidthMod, constant: 0)
