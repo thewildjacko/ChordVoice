@@ -377,7 +377,7 @@ class ViewController: UIViewController {
     func cancelAll(key: Key, midiNote: MIDINoteNumber, bank: Int) {
         key.holding = false
         key.backgroundColor = key.defaultBackgroundColor
-        key.borderColor = blackBorder
+        key.borderColor = .black
         key.borderWidth = 1
         key.isPlaying = false
         key.playCount = 0

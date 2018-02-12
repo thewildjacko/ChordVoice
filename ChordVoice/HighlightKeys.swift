@@ -93,18 +93,18 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
             case 1:
                 goHighlight(currentHighlightDelta: -1, newHighlightColor: myKey.defaultBackgroundColor)
                 if myKey != myRoot && myKey.highlightLocked {
-                    borderIt(color: blackBorder, width: 1)
+                    borderIt(color: .black, width: 1)
                 }
             case 2:
                 if myKey.holding {
                     goHighlight(currentHighlightDelta: -1, newHighlightColor: keyHighlightColor)
-                    borderIt(color: blackBorder, width: 1)
+                    borderIt(color: .black, width: 1)
                 } else {
                     goHighlight(currentHighlightDelta: -1, newHighlightColor: secondKeyHighlightColor)
                     if myKey.highlightLocked {
                         borderIt(color: tonicBorderHighlightColor, width: 4)
                     } else {
-                        borderIt(color: blackBorder, width: 1)
+                        borderIt(color: .black, width: 1)
                     }
                 }
             case 3:
