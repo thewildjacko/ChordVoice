@@ -83,8 +83,8 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
         myKey.backgroundColor = newHighlightColor
     }
     
-    func borderIt(color: CGColor, width: CGFloat) {
-        myKey.layer.borderColor = color
+    func borderIt(color: UIColor, width: CGFloat) {
+        myKey.borderColor = color
         myKey.layer.borderWidth = width
     }
     

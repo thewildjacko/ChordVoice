@@ -12,7 +12,7 @@ import AudioKitUI
 
 func commonToneTriad(myKeyboard: Keyboard, tonic: Int, root: Int, third: Int, fifth: Int, triadNumber: Int) {
     myKeyboard.keys[root].backgroundColor = rootKeyHighlightColor
-    myKeyboard.keys[tonic].layer.borderColor = tonicBorderHighlightColor
+    myKeyboard.keys[tonic].borderColor = tonicBorderHighlightColor
     myKeyboard.keys[tonic].layer.borderWidth = 2
     myKeyboard.keys[third].backgroundColor = thirdAndFifthHighlightColor
     myKeyboard.keys[fifth].backgroundColor = thirdAndFifthHighlightColor

@@ -30,17 +30,27 @@ class Keyboard: UIView {
     var borderLayer: CAShapeLayer!
     var borderLayerColor = UIColor()
     
-    static var blackBorder: CGColor = UIColor.black.cgColor
+//    static var blackBorder: CGColor = UIColor.black.cgColor
+//    static var keyHighlightColor: UIColor = .red
+//    static var secondKeyHighlightColor: UIColor = .cyan
+//    static var secondKeyBorderColor: CGColor = UIColor.cyan.cgColor
+//    static var shared3rdOr5thBorderColor: CGColor = UIColor.blue.cgColor
+//    static var tonicHighlightColor: UIColor = .magenta
+//    static var tonicBorderHighlightColor: CGColor = UIColor.magenta.cgColor
+//    static var rootKeyHighlightColor: UIColor = .green
+//    static var rootBorderHighlightColor: CGColor = UIColor.green.cgColor
+//    static var thirdAndFifthHighlightColor: UIColor = .cyan
+
+    static var blackBorder: UIColor = .black
     static var keyHighlightColor: UIColor = .red
     static var secondKeyHighlightColor: UIColor = .cyan
-    static var secondKeyBorderColor: CGColor = UIColor.cyan.cgColor
-    static var shared3rdOr5thBorderColor: CGColor = UIColor.blue.cgColor
+    static var secondKeyBorderColor: UIColor = .cyan
+    static var shared3rdOr5thBorderColor: UIColor = .blue
     static var tonicHighlightColor: UIColor = .magenta
-    static var tonicBorderHighlightColor: CGColor = UIColor.magenta.cgColor
+    static var tonicBorderHighlightColor: UIColor = .magenta
     static var rootKeyHighlightColor: UIColor = .green
-    static var rootBorderHighlightColor: CGColor = UIColor.green.cgColor
+    static var rootBorderHighlightColor: UIColor = .green
     static var thirdAndFifthHighlightColor: UIColor = .cyan
-    
     
     var scale: CGFloat = 1.0
     
@@ -141,7 +151,7 @@ class Keyboard: UIView {
 //                key.defaultBackgroundColor = .white
                 //                    key.backgroundColor = .blue
                 key.backgroundColor = key.defaultBackgroundColor
-                key.layer.borderColor = UIColor.black.cgColor
+                key.borderColor = UIColor.black
                 if self.scale == 1 {
                     key.layer.cornerRadius = 5.0
                 } else {
@@ -161,7 +171,7 @@ class Keyboard: UIView {
                 self.bringSubview(toFront: key)
                 //                    key.backgroundColor = .gray
                 key.backgroundColor = key.defaultBackgroundColor
-                key.layer.borderColor = UIColor.black.cgColor
+                key.borderColor = UIColor.black
                 if self.scale == 1 {
                     key.layer.cornerRadius = 2.5
                 } else {
@@ -176,7 +186,7 @@ class Keyboard: UIView {
                 key.defaultBackgroundColor = .white
                 //                    key.backgroundColor = .green
                 key.backgroundColor = key.defaultBackgroundColor
-                key.layer.borderColor = UIColor.black.cgColor
+                key.borderColor = UIColor.black
                 if self.scale == 1 {
                     key.layer.cornerRadius = 5.0
                 } else {

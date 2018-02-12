@@ -34,17 +34,27 @@ let darkerGreen = UIColor(red: 0x23, green: 0x9C, blue: 0x04)
 let darkerYellow = UIColor(red: 0xFF, green: 0xC8, blue: 0x24)
 let darkerBlue = UIColor(red: 0x48, green: 0x6D, blue: 0xFF)
 
-var blackBorder: CGColor = UIColor.black.cgColor
+//var blackBorder: CGColor = UIColor.black.cgColor
+//var keyHighlightColor: UIColor = .red
+//var secondKeyHighlightColor: UIColor = .cyan
+//var secondKeyBorderColor: CGColor = UIColor.cyan.cgColor
+//var shared3rdOr5thBorderColor: CGColor = UIColor.blue.cgColor
+//var tonicHighlightColor: UIColor = .magenta
+//var tonicBorderHighlightColor: CGColor = UIColor.magenta.cgColor
+//var rootKeyHighlightColor: UIColor = .green
+//var rootBorderHighlightColor: CGColor = UIColor.green.cgColor
+//var thirdAndFifthHighlightColor: UIColor = .cyan
+
+var blackBorder: UIColor = .black
 var keyHighlightColor: UIColor = .red
 var secondKeyHighlightColor: UIColor = .cyan
-var secondKeyBorderColor: CGColor = UIColor.cyan.cgColor
-var shared3rdOr5thBorderColor: CGColor = UIColor.blue.cgColor
+var secondKeyBorderColor: UIColor = .cyan
+var shared3rdOr5thBorderColor: UIColor = .blue
 var tonicHighlightColor: UIColor = .magenta
-var tonicBorderHighlightColor: CGColor = UIColor.magenta.cgColor
+var tonicBorderHighlightColor: UIColor = .magenta
 var rootKeyHighlightColor: UIColor = .green
-var rootBorderHighlightColor: CGColor = UIColor.green.cgColor
+var rootBorderHighlightColor: UIColor = .green
 var thirdAndFifthHighlightColor: UIColor = .cyan
-
 
 func printColorName(color: UIColor) {
     switch color {
