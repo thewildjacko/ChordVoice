@@ -52,22 +52,98 @@ public extension UIView {
     }
 }
 
-class Key: UIView {
+public extension CAShapeLayer {
+    public func addShadow(ofColor color: UIColor = UIColor(red: 0.07, green: 0.47, blue: 0.57, alpha: 1.0), radius: CGFloat = 3, offset: CGSize = .zero, opacity: Float = 0.5) {
+        shadowColor = color.cgColor
+        shadowOffset = offset
+        shadowRadius = radius
+        shadowOpacity = opacity
+    }
+}
+
+public extension CAShapeLayer {
+    internal var parentKeyboardView: Keyboard? {
+        return self.delegate as? Keyboard
+    }
+    
+    /// SwifterSwift: y origin of layer
+    public var x: CGFloat {
+        get {
+            return frame.origin.x
+        }
+        set {
+            frame.origin.x = newValue
+        }
+    }
+    
+    /// SwifterSwift: y origin of layer
+    public var y: CGFloat {
+        get {
+            return frame.origin.y
+        }
+        set {
+            frame.origin.y = newValue
+        }
+    }
+    
+    /// SwifterSwift: origin of layer
+    public var origin: CGPoint {
+        get {
+            return frame.origin
+        }
+        set {
+            x = newValue.x
+            y = newValue.y
+        }
+    }
+    
+    public var width: CGFloat {
+        get {
+            return frame.size.width
+        }
+        set {
+            frame.size.width = newValue
+        }
+    }
+    
+    public var height: CGFloat {
+        get {
+            return frame.size.height
+        }
+        set {
+            frame.size.height = newValue
+        }
+    }
+    
+    public var size: CGSize {
+        get {
+            return frame.size
+        }
+        set {
+            width = newValue.width
+            height = newValue.height
+        }
+    }
+}
+
+class Key: CAShapeLayer {
     var keyType = 0
     /// 1 is A, 2 is A#/Bb, 3 is B ... 12 is G#/Ab
     
-    var defaultBackgroundColor: UIColor = .clear
+    var defaultBackgroundColor: CGColor = UIColor.clear.cgColor
     var currentHighlight = 0
     var isPlaying = false
     var holding = false
     var playCount = 0
-    var previousBackground = UIColor()
+    var previousBackground: CGColor!
     var highlightLocked = false
+    var tag = Int()
     
-    init() {
-        super.init(frame: CGRect())
+    
+    override init() {
+        super.init()
         self.previousBackground = defaultBackgroundColor
-        self.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner] // rounded bottom corners
+        self.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner] // rounded bottom corners
     }
     
     required init?(coder aDecoder: NSCoder) {

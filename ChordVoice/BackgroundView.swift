@@ -30,18 +30,18 @@ class BackgroundView: UIView {
 //            print("key center is \(key.center), origin is \(key.origin)")
 //        } // print out center coordinates for both key1 and key2
         
-        let p1x = key1.center.x
-        let p1y = key1.convert(key1.origin, to: self.superview!).y
-        let p2x = key2.convert(key2.center, to: self.superview!).x
-        let p2y = key2.convert(key2.origin, to: self.superview!).y + key2.height
-        //            let p1 = key1.origin
-        //            let p2 = key2.origin
-        
-        //            print(p1)
-        path.move(to: CGPoint(x: p1x, y: p1y))
-//        path.move(to: CGPoint(x: p1x, y: p1.y))
-        path.addLine(to: CGPoint(x: p2x, y: p2y))
-        path.close()
+//        let p1x = key1.center.x
+//        let p1y = key1.convert(key1.origin, to: self.superview!).y
+//        let p2x = key2.convert(key2.center, to: self.superview!).x
+//        let p2y = key2.convert(key2.origin, to: self.superview!).y + key2.height
+//        //            let p1 = key1.origin
+//        //            let p2 = key2.origin
+//        
+//        //            print(p1)
+//        path.move(to: CGPoint(x: p1x, y: p1y))
+////        path.move(to: CGPoint(x: p1x, y: p1.y))
+//        path.addLine(to: CGPoint(x: p2x, y: p2y))
+//        path.close()
     }
     
     override func draw(_ rect: CGRect) {

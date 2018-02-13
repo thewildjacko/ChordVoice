@@ -21,6 +21,7 @@ class Keyboard: UIView {
     var blackKeys = [Key]()
     var myLayoutConstraints = [NSLayoutConstraint]()
     var myKeyboardWidthMod: CGFloat = 0
+    var nextXPos: CGFloat = 0
     var startingPitch = Int()
     var highlightKey = Int()
     var highlightPitch = MIDINoteNumber()
@@ -30,15 +31,25 @@ class Keyboard: UIView {
     var borderLayer: CAShapeLayer!
     var borderLayerColor = UIColor()
 
-    static var keyHighlightColor: UIColor = .red
-    static var secondKeyHighlightColor: UIColor = .cyan
-    static var secondKeyBorderColor: UIColor = .cyan
-    static var shared3rdOr5thBorderColor: UIColor = .blue
-    static var tonicHighlightColor: UIColor = .magenta
-    static var tonicBorderHighlightColor: UIColor = .magenta
-    static var rootKeyHighlightColor: UIColor = .green
-    static var rootBorderHighlightColor: UIColor = .green
-    static var thirdAndFifthHighlightColor: UIColor = .cyan
+//    static var keyHighlightColor: UIColor = .red
+//    static var secondKeyHighlightColor: UIColor = .cyan
+//    static var secondKeyBorderColor: UIColor = .cyan
+//    static var shared3rdOr5thBorderColor: UIColor = .blue
+//    static var tonicHighlightColor: UIColor = .magenta
+//    static var tonicBorderHighlightColor: UIColor = .magenta
+//    static var rootKeyHighlightColor: UIColor = .green
+//    static var rootBorderHighlightColor: UIColor = .green
+//    static var thirdAndFifthHighlightColor: UIColor = .cyan
+    
+    static var keyHighlightColor: CGColor = red
+    static var secondKeyHighlightColor: CGColor = cyan
+    static var secondKeyBorderColor: CGColor = cyan
+    static var shared3rdOr5thBorderColor: CGColor = blue
+    static var tonicHighlightColor: CGColor = magenta
+    static var tonicBorderHighlightColor: CGColor = magenta
+    static var rootKeyHighlightColor: CGColor = green
+    static var rootBorderHighlightColor: CGColor = green
+    static var thirdAndFifthHighlightColor: CGColor = cyan
     
     var scale: CGFloat = 1.0
     
@@ -52,22 +63,29 @@ class Keyboard: UIView {
         self.backgroundColor = .clear
     }
     
+    func getKeyNum(counter: Int) -> Int {
+        var keyNum = Int()
+        let timesIn = Int(counter/12)
+        
+        if counter <= 12 {
+            keyNum = counter
+        } else if counter > 12 && (counter % 12) != 0 {
+            keyNum = counter - (12 * (timesIn))
+        } else {
+            keyNum = counter - (12 * (timesIn - 1))
+        }
+        print(keyNum)
+        return keyNum
+    }
+    
     func addKeys(highlightLockKey: Int) {
         var counter = initialKey
+        let layer = self.layer
         
         while counter <= (numberOfKeys + initialKey - 1)   {
-            var keyNum = Int()
-            let timesIn = Int(counter/12)
+            let keyNum = self.getKeyNum(counter: counter)
             let key = Key()
             key.tag = "\(self.tag)\(counter - initialKey)".int!
-            
-            if counter <= 12 {
-                keyNum = counter
-            } else if counter > 12 && (counter % 12) != 0 {
-                keyNum = counter - (12 * (timesIn))
-            } else {
-                keyNum = counter - (12 * (timesIn - 1))
-            }
             
             key.keyType = keyNum
             switch keyNum {
@@ -84,7 +102,8 @@ class Keyboard: UIView {
             }
             //                key.layer.opacity = 0.5
             keys.append(key)
-            self.addSubview(key)
+//            self.addSubview(key)
+            layer.addSublayer(key)
             
             counter += 1
         }
@@ -103,10 +122,18 @@ class Keyboard: UIView {
     func addKeyConstraints(keys: [Key]) {
         
         for (index, key) in keys.enumerated() {
-            key.translatesAutoresizingMaskIntoConstraints = false
+//            key.translatesAutoresizingMaskIntoConstraints = false
             key.borderWidth = 1
+            var xPos = CGFloat()
             
             let myWidth = self.width
+            let myHeight = self.height
+            let scaleMod = myWidth / myKeyboardWidthMod
+            let aCEGWidth = 23 / scaleMod
+            let bDFWidth = 24 / scaleMod
+            let blackKeyWidth = 14 / scaleMod
+            let whiteKeyHeight = 91 / scaleMod
+            let blackKeyHeight = 52 / scaleMod
             
             var widthConstraints = NSLayoutConstraint()
             var heightConstraints = NSLayoutConstraint()
@@ -116,7 +143,7 @@ class Keyboard: UIView {
             var pinToTop = NSLayoutConstraint()
             //                key.cornerRadius = 5
             
-            func setHighLightLockColor(key: Key, color: UIColor) {
+            func setHighLightLockColor(key: Key, color: CGColor) {
                 if self.highlightKey > 0 {
                     if key == keys[highlightKey] {
                         key.backgroundColor = Keyboard.tonicHighlightColor
@@ -132,34 +159,51 @@ class Keyboard: UIView {
                 
             }
             
+            func setX() {
+                // 4: 14, 5: 9, 6: 19, 7: 5, 8: 23, 9: 20, 10: 13
+                let offsets: Dictionary<Int, CGFloat> = [1: 20, 2: 3, 3: 24, 4: 14, 5: 9, 6: 19, 7: 5, 8: 23, 9: 13, 10: 11, 11: 16, 12: 7]
+                let firstBlackKeyOffsets: Dictionary<Int, CGFloat> = [2: -3, 5: -9, 7: -5, 10: -11, 12: -7]
+                
+                for (index, key) in keys.enumerated() {
+                    if index != 0 {
+                        xPos = nextXPos
+                        nextXPos += offsets[key.keyType]!
+                    } else {
+                        switch key.keyType {
+                        case 1, 3, 4, 6, 8, 9, 11:
+                            xPos = 0
+                        case 2, 5, 7, 10, 12:
+                            xPos = firstBlackKeyOffsets[key.keyType]!
+                        default:
+                            ()
+                        }
+                        nextXPos += xPos + offsets[key.keyType]!
+                    }
+                    print("keyType is \(key.keyType), xPos is \(xPos), nextXPos is \(nextXPos)")
+                }
+            }
+            
             switch key.keyType {
             case 1, 4, 8, 11:
-                key.layer.zPosition = 1
-                setHighLightLockColor(key: key, color: .white)
+                key.zPosition = 1
+                setHighLightLockColor(key: key, color: white)
 //                key.defaultBackgroundColor = .white
                 //                    key.backgroundColor = .blue
                 key.backgroundColor = key.defaultBackgroundColor
-                key.borderColor = .black
+                key.borderColor = black
                 if self.scale == 1 {
                     key.cornerRadius = 5.0
                 } else {
                     key.cornerRadius = 10 * self.scale
                 }
                 
-                
-                widthConstraints = NSLayoutConstraint(item: key, attribute: .width, relatedBy: .equal, toItem: self, attribute: .width, multiplier: 23/myKeyboardWidthMod, constant: 0)
-                heightConstraints = NSLayoutConstraint(item: key, attribute: .height, relatedBy: .equal, toItem: key, attribute: .width, multiplier: 91/23, constant: 0)
-                pinToBottom = NSLayoutConstraint(item: key, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant: 0)
-                myLayoutConstraints += [widthConstraints, heightConstraints, pinToBottom]
-                ()
+                key.frame = CGRect(x: xPos, y: 0, width: aCEGWidth, height: whiteKeyHeight)
+                key.path = UIBezierPath(rect: CGRect(x: xPos, y: 0, width: aCEGWidth, height: whiteKeyHeight)).cgPath
             case 2, 5, 7, 10, 12:
-                key.layer.zPosition = 2
-                setHighLightLockColor(key: key, color: .darkGray)
-//                key.defaultBackgroundColor = .darkGray
-                self.bringSubview(toFront: key)
-                //                    key.backgroundColor = .gray
+                key.zPosition = 2
+                setHighLightLockColor(key: key, color: darkGray)
                 key.backgroundColor = key.defaultBackgroundColor
-                key.borderColor = .black
+                key.borderColor = black
                 if self.scale == 1 {
                     key.cornerRadius = 2.5
                 } else {
@@ -170,11 +214,11 @@ class Keyboard: UIView {
                 pinToTop = NSLayoutConstraint(item: key, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1.0, constant: 0)
                 myLayoutConstraints += [widthConstraints, heightConstraints, pinToTop]
             case 3, 6, 9:
-                key.layer.zPosition = 1
-                key.defaultBackgroundColor = .white
+                key.zPosition = 1
+                key.defaultBackgroundColor = white
                 //                    key.backgroundColor = .green
                 key.backgroundColor = key.defaultBackgroundColor
-                key.borderColor = .black
+                key.borderColor = black
                 if self.scale == 1 {
                     key.cornerRadius = 5.0
                 } else {

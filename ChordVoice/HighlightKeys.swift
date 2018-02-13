@@ -13,14 +13,14 @@ import AudioKitUI
 func addKeyShadow(add: Bool, key: Key) {
     if add {
         key.addShadow(ofColor: purpleShadow, radius: 10, offset: CGSize.zero, opacity: 1.0)
-        key.layer.shadowPath = UIBezierPath(rect: key.bounds).cgPath
+        key.shadowPath = UIBezierPath(rect: key.bounds).cgPath
     } else {
         key.addShadow(ofColor: .clear, radius: 0, offset: CGSize.zero, opacity: 0)
-        key.layer.shadowPath = nil
+        key.shadowPath = nil
     }
 }
 
-func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight: Bool) {
+func highlightKeys(myKey: Key, myRoot: Key, highlightColor: CGColor, doHighlight: Bool) {
     
     let currentBackground = myKey.backgroundColor
     let defaultBackgroundColor = myKey.defaultBackgroundColor
@@ -30,15 +30,15 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
     
     func printPrevBackground() {
         switch myKey.previousBackground {
-        case UIColor.white:
+        case white:
             print("Prev bkgnd was white")
-        case UIColor.darkGray:
+        case darkGray:
             print("Prev bkgnd was black")
-        case UIColor.magenta:
+        case magenta:
             print("Prev bkgnd was pink")
-        case UIColor.red:
+        case red:
             print("Prev bkgnd was red")
-        case UIColor.cyan:
+        case cyan:
             print("Prev bkgnd was blue")
         default:
             ()
@@ -47,17 +47,17 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
     
     func printHighlightColor() {
         switch highlightColor {
-        case UIColor.white:
+        case white:
             print("highlightColor is white")
-        case UIColor.darkGray:
+        case darkGray:
             print("highlightColor is black")
-        case UIColor.magenta:
+        case magenta:
             print("highlightColor is pink")
-        case UIColor.red:
+        case red:
             print("highlightColor is red")
-        case UIColor.cyan:
+        case cyan:
             print("highlightColor is blue")
-        case UIColor.green:
+        case green:
             print("highlightColor is green")
         default:
             ()
@@ -72,12 +72,12 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
         }
     }
     
-    func goHighlight(currentHighlightDelta: Int, newHighlightColor: UIColor) {
+    func goHighlight(currentHighlightDelta: Int, newHighlightColor: CGColor) {
         myKey.currentHighlight += currentHighlightDelta
         myKey.backgroundColor = newHighlightColor
     }
     
-    func borderIt(color: UIColor, width: CGFloat) {
+    func borderIt(color: CGColor, width: CGFloat) {
         myKey.borderColor = color
         myKey.borderWidth = width
     }
@@ -93,18 +93,18 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight
             case 1:
                 goHighlight(currentHighlightDelta: -1, newHighlightColor: myKey.defaultBackgroundColor)
                 if myKey != myRoot && myKey.highlightLocked {
-                    borderIt(color: .black, width: 1)
+                    borderIt(color: black, width: 1)
                 }
             case 2:
                 if myKey.holding {
                     goHighlight(currentHighlightDelta: -1, newHighlightColor: keyHighlightColor)
-                    borderIt(color: .black, width: 1)
+                    borderIt(color: black, width: 1)
                 } else {
                     goHighlight(currentHighlightDelta: -1, newHighlightColor: secondKeyHighlightColor)
                     if myKey.highlightLocked {
                         borderIt(color: tonicBorderHighlightColor, width: 4)
                     } else {
-                        borderIt(color: .black, width: 1)
+                        borderIt(color: black, width: 1)
                     }
                 }
             case 3:

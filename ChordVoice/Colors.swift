@@ -28,33 +28,43 @@ let electricBlue = UIColor(red: 0x7D, green: 0xF9, blue: 0xFF)
 let purpleShadow = UIColor(red: 0x80, green: 0x00, blue: 0xFF)
 let lavender = UIColor(red: 0xE6, green: 0xE6, blue: 0xFA)
 let lightPurple = UIColor(red: 0xCE, green: 0x63, blue: 0xFF)
-let orange = UIColor(red: 0xFF, green: 0x7F, blue: 0x00)
+let orange = UIColor(red: 0xFF, green: 0x7F, blue: 0x00).cgColor
 let clearColor = UIColor.clear
 let darkerGreen = UIColor(red: 0x23, green: 0x9C, blue: 0x04)
 let darkerYellow = UIColor(red: 0xFF, green: 0xC8, blue: 0x24)
 let darkerBlue = UIColor(red: 0x48, green: 0x6D, blue: 0xFF)
+let white = UIColor.white.cgColor
+let black = UIColor.black.cgColor
+let darkGray = UIColor.darkGray.cgColor
+let red = UIColor.red.cgColor
+let magenta = UIColor.magenta.cgColor
+let blue = UIColor.blue.cgColor
+let green = UIColor.green.cgColor
+let cyan = UIColor.cyan.cgColor
+let purple = UIColor.purple.cgColor
+let yellow = UIColor.yellow.cgColor
 
-var keyHighlightColor: UIColor = .red
-var secondKeyHighlightColor: UIColor = .cyan
-var secondKeyBorderColor: UIColor = .cyan
-var shared3rdOr5thBorderColor: UIColor = .blue
-var tonicHighlightColor: UIColor = .magenta
-var tonicBorderHighlightColor: UIColor = .magenta
-var rootKeyHighlightColor: UIColor = .green
-var rootBorderHighlightColor: UIColor = .green
-var thirdAndFifthHighlightColor: UIColor = .cyan
+var keyHighlightColor: CGColor = red
+var secondKeyHighlightColor: CGColor = cyan
+var secondKeyBorderColor: CGColor = cyan
+var shared3rdOr5thBorderColor: CGColor = blue
+var tonicHighlightColor: CGColor = magenta
+var tonicBorderHighlightColor: CGColor = magenta
+var rootKeyHighlightColor: CGColor = green
+var rootBorderHighlightColor: CGColor = green
+var thirdAndFifthHighlightColor: CGColor = cyan
 
-func printColorName(color: UIColor) {
+func printColorName(color: CGColor) {
     switch color {
-    case UIColor.blue:
+    case blue:
         print("Color is blue")
-    case UIColor.green:
+    case green:
         print("Color is green")
-    case UIColor.purple:
+    case purple:
         print("Color is purple")
     case orange:
         print("Color is orange")
-    case UIColor.yellow:
+    case yellow:
         print("Color is yellow")
     default:
         ()

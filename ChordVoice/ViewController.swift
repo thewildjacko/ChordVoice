@@ -202,17 +202,23 @@ class ViewController: UIViewController {
     }
     
     func addTapGestureRecognizers(myKeyboard: Keyboard) {
-        func addLongTaps(myKeysArray: [Key]) {
-            for key in myKeysArray {
-                key.isUserInteractionEnabled = true
-                let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-                tap.minimumPressDuration = 0
-                key.addGestureRecognizer(tap)
-            }
-        }
+        myKeyboard.isUserInteractionEnabled = true
+        let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        tap.minimumPressDuration = 0
+        myKeyboard.addGestureRecognizer(tap)
         
-        addLongTaps(myKeysArray: myKeyboard.whiteKeys)
-        addLongTaps(myKeysArray: myKeyboard.blackKeys)
+//
+//        func addLongTaps(myKeysArray: [Key]) {
+//            for key in myKeysArray {
+//                key.isUserInteractionEnabled = true
+//                let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+//                tap.minimumPressDuration = 0
+//                key.addGestureRecognizer(tap)
+//            }
+//        }
+//
+//        addLongTaps(myKeysArray: myKeyboard.whiteKeys)
+//        addLongTaps(myKeysArray: myKeyboard.blackKeys)
     }
     
    
@@ -377,7 +383,7 @@ class ViewController: UIViewController {
     func cancelAll(key: Key, midiNote: MIDINoteNumber, bank: Int) {
         key.holding = false
         key.backgroundColor = key.defaultBackgroundColor
-        key.borderColor = .black
+        key.borderColor = black
         key.borderWidth = 1
         key.isPlaying = false
         key.playCount = 0
