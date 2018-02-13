@@ -138,15 +138,4 @@ class Key: CAShapeLayer {
     var previousBackground: CGColor!
     var highlightLocked = false
     var tag = Int()
-    
-    
-    override init() {
-        super.init()
-        self.previousBackground = defaultBackgroundColor
-        self.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner] // rounded bottom corners
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }

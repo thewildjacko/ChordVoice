@@ -82,7 +82,7 @@
 		1D9476512028BB2D002029AE /* HighlightKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D9476502028BB2D002029AE /* HighlightKeys.swift */; };
 		1D9476532028D66E002029AE /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D9476522028D66E002029AE /* Colors.swift */; };
 		1D95ABBB202A31F700E594D1 /* CommonToneKeyboards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D95ABBA202A31F700E594D1 /* CommonToneKeyboards.swift */; };
-		1DC26431202F7891000DCE18 /* Outline.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 1DC26430202F7891000DCE18 /* Outline.rtf */; };
+		1DE1704F203388AF00203EB2 /* Outline.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 1DC26430202F7891000DCE18 /* Outline.rtf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -432,8 +432,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D16609F2027A381002BB542 /* LaunchScreen.storyboard in Resources */,
-				1DC26431202F7891000DCE18 /* Outline.rtf in Resources */,
 				1D16609C2027A381002BB542 /* Assets.xcassets in Resources */,
+				1DE1704F203388AF00203EB2 /* Outline.rtf in Resources */,
 				1D16609A2027A381002BB542 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

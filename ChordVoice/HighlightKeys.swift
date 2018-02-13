@@ -74,7 +74,7 @@ func highlightKeys(myKey: Key, myRoot: Key, highlightColor: CGColor, doHighlight
     
     func goHighlight(currentHighlightDelta: Int, newHighlightColor: CGColor) {
         myKey.currentHighlight += currentHighlightDelta
-        myKey.backgroundColor = newHighlightColor
+        myKey.fillColor = newHighlightColor
     }
     
     func borderIt(color: CGColor, width: CGFloat) {

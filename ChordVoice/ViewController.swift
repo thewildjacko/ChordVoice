@@ -13,7 +13,6 @@ import AudioKitUI
 class ViewController: UIViewController {
     
     @IBAction func setOrRemoveHighlights(_ sender: AnyObject) {
-//        print(sender.tag)
         if sender.tag == 200000 {
             tapIndex = -1
         } else {
@@ -34,168 +33,171 @@ class ViewController: UIViewController {
     
     let engine = AudioEngine(waveform1: AKTable(.sawtooth), waveform2: AKTable(.square))
     
-    @objc func handleTap(_ sender: UITapGestureRecognizer) {
+    @objc func handleTap(_ recognizer: UILongPressGestureRecognizer) {
+
+        let tapLocation = recognizer.location(in: recognizer.view)
+        var key: Key!
+        var tag = Int()
+        
+        if recognizer.state == .began {
+            print(tapLocation)
+        }
+        
         if tapIndex != -1 {
-            let view = sender.view!
-            let tag = view.tag
-            let parent = view.parentKeyboardView
-            let digits = tag.digits
-            var myTagString = String(tag)
-            var myTagCount = tag.digitsCount
-            var myKeyboardTag = Int()
-            
-            if myTagCount <= 3 {
-                myKeyboardTag = tag.digits[0] - 1
-            } else {
-                myKeyboardTag = "\(digits[0])\(digits[1])".int! - 1
-            }
-            
-            let myKeyboard = self.keyboards[myKeyboardTag]
-            let myCount = self.keyboards[myKeyboardTag].keys.count
-            let myKeys = self.keyboards[myKeyboardTag].keys
-            
-            myTagString.remove(at: myTagString.startIndex)
-            var myTag = Int()
-            
-            if myKeyboard.tag < 1000 {
-                myTag = myTagString.int!
-                //            print("myTag is \(myTag)")
-            } else {
-                var length = Int()
-                if myTagString.count < 5 {
-                    length = 1
-                } else {
-                    length = 2
+            for layer in masterKeyboard.keys {
+                if layer.hitTest(tapLocation) != nil {
+                    key = layer
+                    tag = key.tag
+                    break
                 }
-                myTag = myTagString.slicing(from: 3, length: length)!.int!
             }
-            
-//            if sender.state == .began {
-//                print("tag is \(tag)")
-//                print("tag digits are \(digits)")
-//                print("myTagCount is \(myTagCount)")
-//                print("myTagString is \(myTagString)")
-//                print("myKeyboardTag is \(myKeyboardTag)")
-//                print("myTag is \(myTag)")
-//            }
-            
-            let unison = 0, min2nd = 1, maj2nd = 2, min3rd = 3, maj3rd = 4, P4th = 5, tritone = 6, P5th = 7, min6th = 8, maj6th = 9, min7th = 10, maj7th = 11, octave = 12
-            let simpleIntervals = [unison, min2nd, maj2nd, min3rd, maj3rd, P4th, tritone, P5th, min6th, maj6th, min7th, maj7th, octave]
-            
-            // -1: notes off, 0: single notes, 1: major triads, 2: minor triads, 3: aug triads, 4: dim triads, 5: sus4 triad, 6: sus2 triad
-            
-            let chordInversionOuterBounds = [1: [8, 9, 10], 2: [8, 10, 9], 3: [9, 9, 9], 4: [7, 10, 10], 5: [8, 8, 11], 6: [8, 11, 8]]
-            let chordUpperOffsets = [1: [8, 5], 2: [8, 4], 3: [9, 5], 4: [7, 4], 5: [8, 6], 6: [8, 3]]
-            let chordInversions = [1: [4, 7, 5, 8], 2: [3, 7, 5, 9], 3: [4, 8, 4, 8], 4: [3, 6, 6, 9], 5: [5, 7, 5, 7], 6: [2, 7, 5, 10]]
-
-            let myRoot = myKeys[myTag]
-            let midiRootOffset = parent!.startingPitch + myTag + 21
-            let myRootMidiNote = MIDINoteNumber(midiRootOffset)
-            
-            var my3rd = Key()
-            var my3rdMidiNote = MIDINoteNumber()
-
-            var my5th = Key()
-            var my5thMidiNote = MIDINoteNumber()
-            
-            func toggleChordShape(triadType: Int, addRemove: Bool) {
-                let rootPosOffset = chordUpperOffsets[triadType]![0]
-                let firstInvOffset = chordUpperOffsets[triadType]![1]
-                let chord = chordInversions[triadType]
+            if key != nil {
+                let digits = tag.digits
+                var myTagString = String(tag)
+                var myTagCount = tag.digitsCount
+                var myKeyboardTag = Int()
                 
-                let myChordInversionOuterBounds = chordInversionOuterBounds[triadType]!.sorted()
-                                
-                func set3rdAnd5th() {
-                    if myTag <= myCount - rootPosOffset {
-                        my3rd = myKeys[myTag + chord![0]]
-                        my5th = myKeys[myTag + chord![1]]
-                        
-                        my3rdMidiNote = MIDINoteNumber(midiRootOffset + chord![0])
-                        my5thMidiNote = MIDINoteNumber(midiRootOffset + chord![1])
-                    } else if myTag > myCount - rootPosOffset && myTag <= myCount - firstInvOffset {
-                        my3rd = myKeys[myTag + chord![0]]
-                        my5th = myKeys[myTag - chord![2]]
-                    
-                        my3rdMidiNote = MIDINoteNumber(midiRootOffset + chord![0])
-                        my5thMidiNote = MIDINoteNumber(midiRootOffset - chord![2])
+                if myTagCount <= 3 {
+                    myKeyboardTag = tag.digits[0] - 1
+                } else {
+                    myKeyboardTag = "\(digits[0])\(digits[1])".int! - 1
+                }
+                
+                let myKeyboard = self.keyboards[myKeyboardTag]
+                let myCount = self.keyboards[myKeyboardTag].keys.count
+                let myKeys = self.keyboards[myKeyboardTag].keys
+                
+                myTagString.remove(at: myTagString.startIndex)
+                var myTag = Int()
+                
+                if myKeyboard.tag < 1000 {
+                    myTag = myTagString.int!
+                    //            print("myTag is \(myTag)")
+                } else {
+                    var length = Int()
+                    if myTagString.count < 5 {
+                        length = 1
                     } else {
-                        my3rd = myKeys[myTag - chord![3]]
-                        my5th = myKeys[myTag - chord![2]]
-
-                        my3rdMidiNote = MIDINoteNumber(midiRootOffset - chord![3])
-                        my5thMidiNote = MIDINoteNumber(midiRootOffset - chord![2])
+                        length = 2
                     }
-//                    print(myRootMidiNote, my3rdMidiNote, my5thMidiNote)
+                    myTag = myTagString.slicing(from: 3, length: length)!.int!
                 }
                 
-                // addRemove == true, highlight; addRemove == false, remove highlights
-                if addRemove {
-                    highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: true)
-                    myRoot.playCount += 1
-                    if myCount - myChordInversionOuterBounds[2] > 0 {
-                        //                    print("We can invert!")
-                        set3rdAnd5th()
-                        my3rd.playCount += 1
-                        my5th.playCount += 1
-                        highlightKeys(myKey: my3rd, myRoot: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: true)
-                        highlightKeys(myKey: my5th, myRoot: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: true)
+                let unison = 0, min2nd = 1, maj2nd = 2, min3rd = 3, maj3rd = 4, P4th = 5, tritone = 6, P5th = 7, min6th = 8, maj6th = 9, min7th = 10, maj7th = 11, octave = 12
+                let simpleIntervals = [unison, min2nd, maj2nd, min3rd, maj3rd, P4th, tritone, P5th, min6th, maj6th, min7th, maj7th, octave]
+                
+                // -1: notes off, 0: single notes, 1: major triads, 2: minor triads, 3: aug triads, 4: dim triads, 5: sus4 triad, 6: sus2 triad
+                
+                let chordInversionOuterBounds = [1: [8, 9, 10], 2: [8, 10, 9], 3: [9, 9, 9], 4: [7, 10, 10], 5: [8, 8, 11], 6: [8, 11, 8]]
+                let chordUpperOffsets = [1: [8, 5], 2: [8, 4], 3: [9, 5], 4: [7, 4], 5: [8, 6], 6: [8, 3]]
+                let chordInversions = [1: [4, 7, 5, 8], 2: [3, 7, 5, 9], 3: [4, 8, 4, 8], 4: [3, 6, 6, 9], 5: [5, 7, 5, 7], 6: [2, 7, 5, 10]]
+
+                let myRoot = myKeys[myTag]
+                let midiRootOffset = myKeyboard.startingPitch + myTag + 21
+                let myRootMidiNote = MIDINoteNumber(midiRootOffset)
+                
+                var my3rd = Key()
+                var my3rdMidiNote = MIDINoteNumber()
+
+                var my5th = Key()
+                var my5thMidiNote = MIDINoteNumber()
+                
+                func toggleChordShape(triadType: Int, addRemove: Bool) {
+                    let rootPosOffset = chordUpperOffsets[triadType]![0]
+                    let firstInvOffset = chordUpperOffsets[triadType]![1]
+                    let chord = chordInversions[triadType]
+                    
+                    let myChordInversionOuterBounds = chordInversionOuterBounds[triadType]!.sorted()
+                    
+                    func set3rdAnd5th() {
+                        if myTag <= myCount - rootPosOffset {
+                            my3rd = myKeys[myTag + chord![0]]
+                            my5th = myKeys[myTag + chord![1]]
+                            
+                            my3rdMidiNote = MIDINoteNumber(midiRootOffset + chord![0])
+                            my5thMidiNote = MIDINoteNumber(midiRootOffset + chord![1])
+                        } else if myTag > myCount - rootPosOffset && myTag <= myCount - firstInvOffset {
+                            my3rd = myKeys[myTag + chord![0]]
+                            my5th = myKeys[myTag - chord![2]]
+                        
+                            my3rdMidiNote = MIDINoteNumber(midiRootOffset + chord![0])
+                            my5thMidiNote = MIDINoteNumber(midiRootOffset - chord![2])
+                        } else {
+                            my3rd = myKeys[myTag - chord![3]]
+                            my5th = myKeys[myTag - chord![2]]
+
+                            my3rdMidiNote = MIDINoteNumber(midiRootOffset - chord![3])
+                            my5thMidiNote = MIDINoteNumber(midiRootOffset - chord![2])
+                        }
                     }
-                } else {
-                    highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
-                    myRoot.playCount -= 1
-                    if myCount - myChordInversionOuterBounds[2] > 0 {
-                        set3rdAnd5th()
-                        my3rd.playCount -= 1
-                        my5th.playCount -= 1
-                        highlightKeys(myKey: my3rd, myRoot: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: false)
-                        highlightKeys(myKey: my5th, myRoot: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: false)
+                    
+                    // addRemove == true, highlight; addRemove == false, remove highlights
+                    if addRemove {
+                        highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: true)
+                        myRoot.playCount += 1
+                        if myCount - myChordInversionOuterBounds[2] > 0 {
+                            set3rdAnd5th()
+                            my3rd.playCount += 1
+                            my5th.playCount += 1
+                            highlightKeys(myKey: my3rd, myRoot: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: true)
+                            highlightKeys(myKey: my5th, myRoot: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: true)
+                        }
+                    } else {
+                        highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
+                        myRoot.playCount -= 1
+                        if myCount - myChordInversionOuterBounds[2] > 0 {
+                            set3rdAnd5th()
+                            my3rd.playCount -= 1
+                            my5th.playCount -= 1
+                            highlightKeys(myKey: my3rd, myRoot: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: false)
+                            highlightKeys(myKey: my5th, myRoot: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: false)
+                        }
                     }
                 }
-            }
-            if sender.state == .began  {
-//                print("my tag is \(myTag), my midi note is \(myRootMidiNote)")
-                if !myRoot.holding {
-                    engine.noteOn(note: myRootMidiNote, bank: 1)
-                    myRoot.holding = true
-                }
-                if tapIndex == 0 {
-                    myRoot.playCount += 1
-                    highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: true)
-                } else if tapIndex > 0 {
-                    toggleChordShape(triadType: tapIndex, addRemove: true)
-                    engine.noteOn(note: my3rdMidiNote, bank: 1)
-                    engine.noteOn(note: my5thMidiNote, bank: 1)
-                }
-                myRoot.isPlaying = true
-            }
-            
-            if sender.state == .ended {
-                func ifNotHolding(note: Key, midiNote: MIDINoteNumber) {
-                    if !note.holding {
-                        engine.noteOff(note: midiNote, bank: 1)
+                if recognizer.state == .began  {
+                    if !myRoot.holding {
+                        engine.noteOn(note: myRootMidiNote, bank: 1)
+                        myRoot.holding = true
                     }
+                    if tapIndex == 0 {
+                        myRoot.playCount += 1
+                        highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: true)
+                    } else if tapIndex > 0 {
+                        toggleChordShape(triadType: tapIndex, addRemove: true)
+                        engine.noteOn(note: my3rdMidiNote, bank: 1)
+                        engine.noteOn(note: my5thMidiNote, bank: 1)
+                    }
+                    myRoot.isPlaying = true
+                }
+                
+                if recognizer.state == .ended {
+                    func ifNotHolding(note: Key, midiNote: MIDINoteNumber) {
+                        if !note.holding {
+                            engine.noteOff(note: midiNote, bank: 1)
+                        }
+                    }
+
+                    myRoot.holding = false
+                    if myRoot.playCount == 1 {
+                        engine.noteOff(note: myRootMidiNote, bank: 1)
+                    }
+                    if tapIndex == 0 {
+                        highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
+                        myRoot.playCount -= 1
+                    } else if tapIndex > 0 {
+                        toggleChordShape(triadType: tapIndex, addRemove: false)
+                        ifNotHolding(note: my3rd, midiNote: my3rdMidiNote)
+                        ifNotHolding(note: my5th, midiNote: my5thMidiNote)
+                    } else {
+                        print("Error!")
+                    }
+                    myRoot.isPlaying = false
                 }
 
-                myRoot.holding = false
-                if myRoot.playCount == 1 {
-                    engine.noteOff(note: myRootMidiNote, bank: 1)
-                }
-                if tapIndex == 0 {
-                    highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
-                    myRoot.playCount -= 1
-                } else if tapIndex > 0 {
-                    toggleChordShape(triadType: tapIndex, addRemove: false)
-                    ifNotHolding(note: my3rd, midiNote: my3rdMidiNote)
-                    ifNotHolding(note: my5th, midiNote: my5thMidiNote)
-                } else {
-                    print("Error!")
-                }
-                myRoot.isPlaying = false
-            }
-
-            if sender.state == .cancelled {
-                for (index, key) in myKeys.enumerated() {
-                    cancelAll(key: key, midiNote: MIDINoteNumber(parent!.startingPitch + index + 21), bank: 1)
+                if recognizer.state == .cancelled {
+                    for (index, key) in myKeys.enumerated() {
+                        cancelAll(key: key, midiNote: MIDINoteNumber(myKeyboard.startingPitch + index + 21), bank: 1)
+                    }
                 }
             }
         }
@@ -206,27 +208,11 @@ class ViewController: UIViewController {
         let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         tap.minimumPressDuration = 0
         myKeyboard.addGestureRecognizer(tap)
-        
-//
-//        func addLongTaps(myKeysArray: [Key]) {
-//            for key in myKeysArray {
-//                key.isUserInteractionEnabled = true
-//                let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-//                tap.minimumPressDuration = 0
-//                key.addGestureRecognizer(tap)
-//            }
-//        }
-//
-//        addLongTaps(myKeysArray: myKeyboard.whiteKeys)
-//        addLongTaps(myKeysArray: myKeyboard.blackKeys)
     }
-    
-   
     
     @objc func highlightKeyboard(_ sender: UITapGestureRecognizer) {
         let parent: Keyboard = (sender.view as! Keyboard)
         let lockedPitch = parent.highlightPitch
-//        print(lockedPitch)
         
         func toggleBorders(myBorderLayer: CAShapeLayer, color: CGColor, opacity: Float) {
             CATransaction.begin()
@@ -263,7 +249,6 @@ class ViewController: UIViewController {
                 engine.noteOff(note: ifNegative(note: note2), bank: 2)
             }
             toggleBorders(myBorderLayer: masterChordBorders[parent.triadNumber - 1], color: color, opacity: opacity)
-//            print(parent.triadNumber)
         }
         
         if sender.state == .began {
@@ -282,18 +267,12 @@ class ViewController: UIViewController {
             default:
                 ()
             }
-//            parent.borderLayerColor = chordBorderColors[0]
-//            parent.borderLayer.fillColor = chordBorderColors[0].cgColor
             parent.borderLayerColor = theColor
             parent.borderLayer.fillColor = theColor.cgColor
 
             parent.borderLayer.opacity = 0.5
-//            let myColor = parent.borderLayerColor
-//            printColorName(color: parent.borderLayerColor)
-//            print(parent.keys[0].keyType)
             chordBorderColors.removeFirst()
 
-//            toggleBorders(myBorderLayer: parent.borderLayer, color: myColor.cgColor, opacity: 0.5)
             toggleBorders(myBorderLayer: parent.borderLayer, color: theColor.cgColor, opacity: 0.5)
             engine.noteOn(note: lockedPitch, bank: 2)
             
@@ -585,33 +564,39 @@ class ViewController: UIViewController {
         
         view.addSubview(backgroundView)
         backgroundView.frame = CGRect(x: 0.0, y: 0.0, width: screenWidth, height: screenHeight)
+//        backgroundView.backgroundColor = .gray
         view.sendSubview(toBack: backgroundView)
         
         addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 37, highlightLockKey: 12)
 //        print(masterKeyboard.startingPitch)
-        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
-        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
-        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 9, highlightLockKey: -1)
-        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
-        addKeyboard(initialKey: 1, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
-        addKeyboard(initialKey: 1, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
-        addKeyboard(initialKey: 12, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
-        addKeyboard(initialKey: 10, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
-        addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
-        addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+//        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+//        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+//        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 9, highlightLockKey: -1)
+//        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
+//        addKeyboard(initialKey: 1, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+//        addKeyboard(initialKey: 1, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
+//        addKeyboard(initialKey: 12, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+//        addKeyboard(initialKey: 10, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
+//        addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+//        addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
         
-        addTapGestureRecognizers(myKeyboard: masterKeyboard)
+//        keyboards[1...].forEach {addChordGestureRecognizers(myKeyboard: $0)}
         
-        keyboards[1...].forEach {addChordGestureRecognizers(myKeyboard: $0)}
+        // bottom keyboard
+        masterKeyboard.frame = CGRect(x: 0, y: screenHeight - 91 / masterKeyboard.myKeyboardWidthMod * screenWidth, width: screenWidth, height: 91 / masterKeyboard.myKeyboardWidthMod * screenWidth)
+        masterKeyboard.setKeyDimensionsAndSpecs(keys: masterKeyboard.keys, screenWidth: screenWidth)
+
+        masterKeyboard.isUserInteractionEnabled = true
+        let longPressGR = UILongPressGestureRecognizer()
+        longPressGR.minimumPressDuration = 0
+        longPressGR.delegate = masterKeyboard
+        longPressGR.addTarget(self, action: #selector(handleTap(_:)))
+        masterKeyboard.addGestureRecognizer(longPressGR)
     }
     
     override func viewWillLayoutSubviews() {
         let screenWidth = view.width
         let screenHeight = view.height
-        
-        // bottom keyboard
-        masterKeyboard.frame = CGRect(x: 0, y: screenHeight - 91 / masterKeyboard.myKeyboardWidthMod * screenWidth, width: screenWidth, height: 91 / masterKeyboard.myKeyboardWidthMod * screenWidth)
-        masterKeyboard.addKeyConstraints(keys: masterKeyboard.keys)
         
         if masterKeyboard.highlightPitch > 0 {
             masterKeyboard.keys[masterKeyboard.highlightKey].backgroundColor = tonicHighlightColor
@@ -620,52 +605,49 @@ class ViewController: UIViewController {
 
         let heightAboveBottomKeyboard = screenHeight - masterKeyboard.height
         
-        func scaleKeyboard(myKeyboard: Keyboard, scale: CGFloat, x: CGFloat, y: CGFloat, xCentered: Bool, yCentered: Bool) {
-            myKeyboard.scale = scale
-            let keyboardHeight = heightAboveBottomKeyboard * scale
-            let centerYKeyboard = (heightAboveBottomKeyboard - keyboardHeight)/2
-            
-            if xCentered && yCentered {
-                myKeyboard.frame = CGRect(x: (screenWidth - myKeyboard.myKeyboardWidthMod * keyboardHeight/91)/2, y: centerYKeyboard, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
-            } else if xCentered {
-                myKeyboard.frame = CGRect(x: (screenWidth - myKeyboard.myKeyboardWidthMod * keyboardHeight/91)/2, y: y, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
-            } else if yCentered {
-                myKeyboard.frame = CGRect(x: x, y: centerYKeyboard, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
-            } else {
-                myKeyboard.frame = CGRect(x: x, y: y, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
-            }
-            
-            myKeyboard.addKeyConstraints(keys: myKeyboard.keys)
-        }
+//        func scaleKeyboard(myKeyboard: Keyboard, scale: CGFloat, x: CGFloat, y: CGFloat, xCentered: Bool, yCentered: Bool) {
+//            myKeyboard.scale = scale
+//            let keyboardHeight = heightAboveBottomKeyboard * scale
+//            let centerYKeyboard = (heightAboveBottomKeyboard - keyboardHeight)/2
+//            
+//            if xCentered && yCentered {
+//                myKeyboard.frame = CGRect(x: (screenWidth - myKeyboard.myKeyboardWidthMod * keyboardHeight/91)/2, y: centerYKeyboard, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
+//            } else if xCentered {
+//                myKeyboard.frame = CGRect(x: (screenWidth - myKeyboard.myKeyboardWidthMod * keyboardHeight/91)/2, y: y, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
+//            } else if yCentered {
+//                myKeyboard.frame = CGRect(x: x, y: centerYKeyboard, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
+//            } else {
+//                myKeyboard.frame = CGRect(x: x, y: y, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
+//            }
+//            
+//            myKeyboard.setKeyDimensionsAndSpecs(keys: myKeyboard.keys, screenWidth: screenWidth)
+//        }
         
         masterKeys = masterKeyboard.keys
         masterHighlightKey = masterKeyboard.highlightKey
-        
-        scaleKeyboard(myKeyboard: keyboards[1], scale: 1/5, x: 15, y: 75, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[2], scale: 1/5, x: 145, y: 75, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[3], scale: 1/5, x: 275, y: 75, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[4], scale: 1/5, x: 415, y: 75, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[5], scale: 1/5, x: 575, y: 75, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[6], scale: 1/5, x: 15, y: 165, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[7], scale: 1/5, x: 145, y: 165, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[8], scale: 1/5, x: 275, y: 165, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[9], scale: 1/5, x: 415, y: 165, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[10], scale: 1/5, x: 575, y: 165, xCentered: false, yCentered: false)
-
-        commonToneTriad(myKeyboard: keyboards[1], tonic: 0, root: 0, third: 4, fifth: 7, triadNumber: 1)
-        commonToneTriad(myKeyboard: keyboards[2], tonic: 0, root: 0, third: 3, fifth: 7, triadNumber: 2)
-        commonToneTriad(myKeyboard: keyboards[3], tonic: 0, root: 0, third: 4, fifth: 8, triadNumber: 3)
-        commonToneTriad(myKeyboard: keyboards[4], tonic: 0, root: 0, third: 3, fifth: 6, triadNumber: 4)
-        commonToneTriad(myKeyboard: keyboards[5], tonic: 3, root: 0, third: 3, fifth: 7, triadNumber: 5)
-        commonToneTriad(myKeyboard: keyboards[6], tonic: 3, root: 0, third: 3, fifth: 6, triadNumber: 6)
-        commonToneTriad(myKeyboard: keyboards[7], tonic: 4, root: 0, third: 4, fifth: 7, triadNumber: 7)
-        commonToneTriad(myKeyboard: keyboards[8], tonic: 6, root: 0, third: 3, fifth: 6, triadNumber: 8)
-        commonToneTriad(myKeyboard: keyboards[9], tonic: 7, root: 0, third: 4, fifth: 7, triadNumber: 9)
-        commonToneTriad(myKeyboard: keyboards[10], tonic: 7, root: 0, third: 3, fifth: 7, triadNumber: 10)
-        
-//        backgroundView.createLine(key1: masterKeyboard.keys[12], key2: Keyboard.keys[2], array: masterKeyboard.keys)
-//        print(masterKeyboard.highlightPitch)
-    }
+//        
+//        scaleKeyboard(myKeyboard: keyboards[1], scale: 1/5, x: 15, y: 75, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[2], scale: 1/5, x: 145, y: 75, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[3], scale: 1/5, x: 275, y: 75, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[4], scale: 1/5, x: 415, y: 75, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[5], scale: 1/5, x: 575, y: 75, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[6], scale: 1/5, x: 15, y: 165, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[7], scale: 1/5, x: 145, y: 165, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[8], scale: 1/5, x: 275, y: 165, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[9], scale: 1/5, x: 415, y: 165, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[10], scale: 1/5, x: 575, y: 165, xCentered: false, yCentered: false)
+//
+//        commonToneTriad(myKeyboard: keyboards[1], tonic: 0, root: 0, third: 4, fifth: 7, triadNumber: 1)
+//        commonToneTriad(myKeyboard: keyboards[2], tonic: 0, root: 0, third: 3, fifth: 7, triadNumber: 2)
+//        commonToneTriad(myKeyboard: keyboards[3], tonic: 0, root: 0, third: 4, fifth: 8, triadNumber: 3)
+//        commonToneTriad(myKeyboard: keyboards[4], tonic: 0, root: 0, third: 3, fifth: 6, triadNumber: 4)
+//        commonToneTriad(myKeyboard: keyboards[5], tonic: 3, root: 0, third: 3, fifth: 7, triadNumber: 5)
+//        commonToneTriad(myKeyboard: keyboards[6], tonic: 3, root: 0, third: 3, fifth: 6, triadNumber: 6)
+//        commonToneTriad(myKeyboard: keyboards[7], tonic: 4, root: 0, third: 4, fifth: 7, triadNumber: 7)
+//        commonToneTriad(myKeyboard: keyboards[8], tonic: 6, root: 0, third: 3, fifth: 6, triadNumber: 8)
+//        commonToneTriad(myKeyboard: keyboards[9], tonic: 7, root: 0, third: 4, fifth: 7, triadNumber: 9)
+//        commonToneTriad(myKeyboard: keyboards[10], tonic: 7, root: 0, third: 3, fifth: 7, triadNumber: 10)
+}
 
     override func viewDidAppear(_ animated: Bool) {
         for keyboard in keyboards[1...] {
