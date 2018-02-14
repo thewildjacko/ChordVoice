@@ -33,12 +33,17 @@ class ViewController: UIViewController {
     
     let engine = AudioEngine(waveform1: AKTable(.sawtooth), waveform2: AKTable(.square))
     
+    
+    
     @objc func handleTap(_ recognizer: UILongPressGestureRecognizer) {
 
+        for touch in masterKeyboard.myTouchesBegan {
+            print(recognizer.location(in: recognizer.view))
+        }
+        
         let tapLocation = recognizer.location(in: recognizer.view)
         var key: Key!
         var tag = Int()
-        
         if recognizer.state == .began {
             print(tapLocation)
         }
@@ -202,13 +207,13 @@ class ViewController: UIViewController {
             }
         }
     }
-    
-    func addTapGestureRecognizers(myKeyboard: Keyboard) {
-        myKeyboard.isUserInteractionEnabled = true
-        let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        tap.minimumPressDuration = 0
-        myKeyboard.addGestureRecognizer(tap)
-    }
+//
+//    func addTapGestureRecognizers(myKeyboard: Keyboard) {
+//        myKeyboard.isUserInteractionEnabled = true
+//        let tap = UILongPressGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+//        tap.minimumPressDuration = 0
+//        myKeyboard.addGestureRecognizer(tap)
+//    }
     
     @objc func highlightKeyboard(_ sender: UITapGestureRecognizer) {
         let parent: Keyboard = (sender.view as! Keyboard)
@@ -529,81 +534,81 @@ class ViewController: UIViewController {
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
 
-        let screenWidth = view.height
-        let screenHeight = view.width
-        
-        func addKeyboard(initialKey: Int, startingOctave: Int, numberOfKeys: Int, highlightLockKey: Int) {
-            let myKeyboard = Keyboard(initialKey: initialKey, startingOctave: startingOctave, numberOfKeys: numberOfKeys)
-            myKeyboard.highlightKey = highlightLockKey
-            func tagAppendAndSort() {
-                myKeyboard.tag = keyboardIndex
-                //        print(myKeyboard.tag)
-                if keyboards.count < 8 {
-                    keyboardIndex += 1
-                } else if keyboards.count == 8 {
-                    keyboardIndex += 991
-                } else {
-                    keyboardIndex += 101
+            let screenWidth = view.height
+            let screenHeight = view.width
+            
+            func addKeyboard(initialKey: Int, startingOctave: Int, numberOfKeys: Int, highlightLockKey: Int) {
+                let myKeyboard = Keyboard(initialKey: initialKey, startingOctave: startingOctave, numberOfKeys: numberOfKeys)
+                myKeyboard.highlightKey = highlightLockKey
+                func tagAppendAndSort() {
+                    myKeyboard.tag = keyboardIndex
+                    //        print(myKeyboard.tag)
+                    if keyboards.count < 8 {
+                        keyboardIndex += 1
+                    } else if keyboards.count == 8 {
+                        keyboardIndex += 991
+                    } else {
+                        keyboardIndex += 101
+                    }
+                    if highlightLockKey >= 0 {
+                        masterKeyboard = myKeyboard
+                        masterKeyboard.addKeys(highlightLockKey: highlightLockKey)
+                        keyboards.append(masterKeyboard)
+                        backgroundView.addSubview(masterKeyboard)
+                    } else {
+                        myKeyboard.addKeys(highlightLockKey: highlightLockKey)
+                        keyboards.append(myKeyboard)
+                        backgroundView.addSubview(myKeyboard)
+                    }
                 }
-                if highlightLockKey >= 0 {
-                    masterKeyboard = myKeyboard
-                    masterKeyboard.addKeys(highlightLockKey: highlightLockKey)
-                    keyboards.append(masterKeyboard)
-                    backgroundView.addSubview(masterKeyboard)
-                } else {
-                    myKeyboard.addKeys(highlightLockKey: highlightLockKey)
-                    keyboards.append(myKeyboard)
-                    backgroundView.addSubview(myKeyboard)
-                }
+                tagAppendAndSort()
             }
-            tagAppendAndSort()
-        }
-        
-        view.addSubview(backgroundView)
-        backgroundView.frame = CGRect(x: 0.0, y: 0.0, width: screenWidth, height: screenHeight)
-//        backgroundView.backgroundColor = .gray
-        view.sendSubview(toBack: backgroundView)
-        
-        addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 37, highlightLockKey: 12)
-//        print(masterKeyboard.startingPitch)
-//        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
-//        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
-//        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 9, highlightLockKey: -1)
-//        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
-//        addKeyboard(initialKey: 1, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
-//        addKeyboard(initialKey: 1, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
-//        addKeyboard(initialKey: 12, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
-//        addKeyboard(initialKey: 10, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
-//        addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
-//        addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
-        
-//        keyboards[1...].forEach {addChordGestureRecognizers(myKeyboard: $0)}
-        
-        // bottom keyboard
-        masterKeyboard.frame = CGRect(x: 0, y: screenHeight - 91 / masterKeyboard.myKeyboardWidthMod * screenWidth, width: screenWidth, height: 91 / masterKeyboard.myKeyboardWidthMod * screenWidth)
-        masterKeyboard.setKeyDimensionsAndSpecs(keys: masterKeyboard.keys, screenWidth: screenWidth)
+            
+            view.addSubview(backgroundView)
+            backgroundView.frame = CGRect(x: 0.0, y: 0.0, width: screenWidth, height: screenHeight)
+    //        backgroundView.backgroundColor = .gray
+            view.sendSubview(toBack: backgroundView)
+            
+            addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 25, highlightLockKey: 12)
+    //        print(masterKeyboard.startingPitch)
+    //        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+    //        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+    //        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 9, highlightLockKey: -1)
+    //        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
+    //        addKeyboard(initialKey: 1, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+    //        addKeyboard(initialKey: 1, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
+    //        addKeyboard(initialKey: 12, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+    //        addKeyboard(initialKey: 10, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
+    //        addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+    //        addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+            
+    //        keyboards[1...].forEach {addChordGestureRecognizers(myKeyboard: $0)}
+            
+            // bottom keyboard
+            masterKeyboard.frame = CGRect(x: 0, y: screenHeight - 91 / masterKeyboard.myKeyboardWidthMod * screenWidth, width: screenWidth, height: 91 / masterKeyboard.myKeyboardWidthMod * screenWidth)
+            masterKeyboard.setKeyDimensionsAndSpecs(keys: masterKeyboard.keys, screenWidth: screenWidth)
 
-        masterKeyboard.isUserInteractionEnabled = true
-        let longPressGR = UILongPressGestureRecognizer()
-        longPressGR.minimumPressDuration = 0
-        longPressGR.delegate = masterKeyboard
-        longPressGR.addTarget(self, action: #selector(handleTap(_:)))
-        masterKeyboard.addGestureRecognizer(longPressGR)
-    }
+            masterKeyboard.isUserInteractionEnabled = true
+//            let longPressGR = UILongPressGestureRecognizer()
+//            longPressGR.minimumPressDuration = 0
+//            longPressGR.delegate = masterKeyboard
+//            longPressGR.addTarget(self, action: #selector(handleTap(_:)))
+//            masterKeyboard.addGestureRecognizer(longPressGR)
+        }
     
     override func viewWillLayoutSubviews() {
-        let screenWidth = view.width
-        let screenHeight = view.height
+//        let screenWidth = view.width
+//        let screenHeight = view.height
         
         if masterKeyboard.highlightPitch > 0 {
             masterKeyboard.keys[masterKeyboard.highlightKey].backgroundColor = tonicHighlightColor
             masterKeyboard.keys[masterKeyboard.highlightKey].defaultBackgroundColor = tonicHighlightColor
         }
 
-        let heightAboveBottomKeyboard = screenHeight - masterKeyboard.height
+//        let heightAboveBottomKeyboard = screenHeight - masterKeyboard.height
         
 //        func scaleKeyboard(myKeyboard: Keyboard, scale: CGFloat, x: CGFloat, y: CGFloat, xCentered: Bool, yCentered: Bool) {
 //            myKeyboard.scale = scale
@@ -650,9 +655,9 @@ class ViewController: UIViewController {
 }
 
     override func viewDidAppear(_ animated: Bool) {
-        for keyboard in keyboards[1...] {
-            borderBezier(key1Num: 0, key2Num: 1, key3Num: keyboard.keys.count - 2, key4Num: keyboard.keys.count - 1, myKeyboard: keyboard)
-        }
+//        for keyboard in keyboards[1...] {
+//            borderBezier(key1Num: 0, key2Num: 1, key3Num: keyboard.keys.count - 2, key4Num: keyboard.keys.count - 1, myKeyboard: keyboard)
+//        }
         
 
     }

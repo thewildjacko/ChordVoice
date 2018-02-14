@@ -19,6 +19,10 @@ class Keyboard: UIView, UIGestureRecognizerDelegate {
     var keys = [Key]()
     var whiteKeys = [Key]()
     var blackKeys = [Key]()
+    
+    let offsets: Dictionary<Int, CGFloat> = [1: 20, 2: 3, 3: 24, 4: 14, 5: 9, 6: 19, 7: 5, 8: 23, 9: 13, 10: 11, 11: 16, 12: 7]
+    let firstBlackKeyOffsets: Dictionary<Int, CGFloat> = [2: -3, 5: -9, 7: -5, 10: -11, 12: -7]
+
     var myLayoutConstraints = [NSLayoutConstraint]()
     var myKeyboardWidthMod: CGFloat = 0
     var nextXPos: CGFloat = 0
@@ -27,9 +31,13 @@ class Keyboard: UIView, UIGestureRecognizerDelegate {
     var highlightPitch = MIDINoteNumber()
     static var globalHighlightPitch = MIDINoteNumber()
     var triadNumber = Int()
+    var keyboardBackgroundLayer = CAShapeLayer()
     var borderPath: UIBezierPath!
     var borderLayer: CAShapeLayer!
     var borderLayerColor = UIColor()
+    var keyTapCount = 0
+    var currentKeys = [Key]()
+    var myBlackKeyHeight = CGFloat()
 
 //    static var keyHighlightColor: UIColor = .red
 //    static var secondKeyHighlightColor: UIColor = .cyan
@@ -52,6 +60,10 @@ class Keyboard: UIView, UIGestureRecognizerDelegate {
     static var thirdAndFifthHighlightColor: CGColor = cyan
     
     var scale: CGFloat = 1.0
+    var myTouchesBegan = [UITouch]()
+    var myTouchesEnded = [UITouch]()
+    var myTouchesCancelled = [UITouch]()
+    var myTouchesMoved = [UITouch]()
     
     init(initialKey: Int, startingOctave: Int, numberOfKeys: Int) {
         self.initialKey = initialKey
@@ -59,18 +71,187 @@ class Keyboard: UIView, UIGestureRecognizerDelegate {
         self.numberOfKeys = numberOfKeys
         self.startingPitch = initialKey + (startingOctave * 12) - 1
         super.init(frame: CGRect())
-        //            self.backgroundColor = .red
         self.backgroundColor = .clear
         self.isMultipleTouchEnabled = true
     }
+
+    var myPoints = [CGPoint]()
+    var touchesKeyboardColors = [CGColor]()
+    var touchedKeys = [Key]()
     
-//    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-//        if gestureRecognizer is UILongPressGestureRecognizer {
-//            return true
-//        } else {
-//            return false
+    func getPoint(keyTapCount: Int, remove: Bool, message: Int) {
+//        switch message {
+//        case 1:
+////            print("hello from touches began")
+//        case 2:
+////            print("hello from touches ended")
+//        case 3:
+////            print("hello from touches moved")
+//        default:
+//            ()
 //        }
-//    }
+        var myPoint = CGPoint()
+        if myTouchesBegan.count > 0 {
+            print("keyTapCount is \(keyTapCount)")
+            print("myTouchesBegan.count is \(myTouchesBegan.count)")
+            myPoint = myTouchesBegan[keyTapCount].location(in: self)
+        }
+        if remove {
+            if myPoints.count > 0 && myTouchesBegan.count > 0 {
+                myPoints.remove(at: keyTapCount)
+                myTouchesBegan.remove(at: keyTapCount)
+            }
+        } else {
+            myPoints.append(myPoint)
+//            for key in self.keys {
+//                var convertedPoint = CGPoint()
+//                convertedPoint = keyboardBackgroundLayer.convert(myPoint, to: key)
+//                //            print("myPoint is \(myPoint)")
+//                //            print("convertedPoint is \(convertedPoint)")
+//                if key.path?.contains(myPoint) == true {
+//
+//                    currentKeys.append(key)
+//                }
+//            }
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        print("Began!")
+        print(self.keyboardBackgroundLayer.y)
+        if let touch = touches.first {
+            myTouchesBegan.append(touch)
+            getPoint(keyTapCount: keyTapCount, remove: false, message: 1)
+            keyTapCount += 1
+            let tapLocation = touch.location(in: self)
+            print("Location is \(tapLocation)")
+            for (index, key) in self.keys.enumerated() {
+                if key.hitTest(tapLocation) != nil {
+//                    print("key \(index) tapped! Left x origin is \(key.x), bottom of key is \(key.y + key.height)")
+                    touchesKeyboardColors.append(key.defaultBackgroundColor)
+                    touchedKeys.append(key)
+                    print(touchedKeys.count)
+                    key.touchPoint = tapLocation
+                    key.holding = true
+                    instaHighlight(key: key, color: red)
+                    break
+                }
+            }
+        }
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        print("Ended!")
+        var myIndex = Int()
+        if let touch = touches.first {
+            for (theIndex, theTouch) in myTouchesBegan.enumerated() {
+                if touch == theTouch {
+                    myIndex = theIndex
+//                    myTouchesBegan.remove(at: theIndex)
+                }
+            }
+
+            let tapLocation = touch.location(in: self)
+            for key in self.keys {
+                if key.hitTest(tapLocation) != nil {
+                    if key.holding {
+                        instaHighlight(key: key, color: key.defaultBackgroundColor)
+                        key.holding = false
+                        getPoint(keyTapCount: myIndex, remove: true, message: 2)
+                        keyTapCount -= 1
+                    }
+//                    print("key \(index) tap ended!")
+                    break
+                }
+            }
+        }
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesMoved(touches, with: event)
+        var myPoint = CGPoint()
+        var myIndex = Int()
+        if let touch = touches.first {
+            for (theIndex, theTouch) in myTouchesBegan.enumerated() {
+                if touch == theTouch {
+                    if myPoints.count > 0 {
+                        myPoint = myPoints[theIndex]
+                        myIndex = theIndex
+                    }
+                }
+            }
+//            print("myPoint[\(myIndex)] is \(myPoint)")
+//            print("myTouchesBegan[\(myIndex)].location is \(myTouchesBegan[myIndex].location(in: self))")
+            let tapLocation = touch.location(in: self)
+            let last = touch.previousLocation(in: self)
+            var thisKey = Key()
+            var thisIndex = Int()
+            var lastKey = Key()
+            var lastIndex = Int()
+//            print("tapLocation.y is \(tapLocation.y), self.y is \(self.y)")
+//            print("tapLocation.x is \(tapLocation.x), left edge is \(self.x), right edge is \(self.width)")
+            
+            for (index, key) in self.keys.enumerated() {
+                if key.hitTest(last) != nil {
+                    lastKey = key
+                    lastIndex = index
+                }
+                if key.hitTest(tapLocation) != nil {
+                    thisKey = key
+                    thisIndex = index
+                }
+                getPoint(keyTapCount: myIndex, remove: true, message: 3)
+            }
+
+            if tapLocation.y < 0 {
+                print(keyTapCount)
+                var touchIndex = Int()
+                if myTouchesBegan.count > 0 {
+                    for (index, myTouch) in myTouchesBegan.enumerated() {
+                        if touch == myTouch {
+                            touchIndex = index
+                        }
+                    }
+                }
+                
+                if touchedKeys[touchIndex].fillColor != touchedKeys[touchIndex].defaultBackgroundColor {
+                    printColorWithoutKey(color: touchedKeys[touchIndex].fillColor!)
+                    printColorWithoutKey(color: touchedKeys[touchIndex].defaultBackgroundColor)
+                    print("Hey I'm switching back OK?")
+                    keyTapCount -= 1
+                    print(keyTapCount)
+                    instaHighlight(key: lastKey, color: touchedKeys[touchIndex].defaultBackgroundColor)
+                    lastKey.holding = false
+                    myTouchesBegan.remove(at: myIndex)
+                }
+            }
+
+//            print("last key is \(lastKey.keyType)")
+//            print("this key is \(thisKey.keyType)")
+
+            if thisKey.keyType != lastKey.keyType {
+                print("Moved to key \(thisIndex)!")
+                if lastKey.fillColor != lastKey.defaultBackgroundColor {
+                    keyTapCount -= 1
+                    instaHighlight(key: lastKey, color: lastKey.defaultBackgroundColor)
+                }
+                lastKey.holding = false
+            } else {
+//                print("Moved to key \(lastIndex)!")
+            }
+        }
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
+        print("Cancelled!")
+    }
+    
+    override func touchesEstimatedPropertiesUpdated(_ touches: Set<UITouch>) {
+        super.touchesEstimatedPropertiesUpdated(touches)
+    }
     
     func getKeyNum(counter: Int) -> Int {
         var keyNum = Int()
@@ -90,26 +271,34 @@ class Keyboard: UIView, UIGestureRecognizerDelegate {
     func addKeys(highlightLockKey: Int) {
         var counter = initialKey
         let layer = self.layer
+        keyboardBackgroundLayer.frame = self.frame
+        keyboardBackgroundLayer.bounds = self.bounds
+        keyboardBackgroundLayer.path = UIBezierPath(rect: self.bounds).cgPath
+        keyboardBackgroundLayer.fillColor = clearColor.cgColor
+        keyboardBackgroundLayer.strokeColor = clearColor.cgColor
+        keyboardBackgroundLayer.lineWidth = 0
+        keyboardBackgroundLayer.backgroundColor = clearColor.cgColor
+        keyboardBackgroundLayer.zPosition = 0
+        layer.addSublayer(keyboardBackgroundLayer)
         
         while counter <= (numberOfKeys + initialKey - 1)   {
             let keyNum = self.getKeyNum(counter: counter)
             let key = Key()
             key.tag = "\(self.tag)\(counter - initialKey)".int!
 //            print("Hello \(key.tag)")
-            
             key.keyType = keyNum
             switch keyNum {
             case 1, 4, 8, 11:
                 myKeyboardWidthMod += 23
                 whiteKeys.append(key)
-                layer.insertSublayer(key, at: 0)
+                keyboardBackgroundLayer.insertSublayer(key, at: 0)
             case 3, 6, 9:
                 myKeyboardWidthMod += 24
                 whiteKeys.append(key)
-                layer.insertSublayer(key, at: 0)
+                keyboardBackgroundLayer.insertSublayer(key, at: 0)
             case 2, 5, 7, 10, 12:
                 blackKeys.append(key)
-                layer.addSublayer(key)
+                keyboardBackgroundLayer.addSublayer(key)
             default:
                 print("Error!")
             }
@@ -146,6 +335,7 @@ class Keyboard: UIView, UIGestureRecognizerDelegate {
             let blackKeyWidth = 14 * scaleMod
             let whiteKeyHeight = myHeight
             let blackKeyHeight = 52 / 91 * myHeight
+            self.myBlackKeyHeight = blackKeyHeight
             
             func setHighLightLockColor(key: Key, color: CGColor) {
                 if self.highlightKey > 0 {
@@ -160,14 +350,10 @@ class Keyboard: UIView, UIGestureRecognizerDelegate {
                     key.backgroundColor = color
                     key.defaultBackgroundColor = color
                 }
-                
             }
             
             func setX() {
-                // 4: 14, 5: 9, 6: 19, 7: 5, 8: 23, 9: 20, 10: 13
-                let offsets: Dictionary<Int, CGFloat> = [1: 20, 2: 3, 3: 24, 4: 14, 5: 9, 6: 19, 7: 5, 8: 23, 9: 13, 10: 11, 11: 16, 12: 7]
-                let firstBlackKeyOffsets: Dictionary<Int, CGFloat> = [2: -3, 5: -9, 7: -5, 10: -11, 12: -7]
-                
+                // 4: 14, 5: 9, 6: 19, 7: 5, 8: 23, 9: 20, 10: 13                
                 let modifiedOffsets = offsets.mapValues { $0 * myWidth / myKeyboardWidthMod }
                 let modifiedFBKOffsets = firstBlackKeyOffsets.mapValues { $0 * myWidth / myKeyboardWidthMod }
                 
@@ -206,6 +392,7 @@ class Keyboard: UIView, UIGestureRecognizerDelegate {
                 
                 key.frame = CGRect(x: xPos, y: 0, width: width, height: height)
                 key.path = UIBezierPath(rect: key.bounds).cgPath
+                key.keyBorderPath(myWidth: myWidth, widthMod: myKeyboardWidthMod)
 //                print(key.x)
             }
             

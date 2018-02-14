@@ -10,6 +10,13 @@ import Foundation
 import AudioKit
 import AudioKitUI
 
+func instaHighlight(key: Key, color: CGColor) {
+    CATransaction.begin()
+    CATransaction.setDisableActions(true)
+    key.fillColor = color
+    CATransaction.commit()
+}
+
 func addKeyShadow(add: Bool, key: Key) {
     if add {
         key.addShadow(ofColor: purpleShadow, radius: 10, offset: CGSize.zero, opacity: 1.0)
@@ -20,29 +27,62 @@ func addKeyShadow(add: Bool, key: Key) {
     }
 }
 
+func printColor(key: Key, color: CGColor) {
+    switch color {
+    case white:
+        print("white")
+    case darkGray:
+        print("black")
+    case magenta:
+        print("pink")
+    case red:
+        print("red")
+    case cyan:
+        print("blue")
+    default:
+        ()
+    }
+}
+
+func printColorWithoutKey(color: CGColor) {
+    switch color {
+    case white:
+        print("white")
+    case darkGray:
+        print("black")
+    case magenta:
+        print("pink")
+    case red:
+        print("red")
+    case cyan:
+        print("blue")
+    default:
+        ()
+    }
+}
+
+func printFillColor(key: Key) {
+    printColor(key: key, color: key.fillColor!)
+}
+
+func printPrevBackground(key: Key) {
+    printColor(key: key, color: key.previousBackground!)
+}
+
+func printBackground(key: Key) {
+    printColor(key: key, color: key.backgroundColor!)
+}
+
+func printDefaultBackground(key: Key) {
+    printColor(key: key, color: key.defaultBackgroundColor)
+}
+
 func highlightKeys(myKey: Key, myRoot: Key, highlightColor: CGColor, doHighlight: Bool) {
     
     let currentBackground = myKey.backgroundColor
     let defaultBackgroundColor = myKey.defaultBackgroundColor
     if doHighlight == true {
         myKey.previousBackground = currentBackground!
-    }
-    
-    func printPrevBackground() {
-        switch myKey.previousBackground {
-        case white:
-            print("Prev bkgnd was white")
-        case darkGray:
-            print("Prev bkgnd was black")
-        case magenta:
-            print("Prev bkgnd was pink")
-        case red:
-            print("Prev bkgnd was red")
-        case cyan:
-            print("Prev bkgnd was blue")
-        default:
-            ()
-        }
     }
     
     func printHighlightColor() {

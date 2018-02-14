@@ -138,4 +138,42 @@ class Key: CAShapeLayer {
     var previousBackground: CGColor!
     var highlightLocked = false
     var tag = Int()
+    var touchPoint = CGPoint(x: -100, y: -100)
+    
+    func keyBorderPath(myWidth: CGFloat, widthMod: CGFloat) {
+        let myPath = UIBezierPath()
+        let arcRadius = self.height * 1/32
+        let y = self.y
+        let width = self.width
+        let height = self.height
+        let blackHeight = 52/91 * height
+        let myWidthMod = myWidth / widthMod
+        
+        let offsets: Dictionary<Int, CGFloat> = [1: 20, 2: 3, 3: 24, 4: 14, 5: 9, 6: 19, 7: 5, 8: 23, 9: 13, 10: 11, 11: 16, 12: 7]
+        let firstBlackKeyOffsets: Dictionary<Int, CGFloat> = [2: -3, 5: -9, 7: -5, 10: -11, 12: -7]
+        let modifiedOffsets = offsets.mapValues { $0 * myWidthMod }
+        let modifiedFBKOffsets = firstBlackKeyOffsets.mapValues { $0 * myWidthMod }
+
+        switch keyType {
+        case 4:
+            myPath.move(to: CGPoint(x: 0, y: y))
+            myPath.addLine(to: CGPoint(x: 0, y: self.height * 31/32))
+            myPath.addArc(withCenter: CGPoint(x: arcRadius, y: height * 31/32), radius: arcRadius, startAngle: leftAng, endAngle: bottomAng, clockwise: false)
+            myPath.addLine(to: CGPoint(x: width - arcRadius, y: self.height))
+            myPath.addArc(withCenter: CGPoint(x: width - arcRadius, y: height - arcRadius), radius: arcRadius, startAngle: bottomAng, endAngle: rightAng, clockwise: false)
+            myPath.addLine(to: CGPoint(x: width, y: blackHeight))
+            myPath.addLine(to: CGPoint(x: modifiedOffsets[4]! + arcRadius, y: blackHeight))
+            myPath.addArc(withCenter: CGPoint(x: modifiedOffsets[4]! + arcRadius, y: blackHeight - arcRadius), radius: arcRadius, startAngle: bottomAng, endAngle: leftAng, clockwise: true)
+            myPath.addLine(to: CGPoint(x: modifiedOffsets[4]!, y: y))
+            myPath.close()
+            self.path = myPath.cgPath
+            self.lineWidth = 5
+            self.strokeColor = green
+        default:
+            ()
+        }
+
+        
+//        self.path = myPath.cgPath
+    }
 }

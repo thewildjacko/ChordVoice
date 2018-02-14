@@ -19,3 +19,5 @@ let leftAng = CGFloat(180.0).toRadians()
 let bottomAng = CGFloat(90.0).toRadians()
 let rightAng = CGFloat(0.0).toRadians()
 let topAng = CGFloat(270).toRadians()
+
+
