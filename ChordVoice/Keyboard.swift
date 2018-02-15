@@ -131,6 +131,7 @@ class Keyboard: UIView, UIGestureRecognizerDelegate {
 //                    print("key \(index) tapped! Left x origin is \(key.x), bottom of key is \(key.y + key.height)")
                     touchesKeyboardColors.append(key.defaultBackgroundColor)
                     touchedKeys.append(key)
+                    print("I matched! touchedKeys.count is \(touchedKeys.count)")
                     print(touchedKeys.count)
                     key.touchPoint = tapLocation
                     key.holding = true
@@ -188,7 +189,7 @@ class Keyboard: UIView, UIGestureRecognizerDelegate {
             let last = touch.previousLocation(in: self)
             var thisKey = Key()
             var thisIndex = Int()
-            var lastKey = Key()
+            var lastKey: Key!
             var lastIndex = Int()
 //            print("tapLocation.y is \(tapLocation.y), self.y is \(self.y)")
 //            print("tapLocation.x is \(tapLocation.x), left edge is \(self.x), right edge is \(self.width)")
@@ -202,44 +203,55 @@ class Keyboard: UIView, UIGestureRecognizerDelegate {
                     thisKey = key
                     thisIndex = index
                 }
-                getPoint(keyTapCount: myIndex, remove: true, message: 3)
+            }
+
+            var touchIndex = Int()
+            if myTouchesBegan.count > 0 {
+                for (index, myTouch) in myTouchesBegan.enumerated() {
+                    if touch == myTouch {
+                        touchIndex = index
+                    }
+                }
             }
 
             if tapLocation.y < 0 {
                 print(keyTapCount)
-                var touchIndex = Int()
-                if myTouchesBegan.count > 0 {
-                    for (index, myTouch) in myTouchesBegan.enumerated() {
-                        if touch == myTouch {
-                            touchIndex = index
+                
+                if let myLastKey = lastKey {
+                    if touchedKeys.count > 0 {
+                        print("Key is not nil")
+                        print("Hey I'm switching back OK? My touch index is \(touchIndex). touchedKeys.count is \(touchedKeys.count)")
+                        print(keyTapCount)
+                        instaHighlight(key: lastKey, color: touchedKeys[touchIndex].defaultBackgroundColor)
+                        lastKey.holding = false
+                        touchedKeys.remove(at: myIndex)
+                        print("myindex is \(myIndex)")
+                        getPoint(keyTapCount: myIndex, remove: true, message: 3)
+                        keyTapCount -= 1
+                    }
+                } else {
+                    print("Key is nil")
+                }
+            } else {
+                if thisKey != lastKey {
+                    if let myLastKey = lastKey {
+                        if lastKey.fillColor != lastKey.defaultBackgroundColor {
+                            if touchedKeys.count > 0 {
+                                print("Hey y is > 0, I'm switching back OK? My touch index is \(touchIndex). touchedKeys.count is \(touchedKeys.count)")
+                                keyTapCount -= 1
+                                print(keyTapCount)
+                                instaHighlight(key: lastKey, color: lastKey.defaultBackgroundColor)
+                                touchedKeys.remove(at: myIndex)
+                                print("Now touchedKeys.count is \(touchedKeys.count)")
+                                lastKey.holding = false
+                                print("myindex is \(myIndex)")
+                                getPoint(keyTapCount: myIndex, remove: true, message: 3)
+                            }
                         }
+                    } else {
+                        print("Key is nil")
                     }
                 }
-                
-                if touchedKeys[touchIndex].fillColor != touchedKeys[touchIndex].defaultBackgroundColor {
-                    printColorWithoutKey(color: touchedKeys[touchIndex].fillColor!)
-                    printColorWithoutKey(color: touchedKeys[touchIndex].defaultBackgroundColor)
-                    print("Hey I'm switching back OK?")
-                    keyTapCount -= 1
-                    print(keyTapCount)
-                    instaHighlight(key: lastKey, color: touchedKeys[touchIndex].defaultBackgroundColor)
-                    lastKey.holding = false
-                    myTouchesBegan.remove(at: myIndex)
-                }
-            }
-
-//            print("last key is \(lastKey.keyType)")
-//            print("this key is \(thisKey.keyType)")
-
-            if thisKey.keyType != lastKey.keyType {
-                print("Moved to key \(thisIndex)!")
-                if lastKey.fillColor != lastKey.defaultBackgroundColor {
-                    keyTapCount -= 1
-                    instaHighlight(key: lastKey, color: lastKey.defaultBackgroundColor)
-                }
-                lastKey.holding = false
-            } else {
-//                print("Moved to key \(lastIndex)!")
             }
         }
     }
