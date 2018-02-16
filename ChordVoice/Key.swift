@@ -61,6 +61,7 @@ class Key: UIView {
     var isPlaying = false
     var holding = false
     var wasHoldingWhenSwitched = false
+    var prevChordIndex = 0
     var playCount = 0
     var previousBackground = UIColor()
     var highlightLocked = false

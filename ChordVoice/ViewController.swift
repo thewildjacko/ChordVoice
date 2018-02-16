@@ -21,6 +21,9 @@ class ViewController: UIViewController {
             for key in masterKeys {
                 if key.holding {
                     key.wasHoldingWhenSwitched = true
+                    if key.prevChordIndex == 0 || key.prevChordIndex == prevTapIndex {
+                        key.prevChordIndex = prevTapIndex
+                    }
                 }
             }
             tapIndex = sender.tag.digits[5]
@@ -193,21 +196,26 @@ class ViewController: UIViewController {
                     myRoot.playCount -= 1
                 } else if tapIndex > 0 {
                     if myRoot.wasHoldingWhenSwitched {
-//                        print("was holding")
+                        print("was holding")
                         if prevTapIndex == 0 {
-//                            print("was zero")
+                            print("was zero")
                             print(prevTapIndex)
                             highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
                             myRoot.playCount -= 1
                             myRoot.wasHoldingWhenSwitched = false
                         } else {
-//                            print("was \(prevTapIndex)")
-                            toggleChordShape(triadType: prevTapIndex, addRemove: false)
+                            print("was \(prevTapIndex)")
+                            if myRoot.prevChordIndex == 0 || myRoot.prevChordIndex == prevTapIndex {
+                                toggleChordShape(triadType: prevTapIndex, addRemove: false)
+                            } else {
+                                toggleChordShape(triadType: myRoot.prevChordIndex, addRemove: false)
+                            }
+                            myRoot.prevChordIndex = 0
                             myRoot.wasHoldingWhenSwitched = false
                         }
                         
                     } else {
-//                        print("Was not holding")
+                        print("Was not holding")
                         toggleChordShape(triadType: tapIndex, addRemove: false)
                     }
                     ifNotHolding(note: my3rd, midiNote: my3rdMidiNote)
