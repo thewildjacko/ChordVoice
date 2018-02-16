@@ -18,18 +18,29 @@ class AudioEngine {
     var mixer = AKMixer()
     var waveform1 = AKTable()
     var waveform2 = AKTable()
-    
+    var reverb1 = AKReverb()
+    var reverb2 = AKReverb()
+
     
     init(waveform1: AKTable, waveform2: AKTable) {
         self.waveform1 = waveform1
         self.waveform2 = waveform2
-        self.bank1 = AKOscillatorBank(waveform: waveform1, attackDuration: 0.0, decayDuration: 0.0, sustainLevel: 1.0, releaseDuration: 0.0, pitchBend: 0.0, vibratoDepth: 0.0, vibratoRate: 0.0)
+        self.bank1 = AKOscillatorBank(waveform: waveform1, attackDuration: 0, decayDuration: 0, sustainLevel: 1.0, releaseDuration: 0, pitchBend: 0.0, vibratoDepth: 0, vibratoRate: 0)
         self.bank1.rampTime = 0.0
-        self.bank2 = AKOscillatorBank(waveform: waveform2, attackDuration: 0.0, decayDuration: 0.0, sustainLevel: 1.0, releaseDuration: 0.0, pitchBend: 0.0, vibratoDepth: 0.0, vibratoRate: 0.0)
+        self.bank2 = AKOscillatorBank(waveform: waveform2, attackDuration: 0, decayDuration: 0, sustainLevel: 1.0, releaseDuration: 0, pitchBend: 0.0, vibratoDepth: 0, vibratoRate: 0)
         self.bank2.rampTime = 0.0
-        self.mixer = AKMixer(bank1, bank2)
+        self.reverb1 = AKReverb(bank1)
+        self.reverb2 = AKReverb(bank2)
+
+        reverb1.loadFactoryPreset(.mediumRoom)
+        reverb2.loadFactoryPreset(.mediumRoom)
+        reverb1.dryWetMix = 0.25
+        reverb2.dryWetMix = 0.25
+        self.mixer = AKMixer(reverb1, reverb2)
         
         AudioKit.output = mixer
+        mixer.volume = 0.5
+        
         do {
             try AudioKit.start()
         } catch {

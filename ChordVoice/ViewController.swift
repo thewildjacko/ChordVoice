@@ -222,12 +222,16 @@ class ViewController: UIViewController {
         let lockedPitch = parent.highlightPitch
 //        print(lockedPitch)
         
-        func toggleBorders(myBorderLayer: CAShapeLayer, color: CGColor, opacity: Float) {
+        func toggleBorders(myBorderLayer: CAShapeLayer, color: CGColor, opacity: Float, triadNumber: Int) {
             CATransaction.begin()
             CATransaction.setDisableActions(true)
-            myBorderLayer.strokeColor = color
+//            myBorderLayer.strokeColor = color
             myBorderLayer.fillColor = color
-            myBorderLayer.opacity = opacity
+            if triadNumber > 0 {
+                myBorderLayer.opacity = opacity
+            } else {
+                myBorderLayer.opacity = 0
+            }
             CATransaction.commit()
         }
         
@@ -252,11 +256,15 @@ class ViewController: UIViewController {
                 engine.noteOn(note: ifNegative(note: note2), bank: 2)
             } else {
                 color = clearColor.cgColor
-                opacity = 0.0
+                if parent.triadNumber > 0 {
+                    opacity = 1.0
+                } else {
+                    opacity = 0.0
+                }
                 engine.noteOff(note: ifNegative(note: note1), bank: 2)
                 engine.noteOff(note: ifNegative(note: note2), bank: 2)
             }
-            toggleBorders(myBorderLayer: masterChordBorders[parent.triadNumber - 1], color: color, opacity: opacity)
+            toggleBorders(myBorderLayer: masterChordBorders[parent.triadNumber - 1], color: color, opacity: opacity, triadNumber: parent.triadNumber)
 //            print(parent.triadNumber)
         }
         
@@ -288,7 +296,7 @@ class ViewController: UIViewController {
             chordBorderColors.removeFirst()
 
 //            toggleBorders(myBorderLayer: parent.borderLayer, color: myColor.cgColor, opacity: 0.5)
-            toggleBorders(myBorderLayer: parent.borderLayer, color: theColor.cgColor, opacity: 0.5)
+            toggleBorders(myBorderLayer: parent.borderLayer, color: theColor.cgColor, opacity: 0.5, triadNumber: parent.triadNumber)
             engine.noteOn(note: lockedPitch, bank: 2)
             
             // [darkerYellow, lightPurple, darkerGreen, .orange, darkerBlue]
@@ -322,9 +330,14 @@ class ViewController: UIViewController {
             
             if sender.state == .ended {
                 chordBorderColors.insert(parent.borderLayerColor, at: 0)
-                parent.borderLayerColor = clearColor
+                if parent.triadNumber == 0 {
+                    parent.borderLayerColor = clearColor
+                    parent.borderLayer.opacity = 0.0
+                } else {
+                    parent.borderLayer.opacity = 1
+                }
+                
                 parent.borderLayer.fillColor = clearColor.cgColor
-                parent.borderLayer.opacity = 0.0
 
                 chordCount -= 1
                 if chordCount == 0 {
@@ -337,7 +350,7 @@ class ViewController: UIViewController {
                 chordCount = 0
             }
             
-            toggleBorders(myBorderLayer: parent.borderLayer, color: clearColor.cgColor, opacity: 0.0)
+//            toggleBorders(myBorderLayer: parent.borderLayer, color: clearColor.cgColor, opacity: 1, triadNumber: parent.triadNumber)
             engine.noteOff(note: lockedPitch, bank: 2)
             
             switch parent.triadNumber {
@@ -506,7 +519,6 @@ class ViewController: UIViewController {
         borderLayer.path = myKeyboard.borderPath.cgPath
         
         borderLayer.fillColor = clearColor.cgColor
-        borderLayer.strokeColor = clearColor.cgColor
         myKeyboard.borderLayer = borderLayer
 
         if myKeyboard.triadNumber > 0 {
@@ -514,28 +526,43 @@ class ViewController: UIViewController {
             chordBorders.append(borderLayer)
             myKeyboard.layer.addSublayer(chordBorders[myKeyboard.triadNumber - 1])
             switch myKeyboard.triadNumber {
-            case 1, 2: // root major, root minor
+            case 1: // root major, root minor
                 borderBezier(key1Num: masterHighlightKey, key2Num: masterHighlightKey + 1, key3Num: masterHighlightKey + 6, key4Num: masterHighlightKey + 7, myKeyboard: masterKeyboard)
+                borderLayer.strokeColor = darkerYellow.cgColor
+            case 2: // root minor
+                borderBezier(key1Num: masterHighlightKey, key2Num: masterHighlightKey + 1, key3Num: masterHighlightKey + 6, key4Num: masterHighlightKey + 7, myKeyboard: masterKeyboard)
+                borderLayer.strokeColor = darkerBlue.cgColor
             case 3: // root augmented
                 borderBezier(key1Num: masterHighlightKey, key2Num: masterHighlightKey + 1, key3Num: masterHighlightKey + 7, key4Num: masterHighlightKey + 8, myKeyboard: masterKeyboard)
+                borderLayer.strokeColor = UIColor.orange.cgColor
             case 4: // root diminished
                 borderBezier(key1Num: masterHighlightKey, key2Num: masterHighlightKey + 1, key3Num: masterHighlightKey + 5, key4Num: masterHighlightKey + 6, myKeyboard: masterKeyboard)
+                borderLayer.strokeColor = lightPurple.cgColor
             case 5: // min 3rd minor
                 borderBezier(key1Num: masterHighlightKey - 3, key2Num: masterHighlightKey - 2, key3Num: masterHighlightKey + 3, key4Num: masterHighlightKey + 4, myKeyboard: masterKeyboard)
+                borderLayer.strokeColor = darkerBlue.cgColor
             case 6: // min 3rd diminished
                 borderBezier(key1Num: masterHighlightKey - 3, key2Num: masterHighlightKey - 2, key3Num: masterHighlightKey + 2, key4Num: masterHighlightKey + 3, myKeyboard: masterKeyboard)
+                borderLayer.strokeColor = lightPurple.cgColor
             case 7: // maj 3rd major
                 borderBezier(key1Num: masterHighlightKey - 4, key2Num: masterHighlightKey - 3, key3Num: masterHighlightKey + 2, key4Num: masterHighlightKey + 3, myKeyboard: masterKeyboard)
+                borderLayer.strokeColor = darkerYellow.cgColor
             case 8: // dim 5th diminished
                 borderBezier(key1Num: masterHighlightKey - 6, key2Num: masterHighlightKey - 5, key3Num: masterHighlightKey - 1, key4Num: masterHighlightKey, myKeyboard: masterKeyboard)
-            case 9, 10: // P5 major, // P5 minor
+                borderLayer.strokeColor = lightPurple.cgColor
+            case 9: // P5 major
                 borderBezier(key1Num: masterHighlightKey - 7, key2Num: masterHighlightKey - 6, key3Num: masterHighlightKey + 1, key4Num: masterHighlightKey, myKeyboard: masterKeyboard)
+                borderLayer.strokeColor = darkerYellow.cgColor
+            case 10: // P5 minor
+                borderBezier(key1Num: masterHighlightKey - 7, key2Num: masterHighlightKey - 6, key3Num: masterHighlightKey + 1, key4Num: masterHighlightKey, myKeyboard: masterKeyboard)
+                borderLayer.strokeColor = darkerBlue.cgColor
             default:
                 ()
             }
             masterKeyboard.layer.addSublayer(masterChordBorders[myKeyboard.triadNumber - 1])
         } else {
             borderLayer.lineWidth = 8.0
+            borderLayer.strokeColor = clearColor.cgColor
             masterChordBorders.append(borderLayer)
         }
     }
@@ -549,6 +576,13 @@ class ViewController: UIViewController {
 
         let screenWidth = view.height
         let screenHeight = view.width
+        
+      
+    }
+    
+    override func viewWillLayoutSubviews() {
+        let screenWidth = view.width
+        let screenHeight = view.height
         
         func addKeyboard(initialKey: Int, startingOctave: Int, numberOfKeys: Int, highlightLockKey: Int) {
             let myKeyboard = Keyboard(initialKey: initialKey, startingOctave: startingOctave, numberOfKeys: numberOfKeys)
@@ -582,7 +616,7 @@ class ViewController: UIViewController {
         view.sendSubview(toBack: backgroundView)
         
         addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 37, highlightLockKey: 12)
-//        print(masterKeyboard.startingPitch)
+        //        print(masterKeyboard.startingPitch)
         addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
         addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
         addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 9, highlightLockKey: -1)
@@ -597,11 +631,6 @@ class ViewController: UIViewController {
         addTapGestureRecognizers(myKeyboard: masterKeyboard)
         
         keyboards[1...].forEach {addChordGestureRecognizers(myKeyboard: $0)}
-    }
-    
-    override func viewWillLayoutSubviews() {
-        let screenWidth = view.width
-        let screenHeight = view.height
         
         // bottom keyboard
         masterKeyboard.frame = CGRect(x: 0, y: screenHeight - 91 / masterKeyboard.myKeyboardWidthMod * screenWidth, width: screenWidth, height: 91 / masterKeyboard.myKeyboardWidthMod * screenWidth)
