@@ -6,49 +6,84 @@
 \deftab864
 \pard\tx864\pardeftab864\pardirnatural\partightenfactor0
 
-\f0\fs36 \cf2 \cb3 //
-\f1\fs24 \cf2 \
+\f0\fs36 \cf2 \cb3 //  ChordVoice
+\f1\fs24 \
 
-\f0\fs36 \cf2 //  Outline.swift
-\f1\fs24 \cf2 \
+\f0\fs36 //
+\f1\fs24 \
 
-\f0\fs36 \cf2 //  ChordVoice
-\f1\fs24 \cf2 \
+\f0\fs36 //  Created by Jake Smolowe on 2/10/18.
+\f1\fs24 \
 
-\f0\fs36 \cf2 //
-\f1\fs24 \cf2 \
-
-\f0\fs36 \cf2 //  Created by Jake Smolowe on 2/10/18.
-\f1\fs24 \cf2 \
-
-\f0\fs36 \cf2 //  Copyright \'a9 2018 Jake Smolowe. All rights reserved.
-\f1\fs24 \cf2 \
+\f0\fs36 //  Copyright \'a9 2018 Jake Smolowe. All rights reserved.
+\f1\fs24 \
 \
 \
 
-\f0\fs36 \cf2 need to import UIKit, AudioKit, AudioKitUI everywhere (also Foundation?)
-\f1\fs24 \cf2 \
+\f0\fs36 need to import UIKit, AudioKit, AudioKitUI everywhere (also Foundation?)
+\f1\fs24 \
 \
 
-\f0\fs36 \cf2 \
-@IBAction func setOrRemoveHighlights(_ sender: AnyObject)
-\f1\fs24 \cf2 \
+\f0\fs36 \
+ViewController.swift\
+\
+	@IBAction func setOrRemoveHighlights(_ sender: AnyObject)
+\f1\fs24 \
 
-\f0\fs36 \cf2     uses tag of chord buttons to set tapIndex
-\f1\fs24 \cf2 \
+\f0\fs36     	uses tag of chord buttons to set tapIndex
+\f1\fs24 \
 
-\f0\fs36 \cf2  
-\f1\fs24 \cf2 \
+\f0\fs36  
+\f1\fs24 \
 
-\f0\fs36 \cf2 tapIndex
-\f1\fs24 \cf2 \
+\f0\fs36 \cf0 \cb1 	var tapIndex
+\f1\fs24 \cf2 \cb3 \
 
-\f0\fs36 \cf2     controls what tapping a note triggers on master keyboard:
-\f1\fs24 \cf2 \
+\f0\fs36     	controls what tapping a note triggers on master keyboard:
+\f1\fs24 \
 
-\f0\fs36 \cf2  
-\f1\fs24 \cf2 \
+\f0\fs36  
+\f1\fs24 \
 
-\f0\fs36 \cf2     -1: notes off, 0: single notes, 1: major triads, 2: minor triads, 3: aug triads, 4: dim triads, 5: sus4 triad, 6: sus2 triad
-\f1\fs24 \cf2 \
-}
+\f0\fs36 	    -1: notes off, 0: single notes, 1: major triads, 2: minor triads, 3: aug triads, 4: dim triads, 5: sus4 triad, 6: sus2 triad\
+	\
+		in:\
+			
+\fs38 setOrRemoveHighlights()\
+			handleTap()\
+\
+	var keyboardIndex 1...		ID for each Keyboard (master = 1)\
+			in: \
+				addKeyboard()\
+\
+	var keyboards				array of all Keyboards created\
+			in: \
+				all over\
+\
+	var masterKeyboard			bottom keyboard\
+		in:\
+			borderBezier()\
+			addKeyboard()\
+			viewWillLayoutSubviews (all over)\
+\
+	var masterKeys				bottom keyboard keys\
+		in:\
+			borderBezier()\
+			addKeyboard()\
+			viewWillLayoutSubviews (all over)\
+\
+	var masterHighlightKey			bottom keyboard highlight key\
+		in:\
+			borderBezier() (all over)\
+			viewDidAppear\
+	
+\fs36 \
+	var chordCount 0..5				to keep track of how many mini-keyboard chords are being played\
+\
+
+\fs38 		in:\
+		highlightKeyboard() (toggleBordersAndNotes)\
+		\
+
+\fs36 \
+	}

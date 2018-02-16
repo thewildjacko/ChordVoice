@@ -14,14 +14,22 @@ class ViewController: UIViewController {
     
     @IBAction func setOrRemoveHighlights(_ sender: AnyObject) {
 //        print(sender.tag)
+        prevTapIndex = tapIndex
         if sender.tag == 200000 {
             tapIndex = -1
         } else {
+            for key in masterKeys {
+                if key.holding {
+                    key.wasHoldingWhenSwitched = true
+                }
+            }
             tapIndex = sender.tag.digits[5]
         }
     }
     
     var tapIndex = 0
+    var prevTapIndex = 0
+    var tapIndexSet = false
     var keyboardIndex = 1
     var keyboards = [Keyboard]()
     var masterKeyboard: Keyboard!
@@ -184,7 +192,24 @@ class ViewController: UIViewController {
                     highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
                     myRoot.playCount -= 1
                 } else if tapIndex > 0 {
-                    toggleChordShape(triadType: tapIndex, addRemove: false)
+                    if myRoot.wasHoldingWhenSwitched {
+//                        print("was holding")
+                        if prevTapIndex == 0 {
+//                            print("was zero")
+                            print(prevTapIndex)
+                            highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
+                            myRoot.playCount -= 1
+                            myRoot.wasHoldingWhenSwitched = false
+                        } else {
+//                            print("was \(prevTapIndex)")
+                            toggleChordShape(triadType: prevTapIndex, addRemove: false)
+                            myRoot.wasHoldingWhenSwitched = false
+                        }
+                        
+                    } else {
+//                        print("Was not holding")
+                        toggleChordShape(triadType: tapIndex, addRemove: false)
+                    }
                     ifNotHolding(note: my3rd, midiNote: my3rdMidiNote)
                     ifNotHolding(note: my5th, midiNote: my5thMidiNote)
                 } else {
