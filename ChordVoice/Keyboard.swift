@@ -92,8 +92,8 @@ class Keyboard: UIView, UIGestureRecognizerDelegate {
 //        }
         var myPoint = CGPoint()
         if myTouchesBegan.count > 0 {
-            print("keyTapCount is \(keyTapCount)")
-            print("myTouchesBegan.count is \(myTouchesBegan.count)")
+//            print("keyTapCount is \(keyTapCount)")
+//            print("myTouchesBegan.count is \(myTouchesBegan.count)")
             myPoint = myTouchesBegan[keyTapCount].location(in: self)
         }
         if remove {
@@ -128,6 +128,9 @@ class Keyboard: UIView, UIGestureRecognizerDelegate {
             print("Location is \(tapLocation)")
             for (index, key) in self.keys.enumerated() {
                 if key.hitTest(tapLocation) != nil {
+                    let keyPoint = self.keyboardBackgroundLayer.convert(tapLocation, to: key)
+                    print(tapLocation)
+                    print(keyPoint)
 //                    print("key \(index) tapped! Left x origin is \(key.x), bottom of key is \(key.y + key.height)")
                     touchesKeyboardColors.append(key.defaultBackgroundColor)
                     touchedKeys.append(key)
