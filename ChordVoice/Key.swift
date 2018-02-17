@@ -8,49 +8,8 @@
 // The key objects for each keyboard.
 
 import UIKit
-
-public extension UIView {
-    public func addShadow(ofColor color: UIColor = UIColor(red: 0.07, green: 0.47, blue: 0.57, alpha: 1.0), radius: CGFloat = 3, offset: CGSize = .zero, opacity: Float = 0.5) {
-        layer.shadowColor = color.cgColor
-        layer.shadowOffset = offset
-        layer.shadowRadius = radius
-        layer.shadowOpacity = opacity
-    }
-}
-
-public extension UIView {
-    internal var parentKeyboardView: Keyboard? {
-        weak var parentResponder: UIResponder? = self
-        while parentResponder != nil {
-            parentResponder = parentResponder!.next
-            if let keyboard = parentResponder as? Keyboard {
-                return keyboard
-            }
-        }
-        return nil
-    }
-    
-    /// SwifterSwift: Size of view.
-    public var origin: CGPoint {
-        get {
-            return frame.origin
-        }
-        set {
-            x = newValue.x
-            y = newValue.y
-        }
-    }
-    
-    @IBInspectable public var cornerRadius: CGFloat {
-        get {
-            return layer.cornerRadius
-        }
-        set {
-            layer.masksToBounds = false
-            layer.cornerRadius = abs(CGFloat(Int(newValue * 100)) / 100)
-        }
-    }
-}
+import AudioKit
+import AudioKitUI
 
 class Key: UIView {
     var keyType = 0
@@ -65,11 +24,21 @@ class Key: UIView {
     var playCount = 0
     var previousBackground = UIColor()
     var highlightLocked = false
+    var parent: Keyboard!
+    var note = MIDINoteNumber()
     
     init() {
         super.init(frame: CGRect())
         self.previousBackground = defaultBackgroundColor
         self.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner] // rounded bottom corners
+    }
+
+    func setParent() {
+        if let parent = parentKeyboardView {
+            self.parent = parent
+        } else {
+            print("Parent does not exist")
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {

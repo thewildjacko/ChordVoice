@@ -47,9 +47,10 @@ class ViewController: UIViewController {
     
     @objc func handleTap(_ sender: UITapGestureRecognizer) {
         if tapIndex != -1 {
-            let view = sender.view!
-            let tag = view.tag
-            let parent = view.parentKeyboardView
+            let tappedKey = sender.view! as! Key
+            let parent = tappedKey.parentKeyboardView
+            let tag = tappedKey.tag
+            let rootNote = tappedKey.note
             let digits = tag.digits
             var myTagString = String(tag)
             var myTagCount = tag.digitsCount
@@ -100,14 +101,12 @@ class ViewController: UIViewController {
             let chordInversions = [1: [4, 7, 5, 8], 2: [3, 7, 5, 9], 3: [4, 8, 4, 8], 4: [3, 6, 6, 9], 5: [5, 7, 5, 7], 6: [2, 7, 5, 10]]
 
             let myRoot = myKeys[myTag]
-            let midiRootOffset = parent!.startingPitch + myTag + 21
-            let myRootMidiNote = MIDINoteNumber(midiRootOffset)
             
             var my3rd = Key()
-            var my3rdMidiNote = MIDINoteNumber()
+            var thirdNote = MIDINoteNumber()
 
             var my5th = Key()
-            var my5thMidiNote = MIDINoteNumber()
+            var fifthNote = MIDINoteNumber()
             
             func toggleChordShape(triadType: Int, addRemove: Bool) {
                 let rootPosOffset = chordUpperOffsets[triadType]![0]
@@ -121,22 +120,22 @@ class ViewController: UIViewController {
                         my3rd = myKeys[myTag + chord![0]]
                         my5th = myKeys[myTag + chord![1]]
                         
-                        my3rdMidiNote = MIDINoteNumber(midiRootOffset + chord![0])
-                        my5thMidiNote = MIDINoteNumber(midiRootOffset + chord![1])
+                        thirdNote = rootNote + MIDINoteNumber(chord![0])
+                        fifthNote = rootNote + MIDINoteNumber(chord![1])
                     } else if myTag > myCount - rootPosOffset && myTag <= myCount - firstInvOffset {
                         my3rd = myKeys[myTag + chord![0]]
                         my5th = myKeys[myTag - chord![2]]
                     
-                        my3rdMidiNote = MIDINoteNumber(midiRootOffset + chord![0])
-                        my5thMidiNote = MIDINoteNumber(midiRootOffset - chord![2])
+                        thirdNote = rootNote + MIDINoteNumber(chord![0])
+                        fifthNote = rootNote - MIDINoteNumber(chord![2])
                     } else {
                         my3rd = myKeys[myTag - chord![3]]
                         my5th = myKeys[myTag - chord![2]]
 
-                        my3rdMidiNote = MIDINoteNumber(midiRootOffset - chord![3])
-                        my5thMidiNote = MIDINoteNumber(midiRootOffset - chord![2])
+                        thirdNote = rootNote - MIDINoteNumber(chord![3])
+                        fifthNote = rootNote - MIDINoteNumber(chord![2])
                     }
-//                    print(myRootMidiNote, my3rdMidiNote, my5thMidiNote)
+//                    print(rootNote, thirdNote, fifthNote)
                 }
                 
                 // addRemove == true, highlight; addRemove == false, remove highlights
@@ -164,9 +163,9 @@ class ViewController: UIViewController {
                 }
             }
             if sender.state == .began  {
-//                print("my tag is \(myTag), my midi note is \(myRootMidiNote)")
+//                print("my tag is \(myTag), my midi note is \(rootNote)")
                 if !myRoot.holding {
-                    engine.noteOn(note: myRootMidiNote, bank: 1)
+                    engine.noteOn(note: rootNote, bank: 1)
                     myRoot.holding = true
                 }
                 if tapIndex == 0 {
@@ -174,8 +173,8 @@ class ViewController: UIViewController {
                     highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: true)
                 } else if tapIndex > 0 {
                     toggleChordShape(triadType: tapIndex, addRemove: true)
-                    engine.noteOn(note: my3rdMidiNote, bank: 1)
-                    engine.noteOn(note: my5thMidiNote, bank: 1)
+                    engine.noteOn(note: thirdNote, bank: 1)
+                    engine.noteOn(note: fifthNote, bank: 1)
                 }
                 myRoot.isPlaying = true
             }
@@ -189,7 +188,7 @@ class ViewController: UIViewController {
 
                 myRoot.holding = false
                 if myRoot.playCount == 1 {
-                    engine.noteOff(note: myRootMidiNote, bank: 1)
+                    engine.noteOff(note: rootNote, bank: 1)
                 }
                 if tapIndex == 0 {
                     highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
@@ -218,8 +217,8 @@ class ViewController: UIViewController {
                         print("Was not holding")
                         toggleChordShape(triadType: tapIndex, addRemove: false)
                     }
-                    ifNotHolding(note: my3rd, midiNote: my3rdMidiNote)
-                    ifNotHolding(note: my5th, midiNote: my5thMidiNote)
+                    ifNotHolding(note: my3rd, midiNote: thirdNote)
+                    ifNotHolding(note: my5th, midiNote: fifthNote)
                 } else {
                     print("Error!")
                 }
@@ -607,8 +606,8 @@ class ViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        let screenWidth = view.height
-        let screenHeight = view.width
+//        let screenWidth = view.height
+//        let screenHeight = view.width
         
       
     }
@@ -650,16 +649,16 @@ class ViewController: UIViewController {
         
         addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 37, highlightLockKey: 12)
         //        print(masterKeyboard.startingPitch)
-        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
-        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
-        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 9, highlightLockKey: -1)
-        addKeyboard(initialKey: 4, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
-        addKeyboard(initialKey: 1, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
-        addKeyboard(initialKey: 1, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
-        addKeyboard(initialKey: 12, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
-        addKeyboard(initialKey: 10, startingOctave: 4, numberOfKeys: 7, highlightLockKey: -1)
-        addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
-        addKeyboard(initialKey: 9, startingOctave: 4, numberOfKeys: 8, highlightLockKey: -1)
+        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 9, highlightLockKey: -1)
+        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
+        addKeyboard(initialKey: 1, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+        addKeyboard(initialKey: 1, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
+        addKeyboard(initialKey: 12, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+        addKeyboard(initialKey: 10, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
+        addKeyboard(initialKey: 9, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+        addKeyboard(initialKey: 9, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
         
         addTapGestureRecognizers(myKeyboard: masterKeyboard)
         
@@ -727,8 +726,6 @@ class ViewController: UIViewController {
         for keyboard in keyboards[1...] {
             borderBezier(key1Num: 0, key2Num: 1, key3Num: keyboard.keys.count - 2, key4Num: keyboard.keys.count - 1, myKeyboard: keyboard)
         }
-        
-
     }
     
     override var shouldAutorotate: Bool {

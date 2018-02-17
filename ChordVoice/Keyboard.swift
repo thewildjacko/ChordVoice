@@ -85,7 +85,9 @@ class Keyboard: UIView {
             //                key.layer.opacity = 0.5
             keys.append(key)
             self.addSubview(key)
-            
+            key.setParent()
+            key.note = MIDINoteNumber(startingPitch + counter - initialKey + 21)
+// parent!.startingPitch + myTag + 21
             counter += 1
         }
         if highlightLockKey > 0 {
