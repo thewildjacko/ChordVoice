@@ -74,18 +74,28 @@
                                     <action selector="setOrRemoveHighlights:" destination="BYZ-38-t0r" eventType="touchUpInside" id="n2f-8X-I94"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" tag="100000" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T3b-r9-573">
+                                <rect key="frame" x="391" y="20" width="30" height="30"/>
+                                <state key="normal" title="add"/>
+                                <connections>
+                                    <action selector="add:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Lhx-Of-gt8"/>
+                                    <action selector="setOrRemoveHighlights:" destination="BYZ-38-t0r" eventType="touchUpInside" id="vxf-he-SzD"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="a26-YB-H7K" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="34" id="4JZ-hr-bIY"/>
+                            <constraint firstItem="T3b-r9-573" firstAttribute="leading" secondItem="i3G-Wh-atL" secondAttribute="trailing" constant="29" id="5ub-V7-Yeh"/>
                             <constraint firstItem="i3G-Wh-atL" firstAttribute="leading" secondItem="gH7-nP-jwa" secondAttribute="trailing" constant="17" id="AUS-Dr-GAz"/>
+                            <constraint firstItem="T3b-r9-573" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="Age-Yf-ENK"/>
                             <constraint firstItem="DGc-lO-GEX" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="Bl4-wN-ehe"/>
                             <constraint firstItem="gH7-nP-jwa" firstAttribute="leading" secondItem="h2Z-lz-7ye" secondAttribute="trailing" constant="17" id="Cv4-GE-IsV"/>
                             <constraint firstItem="a26-YB-H7K" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="K3d-0W-iYf"/>
                             <constraint firstItem="lZM-zb-FZC" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="K4N-OP-PoS"/>
                             <constraint firstItem="h2Z-lz-7ye" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="RZx-Vm-SxE"/>
+                            <constraint firstItem="YSu-YT-Ckf" firstAttribute="leading" secondItem="T3b-r9-573" secondAttribute="trailing" constant="157" id="UVD-Xy-I5N"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="YSu-YT-Ckf" secondAttribute="trailing" constant="34" id="a5w-nh-RVH"/>
-                            <constraint firstItem="YSu-YT-Ckf" firstAttribute="leading" secondItem="i3G-Wh-atL" secondAttribute="trailing" constant="216" id="cHn-6q-ZXR"/>
                             <constraint firstItem="h2Z-lz-7ye" firstAttribute="leading" secondItem="lZM-zb-FZC" secondAttribute="trailing" constant="17" id="dav-fa-kVe"/>
                             <constraint firstItem="YSu-YT-Ckf" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="h6c-FY-hKT"/>
                             <constraint firstItem="gH7-nP-jwa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="hhW-TI-PhC"/>

@@ -120,3 +120,27 @@ public extension UIView {
         }
     }
 }
+
+// ViewController
+
+extension ViewController {
+    #if !os(macOS)
+    /// SwifterSwift: Screen width.
+    public static var uiWidth: CGFloat {
+        #if os(iOS) || os(tvOS)
+            return UIScreen.main.bounds.width
+        #elseif os(watchOS)
+            return currentDevice.screenBounds.width
+        #endif
+    }
+    
+    /// SwifterSwift: Screen height.
+    public static var uiHeight: CGFloat {
+        #if os(iOS) || os(tvOS)
+            return UIScreen.main.bounds.height
+        #elseif os(watchOS)
+            return currentDevice.screenBounds.height
+        #endif
+    }
+    #endif
+}

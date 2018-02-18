@@ -12,6 +12,20 @@ import AudioKitUI
 
 class ViewController: UIViewController {
     
+    @IBAction func add(_ sender: AnyObject) {
+        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 9, highlightLockKey: -1)
+        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
+        addKeyboard(initialKey: 1, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+        addKeyboard(initialKey: 1, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
+        addKeyboard(initialKey: 12, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+        addKeyboard(initialKey: 10, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
+        addKeyboard(initialKey: 9, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+        addKeyboard(initialKey: 9, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+        
+        keyboards[1...].forEach {addChordGestureRecognizers(myKeyboard: $0)}
+    }
     @IBAction func setOrRemoveHighlights(_ sender: AnyObject) {
 //        print(sender.tag)
         prevTapIndex = tapIndex
@@ -44,6 +58,33 @@ class ViewController: UIViewController {
     var chordBorderColors: [UIColor] = [darkerYellow, lightPurple, darkerGreen, .orange, darkerBlue]
     
     let engine = AudioEngine(waveform1: AKTable(.sawtooth), waveform2: AKTable(.square))
+    
+    func addKeyboard(initialKey: Int, startingOctave: Int, numberOfKeys: Int, highlightLockKey: Int) {
+        let myKeyboard = Keyboard(initialKey: initialKey, startingOctave: startingOctave, numberOfKeys: numberOfKeys)
+        myKeyboard.highlightKey = highlightLockKey
+        func tagAppendAndSort() {
+            myKeyboard.tag = keyboardIndex
+            //        print(myKeyboard.tag)
+            if keyboards.count < 8 {
+                keyboardIndex += 1
+            } else if keyboards.count == 8 {
+                keyboardIndex += 991
+            } else {
+                keyboardIndex += 101
+            }
+            if highlightLockKey >= 0 {
+                masterKeyboard = myKeyboard
+                masterKeyboard.addKeys(highlightLockKey: highlightLockKey)
+                keyboards.append(masterKeyboard)
+                backgroundView.addSubview(masterKeyboard)
+            } else {
+                myKeyboard.addKeys(highlightLockKey: highlightLockKey)
+                keyboards.append(myKeyboard)
+                backgroundView.addSubview(myKeyboard)
+            }
+        }
+        tagAppendAndSort()
+    }
     
     @objc func handleTap(_ sender: UITapGestureRecognizer) {
         if tapIndex != -1 {
@@ -603,42 +644,40 @@ class ViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-//        let screenWidth = view.height
-//        let screenHeight = view.width
-        
-      
     }
     
     override func viewWillLayoutSubviews() {
         let screenWidth = view.width
         let screenHeight = view.height
         
-        func addKeyboard(initialKey: Int, startingOctave: Int, numberOfKeys: Int, highlightLockKey: Int) {
-            let myKeyboard = Keyboard(initialKey: initialKey, startingOctave: startingOctave, numberOfKeys: numberOfKeys)
-            myKeyboard.highlightKey = highlightLockKey
-            func tagAppendAndSort() {
-                myKeyboard.tag = keyboardIndex
-                //        print(myKeyboard.tag)
-                if keyboards.count < 8 {
-                    keyboardIndex += 1
-                } else if keyboards.count == 8 {
-                    keyboardIndex += 991
-                } else {
-                    keyboardIndex += 101
-                }
-                if highlightLockKey >= 0 {
-                    masterKeyboard = myKeyboard
-                    masterKeyboard.addKeys(highlightLockKey: highlightLockKey)
-                    keyboards.append(masterKeyboard)
-                    backgroundView.addSubview(masterKeyboard)
-                } else {
-                    myKeyboard.addKeys(highlightLockKey: highlightLockKey)
-                    keyboards.append(myKeyboard)
-                    backgroundView.addSubview(myKeyboard)
-                }
-            }
-            tagAppendAndSort()
-        }
+        let theHeight = screenHeight
+        print(theHeight)
+//        func addKeyboard(initialKey: Int, startingOctave: Int, numberOfKeys: Int, highlightLockKey: Int) {
+//            let myKeyboard = Keyboard(initialKey: initialKey, startingOctave: startingOctave, numberOfKeys: numberOfKeys)
+//            myKeyboard.highlightKey = highlightLockKey
+//            func tagAppendAndSort() {
+//                myKeyboard.tag = keyboardIndex
+//                //        print(myKeyboard.tag)
+//                if keyboards.count < 8 {
+//                    keyboardIndex += 1
+//                } else if keyboards.count == 8 {
+//                    keyboardIndex += 991
+//                } else {
+//                    keyboardIndex += 101
+//                }
+//                if highlightLockKey >= 0 {
+//                    masterKeyboard = myKeyboard
+//                    masterKeyboard.addKeys(highlightLockKey: highlightLockKey)
+//                    keyboards.append(masterKeyboard)
+//                    backgroundView.addSubview(masterKeyboard)
+//                } else {
+//                    myKeyboard.addKeys(highlightLockKey: highlightLockKey)
+//                    keyboards.append(myKeyboard)
+//                    backgroundView.addSubview(myKeyboard)
+//                }
+//            }
+//            tagAppendAndSort()
+//        }
         
         view.addSubview(backgroundView)
         backgroundView.frame = CGRect(x: 0.0, y: 0.0, width: screenWidth, height: screenHeight)
@@ -646,20 +685,20 @@ class ViewController: UIViewController {
         
         addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 37, highlightLockKey: 12)
         //        print(masterKeyboard.startingPitch)
-        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
-        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
-        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 9, highlightLockKey: -1)
-        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
-        addKeyboard(initialKey: 1, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
-        addKeyboard(initialKey: 1, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
-        addKeyboard(initialKey: 12, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
-        addKeyboard(initialKey: 10, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
-        addKeyboard(initialKey: 9, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
-        addKeyboard(initialKey: 9, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+//        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+//        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+//        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 9, highlightLockKey: -1)
+//        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
+//        addKeyboard(initialKey: 1, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+//        addKeyboard(initialKey: 1, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
+//        addKeyboard(initialKey: 12, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+//        addKeyboard(initialKey: 10, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
+//        addKeyboard(initialKey: 9, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+//        addKeyboard(initialKey: 9, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
         
         addTapGestureRecognizers(myKeyboard: masterKeyboard)
         
-        keyboards[1...].forEach {addChordGestureRecognizers(myKeyboard: $0)}
+//        keyboards[1...].forEach {addChordGestureRecognizers(myKeyboard: $0)}
         
         // bottom keyboard
         masterKeyboard.frame = CGRect(x: 0, y: screenHeight - 91 / masterKeyboard.myKeyboardWidthMod * screenWidth, width: screenWidth, height: 91 / masterKeyboard.myKeyboardWidthMod * screenWidth)
@@ -669,11 +708,11 @@ class ViewController: UIViewController {
             masterKeyboard.keys[masterKeyboard.highlightKey].backgroundColor = tonicHighlightColor
             masterKeyboard.keys[masterKeyboard.highlightKey].defaultBackgroundColor = tonicHighlightColor
         }
-
-        let heightAboveBottomKeyboard = screenHeight - masterKeyboard.height
         
         func scaleKeyboard(myKeyboard: Keyboard, scale: CGFloat, x: CGFloat, y: CGFloat, xCentered: Bool, yCentered: Bool) {
             myKeyboard.scale = scale
+            
+            let heightAboveBottomKeyboard = screenHeight - masterKeyboard.height
             let keyboardHeight = heightAboveBottomKeyboard * scale
             let centerYKeyboard = (heightAboveBottomKeyboard - keyboardHeight)/2
             
