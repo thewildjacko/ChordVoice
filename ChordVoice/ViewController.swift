@@ -257,8 +257,8 @@ class ViewController: UIViewController {
         func toggleBorders(myBorderLayer: CAShapeLayer, color: CGColor, opacity: Float, triadNumber: Int) {
             CATransaction.begin()
             CATransaction.setDisableActions(true)
-//            myBorderLayer.strokeColor = color
             myBorderLayer.fillColor = color
+            myBorderLayer.strokeColor = color
             if triadNumber > 0 {
                 myBorderLayer.opacity = opacity
             } else {
@@ -297,7 +297,6 @@ class ViewController: UIViewController {
                 engine.noteOff(note: ifNegative(note: note2), bank: 2)
             }
             toggleBorders(myBorderLayer: masterChordBorders[parent.triadNumber - 1], color: color, opacity: opacity, triadNumber: parent.triadNumber)
-//            print(parent.triadNumber)
         }
         
         if sender.state == .began {
@@ -316,18 +315,15 @@ class ViewController: UIViewController {
             default:
                 ()
             }
-//            parent.borderLayerColor = chordBorderColors[0]
-//            parent.borderLayer.fillColor = chordBorderColors[0].cgColor
             parent.borderLayerColor = theColor
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
             parent.borderLayer.fillColor = theColor.cgColor
 
             parent.borderLayer.opacity = 0.5
-//            let myColor = parent.borderLayerColor
-//            printColorName(color: parent.borderLayerColor)
-//            print(parent.keys[0].keyType)
+            CATransaction.commit()
             chordBorderColors.removeFirst()
 
-//            toggleBorders(myBorderLayer: parent.borderLayer, color: myColor.cgColor, opacity: 0.5)
             toggleBorders(myBorderLayer: parent.borderLayer, color: theColor.cgColor, opacity: 0.5, triadNumber: parent.triadNumber)
             engine.noteOn(note: lockedPitch, bank: 2)
             
@@ -362,6 +358,8 @@ class ViewController: UIViewController {
             
             if sender.state == .ended {
                 chordBorderColors.insert(parent.borderLayerColor, at: 0)
+                CATransaction.begin()
+                CATransaction.setDisableActions(true)
                 if parent.triadNumber == 0 {
                     parent.borderLayerColor = clearColor
                     parent.borderLayer.opacity = 0.0
@@ -370,7 +368,7 @@ class ViewController: UIViewController {
                 }
                 
                 parent.borderLayer.fillColor = clearColor.cgColor
-
+                CATransaction.commit()
                 chordCount -= 1
                 if chordCount == 0 {
                     chordBorderColors = [darkerYellow, lightPurple, darkerGreen, .orange, darkerBlue]
@@ -382,7 +380,6 @@ class ViewController: UIViewController {
                 chordCount = 0
             }
             
-//            toggleBorders(myBorderLayer: parent.borderLayer, color: clearColor.cgColor, opacity: 1, triadNumber: parent.triadNumber)
             engine.noteOff(note: lockedPitch, bank: 2)
             
             switch parent.triadNumber {
