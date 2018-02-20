@@ -12,6 +12,11 @@ import AudioKitUI
 
 class ViewController: UIViewController {
     
+    var topMiniKBs = [Keyboard]()
+    var topMKBWidth = CGFloat()
+    var bottomMiniKBs = [Keyboard]()
+    var bottomMKBWidth = CGFloat()
+
     @IBAction func add(_ sender: AnyObject) {
 
         addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
@@ -24,17 +29,69 @@ class ViewController: UIViewController {
         addKeyboard(initialKey: 10, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
         addKeyboard(initialKey: 9, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
         addKeyboard(initialKey: 9, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+        
+        let scale: CGFloat = 1/4
+        let keyboardHeight = heightAboveBottomKeyboard * scale
 
-        scaleKeyboard(myKeyboard: keyboards[1], scale: 1/5, x: 15, y: 75, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[2], scale: 1/5, x: 145, y: 75, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[3], scale: 1/5, x: 275, y: 75, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[4], scale: 1/5, x: 415, y: 75, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[5], scale: 1/5, x: 575, y: 75, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[6], scale: 1/5, x: 15, y: 165, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[7], scale: 1/5, x: 145, y: 165, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[8], scale: 1/5, x: 275, y: 165, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[9], scale: 1/5, x: 415, y: 165, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[10], scale: 1/5, x: 575, y: 165, xCentered: false, yCentered: false)
+        for (index, keyboard) in keyboards[1...].enumerated() {
+            let width = keyboard.myKeyboardWidthMod * keyboardHeight/91
+            
+            if index < 5 {
+                topMiniKBs.append(keyboard)
+                topMKBWidth += width
+            } else {
+                bottomMiniKBs.append(keyboard)
+                bottomMKBWidth += width
+            }
+        }
+        
+        let topSeparator = (screenWidth - topMKBWidth) / 6
+        let bottomSeparator = (screenWidth - bottomMKBWidth) / 6
+        var nextTopX: CGFloat = 0
+        var nextBottomX: CGFloat = 0
+        
+        print(screenHeight)
+        print(heightAboveBottomKeyboard)
+        print(masterKeyboard.height)
+
+        let miniKBAreaHeightSeparator = (heightAboveBottomKeyboard - (2 * keyboardHeight) - 50) / 3
+        print(miniKBAreaHeightSeparator)
+        let firstY = 50 + miniKBAreaHeightSeparator
+        let secondY = firstY + keyboardHeight + miniKBAreaHeightSeparator
+        
+        for (index, keyboard) in keyboards[1...].enumerated() {
+            keyboard.scale = scale
+            let width = keyboard.myKeyboardWidthMod * keyboardHeight/91
+            if index < 5 {
+                if index == 0 {
+                    keyboard.frame = CGRect(x: topSeparator, y: firstY, width: width, height: keyboardHeight)
+                    nextTopX += keyboard.width + (2 * topSeparator)
+                } else {
+                    keyboard.frame = CGRect(x: nextTopX, y: firstY, width: width, height: keyboardHeight)
+                    nextTopX += keyboard.width + topSeparator
+                }
+            } else {
+                if index == 5 {
+                    keyboard.frame = CGRect(x: bottomSeparator, y: secondY, width: width, height: keyboardHeight)
+                    nextBottomX += keyboard.width + (2 * bottomSeparator)
+                } else {
+                    keyboard.frame = CGRect(x: nextBottomX, y: secondY, width: width, height: keyboardHeight)
+                    nextBottomX += keyboard.width + bottomSeparator
+                }
+            }
+            keyboard.addKeyConstraints(keys: keyboard.keys)
+        }
+        
+//        scaleKeyboard(myKeyboard: keyboards[1], scale: 1/4, x: 15, y: 65, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[2], scale: 1/4, x: 145, y: 65, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[3], scale: 1/4, x: 275, y: 65, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[4], scale: 1/4, x: 415, y: 65, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[5], scale: 1/4, x: 575, y: 65, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[6], scale: 1/4, x: 15, y: 130, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[7], scale: 1/4, x: 145, y: 130, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[8], scale: 1/4, x: 275, y: 130, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[9], scale: 1/4, x: 415, y: 130, xCentered: false, yCentered: false)
+//        scaleKeyboard(myKeyboard: keyboards[10], scale: 1/4, x: 575, y: 130, xCentered: false, yCentered: false)
 
         commonToneTriad(myKeyboard: keyboards[1], tonic: 0, root: 0, third: 4, fifth: 7, triadNumber: 1)
         commonToneTriad(myKeyboard: keyboards[2], tonic: 0, root: 0, third: 3, fifth: 7, triadNumber: 2)
@@ -64,8 +121,6 @@ class ViewController: UIViewController {
     @IBOutlet weak var notes: UIButton!
     @IBOutlet weak var keysOff: UIButton!
     @IBOutlet weak var add: UIButton!
-    
-    
     
     @IBAction func setOrRemoveHighlights(_ sender: UIButton) {
 //        print(sender.tag)
@@ -154,16 +209,18 @@ class ViewController: UIViewController {
         myKeyboard.scale = scale
         
         let keyboardHeight = heightAboveBottomKeyboard * scale
-        let centerYKeyboard = (heightAboveBottomKeyboard - keyboardHeight)/2
+        let keyboardWidth = myKeyboard.myKeyboardWidthMod * keyboardHeight/91
         
+        let centeredY = (heightAboveBottomKeyboard - keyboardHeight)/2
+        let centeredX = (screenWidth - keyboardWidth)/2
         if xCentered && yCentered {
-            myKeyboard.frame = CGRect(x: (screenWidth - myKeyboard.myKeyboardWidthMod * keyboardHeight/91)/2, y: centerYKeyboard, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
+            myKeyboard.frame = CGRect(x: centeredX, y: centeredY, width: keyboardWidth, height: keyboardHeight)
         } else if xCentered {
-            myKeyboard.frame = CGRect(x: (screenWidth - myKeyboard.myKeyboardWidthMod * keyboardHeight/91)/2, y: y, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
+            myKeyboard.frame = CGRect(x: centeredX, y: y, width: keyboardWidth, height: keyboardHeight)
         } else if yCentered {
-            myKeyboard.frame = CGRect(x: x, y: centerYKeyboard, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
+            myKeyboard.frame = CGRect(x: x, y: centeredY, width: keyboardWidth, height: keyboardHeight)
         } else {
-            myKeyboard.frame = CGRect(x: x, y: y, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
+            myKeyboard.frame = CGRect(x: x, y: y, width: keyboardWidth, height: keyboardHeight)
         }
         
         myKeyboard.addKeyConstraints(keys: myKeyboard.keys)
@@ -719,7 +776,7 @@ class ViewController: UIViewController {
         super.viewWillAppear(animated)
         
         // master keyboard (bottom keyboard)
-        addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 37, highlightLockKey: 12)
+        addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 25, highlightLockKey: 12)
         //        print(masterKeyboard.startingPitch)
     }
     
