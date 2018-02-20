@@ -13,6 +13,7 @@ import AudioKitUI
 class ViewController: UIViewController {
     
     @IBAction func add(_ sender: AnyObject) {
+
         addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
         addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
         addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 9, highlightLockKey: -1)
@@ -23,14 +24,69 @@ class ViewController: UIViewController {
         addKeyboard(initialKey: 10, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
         addKeyboard(initialKey: 9, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
         addKeyboard(initialKey: 9, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+
+        scaleKeyboard(myKeyboard: keyboards[1], scale: 1/5, x: 15, y: 75, xCentered: false, yCentered: false)
+        scaleKeyboard(myKeyboard: keyboards[2], scale: 1/5, x: 145, y: 75, xCentered: false, yCentered: false)
+        scaleKeyboard(myKeyboard: keyboards[3], scale: 1/5, x: 275, y: 75, xCentered: false, yCentered: false)
+        scaleKeyboard(myKeyboard: keyboards[4], scale: 1/5, x: 415, y: 75, xCentered: false, yCentered: false)
+        scaleKeyboard(myKeyboard: keyboards[5], scale: 1/5, x: 575, y: 75, xCentered: false, yCentered: false)
+        scaleKeyboard(myKeyboard: keyboards[6], scale: 1/5, x: 15, y: 165, xCentered: false, yCentered: false)
+        scaleKeyboard(myKeyboard: keyboards[7], scale: 1/5, x: 145, y: 165, xCentered: false, yCentered: false)
+        scaleKeyboard(myKeyboard: keyboards[8], scale: 1/5, x: 275, y: 165, xCentered: false, yCentered: false)
+        scaleKeyboard(myKeyboard: keyboards[9], scale: 1/5, x: 415, y: 165, xCentered: false, yCentered: false)
+        scaleKeyboard(myKeyboard: keyboards[10], scale: 1/5, x: 575, y: 165, xCentered: false, yCentered: false)
+
+        commonToneTriad(myKeyboard: keyboards[1], tonic: 0, root: 0, third: 4, fifth: 7, triadNumber: 1)
+        commonToneTriad(myKeyboard: keyboards[2], tonic: 0, root: 0, third: 3, fifth: 7, triadNumber: 2)
+        commonToneTriad(myKeyboard: keyboards[3], tonic: 0, root: 0, third: 4, fifth: 8, triadNumber: 3)
+        commonToneTriad(myKeyboard: keyboards[4], tonic: 0, root: 0, third: 3, fifth: 6, triadNumber: 4)
+        commonToneTriad(myKeyboard: keyboards[5], tonic: 3, root: 0, third: 3, fifth: 7, triadNumber: 5)
+        commonToneTriad(myKeyboard: keyboards[6], tonic: 3, root: 0, third: 3, fifth: 6, triadNumber: 6)
+        commonToneTriad(myKeyboard: keyboards[7], tonic: 4, root: 0, third: 4, fifth: 7, triadNumber: 7)
+        commonToneTriad(myKeyboard: keyboards[8], tonic: 6, root: 0, third: 3, fifth: 6, triadNumber: 8)
+        commonToneTriad(myKeyboard: keyboards[9], tonic: 7, root: 0, third: 4, fifth: 7, triadNumber: 9)
+        commonToneTriad(myKeyboard: keyboards[10], tonic: 7, root: 0, third: 3, fifth: 7, triadNumber: 10)
         
         keyboards[1...].forEach {addChordGestureRecognizers(myKeyboard: $0)}
+        backgroundView.layoutIfNeeded()
+
+        for keyboard in keyboards[1...] {
+            borderBezier(key1Num: 0, key2Num: 1, key3Num: keyboard.keys.count - 2, key4Num: keyboard.keys.count - 1, myKeyboard: keyboard)
+        }
     }
-    @IBAction func setOrRemoveHighlights(_ sender: AnyObject) {
+    
+    @IBOutlet weak var maj: UIButton!
+    @IBOutlet weak var min: UIButton!
+    @IBOutlet weak var aug: UIButton!
+    @IBOutlet weak var dim: UIButton!
+    @IBOutlet weak var sus4: UIButton!
+    @IBOutlet weak var sus2: UIButton!
+    @IBOutlet weak var notes: UIButton!
+    @IBOutlet weak var keysOff: UIButton!
+    @IBOutlet weak var add: UIButton!
+    
+    
+    
+    @IBAction func setOrRemoveHighlights(_ sender: UIButton) {
 //        print(sender.tag)
+        let buttons = [maj, min, aug, dim, sus4, sus2, notes, keysOff]
+        
         prevTapIndex = tapIndex
+        
+        if sender != add {
+            for button in buttons {
+                if button == sender {
+                    button?.isSelected = true
+                } else {
+                    button?.isSelected = false
+                }
+            }
+        }
+        
         if sender.tag == 200000 {
             tapIndex = -1
+        } else if sender.tag == 200001 {
+            sender.isEnabled = false
         } else {
             for key in masterKeys {
                 if key.holding {
@@ -57,33 +113,60 @@ class ViewController: UIViewController {
     var masterChordBorders = [CAShapeLayer]()
     var chordBorderColors: [UIColor] = [darkerYellow, lightPurple, darkerGreen, .orange, darkerBlue]
     
+    var screenWidth = CGFloat()
+    var screenHeight = CGFloat()
+    var heightAboveBottomKeyboard = CGFloat()
+    var masterHeight = CGFloat()
+    var masterWidth = CGFloat()
+    
     let engine = AudioEngine(waveform1: AKTable(.sawtooth), waveform2: AKTable(.square))
     
     func addKeyboard(initialKey: Int, startingOctave: Int, numberOfKeys: Int, highlightLockKey: Int) {
+        // add and set highlightLockKey
         let myKeyboard = Keyboard(initialKey: initialKey, startingOctave: startingOctave, numberOfKeys: numberOfKeys)
         myKeyboard.highlightKey = highlightLockKey
-        func tagAppendAndSort() {
-            myKeyboard.tag = keyboardIndex
-            //        print(myKeyboard.tag)
-            if keyboards.count < 8 {
-                keyboardIndex += 1
-            } else if keyboards.count == 8 {
-                keyboardIndex += 991
-            } else {
-                keyboardIndex += 101
-            }
-            if highlightLockKey >= 0 {
-                masterKeyboard = myKeyboard
-                masterKeyboard.addKeys(highlightLockKey: highlightLockKey)
-                keyboards.append(masterKeyboard)
-                backgroundView.addSubview(masterKeyboard)
-            } else {
-                myKeyboard.addKeys(highlightLockKey: highlightLockKey)
-                keyboards.append(myKeyboard)
-                backgroundView.addSubview(myKeyboard)
-            }
+        
+        // set tag, increment keyboardIndex
+        myKeyboard.tag = keyboardIndex
+        //        print(myKeyboard.tag)
+        if keyboards.count < 8 {
+            keyboardIndex += 1
+        } else if keyboards.count == 8 {
+            keyboardIndex += 991
+        } else {
+            keyboardIndex += 101
         }
-        tagAppendAndSort()
+        
+        // set masterKeyboard if needed, addKeys, append to keyboards and add subviews to backgroundView
+        if highlightLockKey >= 0 {
+            masterKeyboard = myKeyboard
+            masterKeyboard.addKeys(highlightLockKey: highlightLockKey)
+            keyboards.append(masterKeyboard)
+            backgroundView.addSubview(masterKeyboard)
+        } else {
+            myKeyboard.addKeys(highlightLockKey: highlightLockKey)
+            keyboards.append(myKeyboard)
+            backgroundView.addSubview(myKeyboard)
+        }
+    }
+    
+    func scaleKeyboard(myKeyboard: Keyboard, scale: CGFloat, x: CGFloat, y: CGFloat, xCentered: Bool, yCentered: Bool) {
+        myKeyboard.scale = scale
+        
+        let keyboardHeight = heightAboveBottomKeyboard * scale
+        let centerYKeyboard = (heightAboveBottomKeyboard - keyboardHeight)/2
+        
+        if xCentered && yCentered {
+            myKeyboard.frame = CGRect(x: (screenWidth - myKeyboard.myKeyboardWidthMod * keyboardHeight/91)/2, y: centerYKeyboard, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
+        } else if xCentered {
+            myKeyboard.frame = CGRect(x: (screenWidth - myKeyboard.myKeyboardWidthMod * keyboardHeight/91)/2, y: y, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
+        } else if yCentered {
+            myKeyboard.frame = CGRect(x: x, y: centerYKeyboard, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
+        } else {
+            myKeyboard.frame = CGRect(x: x, y: y, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
+        }
+        
+        myKeyboard.addKeyConstraints(keys: myKeyboard.keys)
     }
     
     @objc func handleTap(_ sender: UITapGestureRecognizer) {
@@ -122,15 +205,6 @@ class ViewController: UIViewController {
                 }
                 myTag = myTagString.slicing(from: 3, length: length)!.int!
             }
-            
-//            if sender.state == .began {
-//                print("tag is \(tag)")
-//                print("tag digits are \(digits)")
-//                print("myTagCount is \(myTagCount)")
-//                print("myTagString is \(myTagString)")
-//                print("myKeyboardTag is \(myKeyboardTag)")
-//                print("myTag is \(myTag)")
-//            }
             
             let unison = 0, min2nd = 1, maj2nd = 2, min3rd = 3, maj3rd = 4, P4th = 5, tritone = 6, P5th = 7, min6th = 8, maj6th = 9, min7th = 10, maj7th = 11, octave = 12
             let simpleIntervals = [unison, min2nd, maj2nd, min3rd, maj3rd, P4th, tritone, P5th, min6th, maj6th, min7th, maj7th, octave]
@@ -236,15 +310,15 @@ class ViewController: UIViewController {
                     myRoot.playCount -= 1
                 } else if tapIndex > 0 {
                     if myRoot.wasHoldingWhenSwitched {
-                        print("was holding")
+//                        print("was holding")
                         if prevTapIndex == 0 {
-                            print("was zero")
+//                            print("was zero")
                             print(prevTapIndex)
                             highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
                             myRoot.playCount -= 1
                             myRoot.wasHoldingWhenSwitched = false
                         } else {
-                            print("was \(prevTapIndex)")
+//                            print("was \(prevTapIndex)")
                             if myRoot.prevChordIndex == 0 || myRoot.prevChordIndex == prevTapIndex {
                                 toggleChordShape(triadType: prevTapIndex, addRemove: false)
                             } else {
@@ -255,7 +329,7 @@ class ViewController: UIViewController {
                         }
                         
                     } else {
-                        print("Was not holding")
+//                        print("Was not holding")
                         toggleChordShape(triadType: tapIndex, addRemove: false)
                     }
                     ifNotHolding(note: my3rd, midiNote: thirdNote)
@@ -643,58 +717,19 @@ class ViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        
+        // master keyboard (bottom keyboard)
+        addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 37, highlightLockKey: 12)
+        //        print(masterKeyboard.startingPitch)
     }
     
     override func viewWillLayoutSubviews() {
-        let screenWidth = view.width
-        let screenHeight = view.height
-        
-        let theHeight = screenHeight
-        print(theHeight)
-//        func addKeyboard(initialKey: Int, startingOctave: Int, numberOfKeys: Int, highlightLockKey: Int) {
-//            let myKeyboard = Keyboard(initialKey: initialKey, startingOctave: startingOctave, numberOfKeys: numberOfKeys)
-//            myKeyboard.highlightKey = highlightLockKey
-//            func tagAppendAndSort() {
-//                myKeyboard.tag = keyboardIndex
-//                //        print(myKeyboard.tag)
-//                if keyboards.count < 8 {
-//                    keyboardIndex += 1
-//                } else if keyboards.count == 8 {
-//                    keyboardIndex += 991
-//                } else {
-//                    keyboardIndex += 101
-//                }
-//                if highlightLockKey >= 0 {
-//                    masterKeyboard = myKeyboard
-//                    masterKeyboard.addKeys(highlightLockKey: highlightLockKey)
-//                    keyboards.append(masterKeyboard)
-//                    backgroundView.addSubview(masterKeyboard)
-//                } else {
-//                    myKeyboard.addKeys(highlightLockKey: highlightLockKey)
-//                    keyboards.append(myKeyboard)
-//                    backgroundView.addSubview(myKeyboard)
-//                }
-//            }
-//            tagAppendAndSort()
-//        }
+        screenWidth = ViewController.uiWidth
+        screenHeight = ViewController.uiHeight
         
         view.addSubview(backgroundView)
         backgroundView.frame = CGRect(x: 0.0, y: 0.0, width: screenWidth, height: screenHeight)
         view.sendSubview(toBack: backgroundView)
-        
-        addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 37, highlightLockKey: 12)
-        //        print(masterKeyboard.startingPitch)
-//        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
-//        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
-//        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 9, highlightLockKey: -1)
-//        addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
-//        addKeyboard(initialKey: 1, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
-//        addKeyboard(initialKey: 1, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
-//        addKeyboard(initialKey: 12, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
-//        addKeyboard(initialKey: 10, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
-//        addKeyboard(initialKey: 9, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
-//        addKeyboard(initialKey: 9, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
         
         addTapGestureRecognizers(myKeyboard: masterKeyboard)
         
@@ -709,59 +744,15 @@ class ViewController: UIViewController {
             masterKeyboard.keys[masterKeyboard.highlightKey].defaultBackgroundColor = tonicHighlightColor
         }
         
-        func scaleKeyboard(myKeyboard: Keyboard, scale: CGFloat, x: CGFloat, y: CGFloat, xCentered: Bool, yCentered: Bool) {
-            myKeyboard.scale = scale
-            
-            let heightAboveBottomKeyboard = screenHeight - masterKeyboard.height
-            let keyboardHeight = heightAboveBottomKeyboard * scale
-            let centerYKeyboard = (heightAboveBottomKeyboard - keyboardHeight)/2
-            
-            if xCentered && yCentered {
-                myKeyboard.frame = CGRect(x: (screenWidth - myKeyboard.myKeyboardWidthMod * keyboardHeight/91)/2, y: centerYKeyboard, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
-            } else if xCentered {
-                myKeyboard.frame = CGRect(x: (screenWidth - myKeyboard.myKeyboardWidthMod * keyboardHeight/91)/2, y: y, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
-            } else if yCentered {
-                myKeyboard.frame = CGRect(x: x, y: centerYKeyboard, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
-            } else {
-                myKeyboard.frame = CGRect(x: x, y: y, width: myKeyboard.myKeyboardWidthMod * keyboardHeight/91, height: keyboardHeight)
-            }
-            
-            myKeyboard.addKeyConstraints(keys: myKeyboard.keys)
-        }
-        
         masterKeys = masterKeyboard.keys
         masterHighlightKey = masterKeyboard.highlightKey
-        
-        scaleKeyboard(myKeyboard: keyboards[1], scale: 1/5, x: 15, y: 75, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[2], scale: 1/5, x: 145, y: 75, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[3], scale: 1/5, x: 275, y: 75, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[4], scale: 1/5, x: 415, y: 75, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[5], scale: 1/5, x: 575, y: 75, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[6], scale: 1/5, x: 15, y: 165, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[7], scale: 1/5, x: 145, y: 165, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[8], scale: 1/5, x: 275, y: 165, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[9], scale: 1/5, x: 415, y: 165, xCentered: false, yCentered: false)
-        scaleKeyboard(myKeyboard: keyboards[10], scale: 1/5, x: 575, y: 165, xCentered: false, yCentered: false)
-
-        commonToneTriad(myKeyboard: keyboards[1], tonic: 0, root: 0, third: 4, fifth: 7, triadNumber: 1)
-        commonToneTriad(myKeyboard: keyboards[2], tonic: 0, root: 0, third: 3, fifth: 7, triadNumber: 2)
-        commonToneTriad(myKeyboard: keyboards[3], tonic: 0, root: 0, third: 4, fifth: 8, triadNumber: 3)
-        commonToneTriad(myKeyboard: keyboards[4], tonic: 0, root: 0, third: 3, fifth: 6, triadNumber: 4)
-        commonToneTriad(myKeyboard: keyboards[5], tonic: 3, root: 0, third: 3, fifth: 7, triadNumber: 5)
-        commonToneTriad(myKeyboard: keyboards[6], tonic: 3, root: 0, third: 3, fifth: 6, triadNumber: 6)
-        commonToneTriad(myKeyboard: keyboards[7], tonic: 4, root: 0, third: 4, fifth: 7, triadNumber: 7)
-        commonToneTriad(myKeyboard: keyboards[8], tonic: 6, root: 0, third: 3, fifth: 6, triadNumber: 8)
-        commonToneTriad(myKeyboard: keyboards[9], tonic: 7, root: 0, third: 4, fifth: 7, triadNumber: 9)
-        commonToneTriad(myKeyboard: keyboards[10], tonic: 7, root: 0, third: 3, fifth: 7, triadNumber: 10)
-        
-//        backgroundView.createLine(key1: masterKeyboard.keys[12], key2: Keyboard.keys[2], array: masterKeyboard.keys)
-//        print(masterKeyboard.highlightPitch)
+        masterWidth = masterKeyboard.width
+        masterHeight = masterKeyboard.height
+        heightAboveBottomKeyboard = screenHeight - masterKeyboard.height
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        for keyboard in keyboards[1...] {
-            borderBezier(key1Num: 0, key2Num: 1, key3Num: keyboard.keys.count - 2, key4Num: keyboard.keys.count - 1, myKeyboard: keyboard)
-        }
+
     }
     
     override var shouldAutorotate: Bool {

@@ -74,7 +74,7 @@
                                     <action selector="setOrRemoveHighlights:" destination="BYZ-38-t0r" eventType="touchUpInside" id="n2f-8X-I94"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" tag="100000" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T3b-r9-573">
+                            <button opaque="NO" tag="200001" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T3b-r9-573">
                                 <rect key="frame" x="391" y="20" width="30" height="30"/>
                                 <state key="normal" title="add"/>
                                 <connections>
@@ -107,6 +107,17 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <connections>
+                        <outlet property="add" destination="T3b-r9-573" id="KD7-uQ-VXR"/>
+                        <outlet property="aug" destination="DGc-lO-GEX" id="9Vo-Fn-CpB"/>
+                        <outlet property="dim" destination="lZM-zb-FZC" id="qJd-50-noD"/>
+                        <outlet property="keysOff" destination="YSu-YT-Ckf" id="hOX-4g-Ig5"/>
+                        <outlet property="maj" destination="a26-YB-H7K" id="UWL-sR-O69"/>
+                        <outlet property="min" destination="miH-0f-TxE" id="hyQ-5e-8Ab"/>
+                        <outlet property="notes" destination="i3G-Wh-atL" id="VmA-I2-VZF"/>
+                        <outlet property="sus2" destination="gH7-nP-jwa" id="pCd-bw-gFe"/>
+                        <outlet property="sus4" destination="h2Z-lz-7ye" id="PYM-Bk-kUd"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
