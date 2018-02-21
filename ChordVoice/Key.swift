@@ -11,7 +11,7 @@ import UIKit
 import AudioKit
 import AudioKitUI
 
-class Key: UIView {
+@IBDesignable class Key: UIView {
     var keyType = 0
     /// 1 is A, 2 is A#/Bb, 3 is B ... 12 is G#/Ab
     

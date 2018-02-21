@@ -59,6 +59,15 @@ func printColorName(color: UIColor) {
         print("Color is orange")
     case UIColor.yellow:
         print("Color is yellow")
+    case darkerYellow:
+        print("Color is darkerYellow")
+    case darkerGreen:
+        print("Color is darkerGreen")
+    case darkerBlue:
+        print("Color is darkerBlue")
+    case lightPurple:
+        print("Color is lightPurple")
+
     default:
         ()
     }

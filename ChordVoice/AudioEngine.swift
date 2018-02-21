@@ -53,7 +53,7 @@ class AudioEngine {
         case 1:
             bank1.play(noteNumber: note, velocity: 80, frequency: note.midiNoteToFrequency())
         case 2:
-            bank2.play(noteNumber: note, velocity: 80, frequency: note.midiNoteToFrequency())
+            bank2.play(noteNumber: note, velocity: 60, frequency: note.midiNoteToFrequency())
         default:
             ()
         }

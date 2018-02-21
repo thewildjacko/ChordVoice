@@ -18,92 +18,73 @@
                         <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" tag="100003" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DGc-lO-GEX">
-                                <rect key="frame" x="128" y="20" width="30" height="30"/>
+                            <button opaque="NO" tag="100003" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DGc-lO-GEX">
+                                <rect key="frame" x="20" y="58" width="30" height="30"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <state key="normal" title="Aug"/>
                                 <connections>
                                     <action selector="setOrRemoveHighlights:" destination="BYZ-38-t0r" eventType="touchUpInside" id="sBS-4p-eQI"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" tag="100005" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h2Z-lz-7ye">
-                                <rect key="frame" x="222" y="20" width="34" height="30"/>
+                            <button opaque="NO" tag="100005" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h2Z-lz-7ye">
+                                <rect key="frame" x="20" y="96" width="34" height="30"/>
                                 <state key="normal" title="sus4"/>
                                 <connections>
                                     <action selector="setOrRemoveHighlights:" destination="BYZ-38-t0r" eventType="touchUpInside" id="uth-71-8vY"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" tag="100006" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gH7-nP-jwa">
-                                <rect key="frame" x="273" y="20" width="33" height="30"/>
-                                <state key="normal" title="sus2"/>
-                                <connections>
-                                    <action selector="setOrRemoveHighlights:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2zh-fm-juC"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" tag="100000" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i3G-Wh-atL">
-                                <rect key="frame" x="323" y="20" width="39" height="30"/>
-                                <state key="normal" title="notes"/>
-                                <connections>
-                                    <action selector="setOrRemoveHighlights:" destination="BYZ-38-t0r" eventType="touchUpInside" id="0RW-kN-Yec"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" tag="200000" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YSu-YT-Ckf">
-                                <rect key="frame" x="578" y="20" width="55" height="30"/>
-                                <state key="normal" title="keys off"/>
-                                <connections>
-                                    <action selector="setOrRemoveHighlights:" destination="BYZ-38-t0r" eventType="touchUpInside" id="skY-h2-SgB"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" tag="100004" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lZM-zb-FZC">
-                                <rect key="frame" x="175" y="20" width="30" height="30"/>
-                                <state key="normal" title="dim"/>
-                                <connections>
-                                    <action selector="setOrRemoveHighlights:" destination="BYZ-38-t0r" eventType="touchUpInside" id="qMQ-zy-Hai"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" tag="100001" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a26-YB-H7K">
-                                <rect key="frame" x="34" y="20" width="30" height="30"/>
+                            <button opaque="NO" tag="100001" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a26-YB-H7K">
+                                <rect key="frame" x="20" y="20" width="30" height="30"/>
                                 <state key="normal" title="Maj"/>
                                 <connections>
                                     <action selector="setOrRemoveHighlights:" destination="BYZ-38-t0r" eventType="touchUpInside" id="M5M-IZ-q4z"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" tag="100002" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="miH-0f-TxE">
-                                <rect key="frame" x="81" y="20" width="30" height="30"/>
+                            <button opaque="NO" tag="200000" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="T3b-r9-573">
+                                <rect key="frame" x="20" y="134" width="30" height="30"/>
+                                <state key="normal" title="add"/>
+                                <connections>
+                                    <action selector="toggleMKBs:" destination="BYZ-38-t0r" eventType="touchUpInside" id="MWj-Ph-lWW"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" tag="100006" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gH7-nP-jwa">
+                                <rect key="frame" x="90" y="96" width="33" height="30"/>
+                                <state key="normal" title="sus2"/>
+                                <connections>
+                                    <action selector="setOrRemoveHighlights:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2zh-fm-juC"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" tag="100004" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lZM-zb-FZC">
+                                <rect key="frame" x="90" y="58" width="30" height="30"/>
+                                <state key="normal" title="dim"/>
+                                <connections>
+                                    <action selector="setOrRemoveHighlights:" destination="BYZ-38-t0r" eventType="touchUpInside" id="qMQ-zy-Hai"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" tag="100002" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="miH-0f-TxE">
+                                <rect key="frame" x="90" y="20" width="30" height="30"/>
                                 <state key="normal" title="min"/>
                                 <connections>
                                     <action selector="setOrRemoveHighlights:" destination="BYZ-38-t0r" eventType="touchUpInside" id="n2f-8X-I94"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" tag="200001" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T3b-r9-573">
-                                <rect key="frame" x="391" y="20" width="30" height="30"/>
-                                <state key="normal" title="add"/>
-                                <connections>
-                                    <action selector="add:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Lhx-Of-gt8"/>
-                                    <action selector="setOrRemoveHighlights:" destination="BYZ-38-t0r" eventType="touchUpInside" id="vxf-he-SzD"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="a26-YB-H7K" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="34" id="4JZ-hr-bIY"/>
-                            <constraint firstItem="T3b-r9-573" firstAttribute="leading" secondItem="i3G-Wh-atL" secondAttribute="trailing" constant="29" id="5ub-V7-Yeh"/>
-                            <constraint firstItem="i3G-Wh-atL" firstAttribute="leading" secondItem="gH7-nP-jwa" secondAttribute="trailing" constant="17" id="AUS-Dr-GAz"/>
-                            <constraint firstItem="T3b-r9-573" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="Age-Yf-ENK"/>
-                            <constraint firstItem="DGc-lO-GEX" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="Bl4-wN-ehe"/>
-                            <constraint firstItem="gH7-nP-jwa" firstAttribute="leading" secondItem="h2Z-lz-7ye" secondAttribute="trailing" constant="17" id="Cv4-GE-IsV"/>
-                            <constraint firstItem="a26-YB-H7K" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="K3d-0W-iYf"/>
-                            <constraint firstItem="lZM-zb-FZC" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="K4N-OP-PoS"/>
-                            <constraint firstItem="h2Z-lz-7ye" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="RZx-Vm-SxE"/>
-                            <constraint firstItem="YSu-YT-Ckf" firstAttribute="leading" secondItem="T3b-r9-573" secondAttribute="trailing" constant="157" id="UVD-Xy-I5N"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="YSu-YT-Ckf" secondAttribute="trailing" constant="34" id="a5w-nh-RVH"/>
-                            <constraint firstItem="h2Z-lz-7ye" firstAttribute="leading" secondItem="lZM-zb-FZC" secondAttribute="trailing" constant="17" id="dav-fa-kVe"/>
-                            <constraint firstItem="YSu-YT-Ckf" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="h6c-FY-hKT"/>
-                            <constraint firstItem="gH7-nP-jwa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="hhW-TI-PhC"/>
-                            <constraint firstItem="lZM-zb-FZC" firstAttribute="leading" secondItem="DGc-lO-GEX" secondAttribute="trailing" constant="17" id="hli-7J-1fg"/>
-                            <constraint firstItem="DGc-lO-GEX" firstAttribute="leading" secondItem="miH-0f-TxE" secondAttribute="trailing" constant="17" id="iyy-7H-vqS"/>
-                            <constraint firstItem="miH-0f-TxE" firstAttribute="leading" secondItem="a26-YB-H7K" secondAttribute="trailing" constant="17" id="oAn-KD-1t3"/>
-                            <constraint firstItem="i3G-Wh-atL" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="v5H-eb-xEN"/>
-                            <constraint firstItem="miH-0f-TxE" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="ynR-we-XdC"/>
+                            <constraint firstItem="gH7-nP-jwa" firstAttribute="leading" secondItem="h2Z-lz-7ye" secondAttribute="trailing" constant="36" id="069-Cw-tXi"/>
+                            <constraint firstItem="T3b-r9-573" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="0b0-pb-Roy"/>
+                            <constraint firstItem="T3b-r9-573" firstAttribute="top" secondItem="h2Z-lz-7ye" secondAttribute="bottom" constant="8" id="1tu-gW-cqr"/>
+                            <constraint firstItem="lZM-zb-FZC" firstAttribute="top" secondItem="miH-0f-TxE" secondAttribute="bottom" constant="8" id="4Jx-nj-rnK"/>
+                            <constraint firstItem="gH7-nP-jwa" firstAttribute="top" secondItem="lZM-zb-FZC" secondAttribute="bottom" constant="8" id="4PX-xk-32Q"/>
+                            <constraint firstItem="miH-0f-TxE" firstAttribute="leading" secondItem="a26-YB-H7K" secondAttribute="trailing" constant="40" id="4me-vV-fde"/>
+                            <constraint firstItem="a26-YB-H7K" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="AI5-tG-c4i"/>
+                            <constraint firstItem="a26-YB-H7K" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="E3U-cY-z60"/>
+                            <constraint firstItem="lZM-zb-FZC" firstAttribute="leading" secondItem="DGc-lO-GEX" secondAttribute="trailing" constant="40" id="FL1-RT-FsQ"/>
+                            <constraint firstItem="h2Z-lz-7ye" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="UJb-hu-2S5"/>
+                            <constraint firstItem="h2Z-lz-7ye" firstAttribute="top" secondItem="DGc-lO-GEX" secondAttribute="bottom" constant="8" id="dLt-Kk-zJT"/>
+                            <constraint firstItem="DGc-lO-GEX" firstAttribute="top" secondItem="a26-YB-H7K" secondAttribute="bottom" constant="8" id="f9Q-B0-Lut"/>
+                            <constraint firstItem="DGc-lO-GEX" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="fuJ-1k-v94"/>
+                            <constraint firstItem="miH-0f-TxE" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="jPV-VX-0rP"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
@@ -111,16 +92,15 @@
                         <outlet property="add" destination="T3b-r9-573" id="KD7-uQ-VXR"/>
                         <outlet property="aug" destination="DGc-lO-GEX" id="9Vo-Fn-CpB"/>
                         <outlet property="dim" destination="lZM-zb-FZC" id="qJd-50-noD"/>
-                        <outlet property="keysOff" destination="YSu-YT-Ckf" id="hOX-4g-Ig5"/>
                         <outlet property="maj" destination="a26-YB-H7K" id="UWL-sR-O69"/>
                         <outlet property="min" destination="miH-0f-TxE" id="hyQ-5e-8Ab"/>
-                        <outlet property="notes" destination="i3G-Wh-atL" id="VmA-I2-VZF"/>
                         <outlet property="sus2" destination="gH7-nP-jwa" id="pCd-bw-gFe"/>
                         <outlet property="sus4" destination="h2Z-lz-7ye" id="PYM-Bk-kUd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="34.632683658170919" y="16.800000000000001"/>
         </scene>
     </scenes>
 </document>

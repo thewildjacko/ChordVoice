@@ -10,7 +10,7 @@
 
 import UIKit
 
-class BackgroundView: UIView {
+@IBDesignable class BackgroundView: UIView {
 
     var path: UIBezierPath!
     

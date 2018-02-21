@@ -11,7 +11,7 @@ import UIKit
 import AudioKit
 import AudioKitUI
 
-class Keyboard: UIView {
+@IBDesignable class Keyboard: UIView {
     
     let initialKey: Int
     let numberOfKeys: Int
@@ -231,7 +231,7 @@ class Keyboard: UIView {
         
         NSLayoutConstraint.activate(myLayoutConstraints)
     }
-    
+        
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
