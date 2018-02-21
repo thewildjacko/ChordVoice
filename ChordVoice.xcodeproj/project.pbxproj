@@ -82,6 +82,7 @@
 		1D9476512028BB2D002029AE /* HighlightKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D9476502028BB2D002029AE /* HighlightKeys.swift */; };
 		1D95ABBB202A31F700E594D1 /* CommonToneKeyboards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D95ABBA202A31F700E594D1 /* CommonToneKeyboards.swift */; };
 		1DC26431202F7891000DCE18 /* Outline.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 1DC26430202F7891000DCE18 /* Outline.rtf */; };
+		1DFA1AA0203E0E45007E169B /* MBFingerTipWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DFA1A9E203E0E44007E169B /* MBFingerTipWindow.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -175,6 +176,9 @@
 		1D9476502028BB2D002029AE /* HighlightKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightKeys.swift; sourceTree = "<group>"; };
 		1D95ABBA202A31F700E594D1 /* CommonToneKeyboards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonToneKeyboards.swift; sourceTree = "<group>"; };
 		1DC26430202F7891000DCE18 /* Outline.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Outline.rtf; sourceTree = "<group>"; };
+		1DFA1A9D203E0E43007E169B /* ChordVoice-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ChordVoice-Bridging-Header.h"; sourceTree = "<group>"; };
+		1DFA1A9E203E0E44007E169B /* MBFingerTipWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBFingerTipWindow.m; sourceTree = "<group>"; };
+		1DFA1A9F203E0E44007E169B /* MBFingerTipWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBFingerTipWindow.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,6 +220,8 @@
 				1DC26430202F7891000DCE18 /* Outline.rtf */,
 				1D1660A62027A3D7002BB542 /* AudioEngine.swift */,
 				1D1660A82027A3D7002BB542 /* Keyboard.swift */,
+				1DFA1A9F203E0E44007E169B /* MBFingerTipWindow.h */,
+				1DFA1A9E203E0E44007E169B /* MBFingerTipWindow.m */,
 				1D1660A92027A3D7002BB542 /* Key.swift */,
 				1D1660A72027A3D7002BB542 /* BackgroundView.swift */,
 				1D9476502028BB2D002029AE /* HighlightKeys.swift */,
@@ -226,6 +232,7 @@
 				1D16609B2027A381002BB542 /* Assets.xcassets */,
 				1D16609D2027A381002BB542 /* LaunchScreen.storyboard */,
 				1D1660A02027A381002BB542 /* Info.plist */,
+				1DFA1A9D203E0E43007E169B /* ChordVoice-Bridging-Header.h */,
 			);
 			path = ChordVoice;
 			sourceTree = "<group>";
@@ -401,6 +408,7 @@
 				TargetAttributes = {
 					1D1660902027A381002BB542 = {
 						CreatedOnToolsVersion = 9.2;
+						LastSwiftMigration = 0920;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -479,6 +487,7 @@
 				1D337D2520323DC90016DE24 /* UserDefaultsExtensions.swift in Sources */,
 				1D337D3120323DC90016DE24 /* IntExtensions.swift in Sources */,
 				1D337D2320323DC90016DE24 /* URLExtensions.swift in Sources */,
+				1DFA1AA0203E0E45007E169B /* MBFingerTipWindow.m in Sources */,
 				1D337D4020323DC90016DE24 /* UINavigationBarExtensions.swift in Sources */,
 				1D337D4A20323DC90016DE24 /* UITextFieldExtensions.swift in Sources */,
 				1D337D3520323DC90016DE24 /* StringExtensions.swift in Sources */,
@@ -645,6 +654,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = C359E2V4B3;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -657,6 +667,8 @@
 				"OTHER_LDFLAGS[sdk=iphonesimulator11.2]" = "-lstdc++";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jakesmolowe.ChordVoice;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ChordVoice/ChordVoice-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -666,6 +678,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = C359E2V4B3;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -678,6 +691,7 @@
 				"OTHER_LDFLAGS[sdk=iphonesimulator*]" = "-lstdc++";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jakesmolowe.ChordVoice;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ChordVoice/ChordVoice-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

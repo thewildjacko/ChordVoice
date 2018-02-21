@@ -11,7 +11,6 @@ import AudioKit
 import AudioKitUI
 
 class ViewController: UIViewController {
-    
     var topMiniKBs = [Keyboard]()
     var topMKBWidth = CGFloat()
     var bottomMiniKBs = [Keyboard]()
@@ -29,16 +28,48 @@ class ViewController: UIViewController {
     var buttons = [UIButton]()
     
     func populateButtons() {
-        buttons += [maj, min, aug, dim, sus4, sus2]
+        buttons += [maj, min, aug, dim, sus4, sus2, add]
         for button in buttons {
-            button.backgroundColor = .red
+//            button.backgroundRect(forBounds: button.bounds)
+            button.layer.masksToBounds = true
+            button.borderWidth = 3
+            
+            button.setTitleColor(.white, for: UIControlState.normal)
+            button.setTitleColor(.black, for: UIControlState.selected)
+            button.setTitleColor(.black, for: UIControlState.highlighted)
+            setButtonBackgroundColor(button: button, color: .darkGray, state: UIControlState.normal)
+            setButtonBackgroundColor(button: button, color: .green, state: UIControlState.selected)
+            setButtonBackgroundColor(button: button, color: .green, state: UIControlState.highlighted)
+            
+            button.contentEdgeInsets = UIEdgeInsetsMake(5,5,5,5)
+            switch button {
+            case maj:
+                button.borderColor = darkerYellow
+            case min:
+                button.borderColor = darkerBlue
+            case aug:
+                button.borderColor = orange
+            case dim:
+                button.borderColor = lightPurple
+            case sus4:
+                button.borderColor = processCyan
+            case sus2:
+                button.borderColor = processMagenta
+            case add:
+                button.borderColor = .green
+            default:
+                ()
+            }
         }
     }
     
     var selectCount = 0
     
-    @IBAction func toggleMKBs(_ sender: UIButton) {        
+    @IBAction func toggleMKBs(_ sender: UIButton) {
+        
         if addOrRemoveMKBs == true {
+            add.borderColor = UIColor.blend(.red, with: .white)
+
             addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
             addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
             addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 9, highlightLockKey: -1)
@@ -65,30 +96,31 @@ class ViewController: UIViewController {
                 }
             }
             
-            let topSeparator = (screenWidth - topMKBWidth - 145) / 6
-            let bottomSeparator = (screenWidth - bottomMKBWidth - 145) / 6
+            let miniKBAreaLeftEdge = min.x + min.width
+            let topSeparator = (screenWidth - topMKBWidth - miniKBAreaLeftEdge) / 6
+            let bottomSeparator = (screenWidth - bottomMKBWidth - miniKBAreaLeftEdge) / 6
             var nextTopX: CGFloat = 0
             var nextBottomX: CGFloat = 0
             
             let miniKBAreaHeightSeparator = (heightAboveBottomKeyboard - (2 * keyboardHeight)) / 3
-            let firstY = miniKBAreaHeightSeparator
-            let secondY = firstY + keyboardHeight + miniKBAreaHeightSeparator
+            let firstY = miniKBAreaHeightSeparator * 2
+            let secondY = firstY + keyboardHeight + miniKBAreaHeightSeparator/2
             
             for (index, keyboard) in keyboards[1...].enumerated() {
                 keyboard.scale = scale
                 let width = keyboard.myKeyboardWidthMod * keyboardHeight/91
                 if index < 5 {
                     if index == 0 {
-                        keyboard.frame = CGRect(x: topSeparator + 145, y: firstY, width: width, height: keyboardHeight)
-                        nextTopX += keyboard.width + (2 * topSeparator + 145)
+                        keyboard.frame = CGRect(x: topSeparator + miniKBAreaLeftEdge, y: firstY, width: width, height: keyboardHeight)
+                        nextTopX += keyboard.width + (2 * topSeparator + miniKBAreaLeftEdge)
                     } else {
                         keyboard.frame = CGRect(x: nextTopX, y: firstY, width: width, height: keyboardHeight)
                         nextTopX += keyboard.width + topSeparator
                     }
                 } else {
                     if index == 5 {
-                        keyboard.frame = CGRect(x: bottomSeparator + 145, y: secondY, width: width, height: keyboardHeight)
-                        nextBottomX += keyboard.width + (2 * bottomSeparator + 145)
+                        keyboard.frame = CGRect(x: bottomSeparator + miniKBAreaLeftEdge, y: secondY, width: width, height: keyboardHeight)
+                        nextBottomX += keyboard.width + (2 * bottomSeparator + miniKBAreaLeftEdge)
                     } else {
                         keyboard.frame = CGRect(x: nextBottomX, y: secondY, width: width, height: keyboardHeight)
                         nextBottomX += keyboard.width + bottomSeparator
@@ -131,6 +163,7 @@ class ViewController: UIViewController {
                 masterChordBorders.removeAll()
                 backgroundView.layoutIfNeeded()
             }
+            add.borderColor = .green
             add.setTitle("add", for: UIControlState.normal)
             addOrRemoveMKBs = true
         }
@@ -146,15 +179,18 @@ class ViewController: UIViewController {
             if button == sender {
                 if button.isSelected == true {
                     button.isSelected = false
+                    button.borderWidth = 3
                     tapIndex = 0
                     selectCount -= 1
                 } else {
                     button.isSelected = true
+                    button.borderWidth = 4
                     selectCount += 1
                 }
             } else {
                 if button.isSelected == true {
                     button.isSelected = false
+                    button.borderWidth = 3
                     selectCount -= 1
                 }
             }
@@ -807,11 +843,15 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        populateButtons()
+        view.backgroundColor = UIColor.blend(.darkGray, with: .black)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        if let app = UIApplication.shared.delegate as? AppDelegate, let window = app.window as? MBFingerTipWindow {
+            window.alwaysShowTouches = true
+        }
         
         // master keyboard (bottom keyboard)
         addKeyboard(initialKey: 4, startingOctave: 2, numberOfKeys: 25, highlightLockKey: 12)
@@ -848,6 +888,7 @@ class ViewController: UIViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
+        populateButtons()
 //        masterKeyboard.prepareForInterfaceBuilder()
 //        for key in masterKeys {
 //            key.prepareForInterfaceBuilder()

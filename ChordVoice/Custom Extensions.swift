@@ -76,7 +76,7 @@ func printColorName(color: UIColor) {
 // Math
 
 extension CGFloat {
-    func toRadians() -> CGFloat {
+    public func toRadians() -> CGFloat {
         return self * .pi / 180.0
     }
 }
@@ -152,4 +152,40 @@ extension ViewController {
         #endif
     }
     #endif
+}
+
+// UIImage
+
+public func setButtonBackgroundColor(button: UIButton, color: UIColor, state: UIControlState) {
+    let background = UIImage().imageWithColor(color: color)
+    button.setBackgroundImage(background, for: state)
+}
+
+extension UIImage {
+    
+    public func imageWithColor(color:UIColor?) -> UIImage! {
+        
+        let rect = CGRect(x: 0.0, y: 0.0, width: 1.0, height: 1.0);
+        
+        UIGraphicsBeginImageContextWithOptions(rect.size, false, 0)
+        
+        let context = UIGraphicsGetCurrentContext();
+        
+        if let color = color {
+            
+            color.setFill()
+        }
+        else {
+            
+            UIColor.white.setFill()
+        }
+        
+        context!.fill(rect);
+        
+        let image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        return image;
+    }
+    
 }
