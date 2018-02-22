@@ -173,8 +173,6 @@ class ViewController: UIViewController {
 //        let buttons = [maj, min, aug, dim, sus4, sus2]
 //        print(sender.tag)
         
-        prevTapIndex = tapIndex
-        
         for button in buttons {
             if button == sender {
                 if button.isSelected == true {
@@ -183,12 +181,14 @@ class ViewController: UIViewController {
                     tapIndex = 0
                     selectCount -= 1
                 } else {
+                    prevTapIndex = tapIndex
                     button.isSelected = true
                     button.borderWidth = 4
                     selectCount += 1
                 }
             } else {
                 if button.isSelected == true {
+                    prevTapIndex = tapIndex
                     button.isSelected = false
                     button.borderWidth = 3
                     selectCount -= 1
@@ -199,9 +199,6 @@ class ViewController: UIViewController {
         for key in masterKeys {
             if key.holding {
                 key.wasHoldingWhenSwitched = true
-                if key.prevChordIndex == 0 || key.prevChordIndex == prevTapIndex || (tapIndex == 0 && prevTapIndex != 0) {
-                    key.prevChordIndex = prevTapIndex
-                }
             }
         }
         if selectCount == 1 {
@@ -392,6 +389,8 @@ class ViewController: UIViewController {
             if sender.state == .began  {
 //                print("my tag is \(myTag), my midi note is \(rootNote)")
 //                print("Tapped!")
+                myRoot.prevChordIndex = tapIndex
+//                print(myRoot.prevChordIndex)
                 if !myRoot.holding {
                     engine.noteOn(note: rootNote, bank: 1)
                     myRoot.holding = true
@@ -413,54 +412,38 @@ class ViewController: UIViewController {
                         engine.noteOff(note: midiNote, bank: 1)
                     }
                 }
-
-                myRoot.holding = false
+                
                 if myRoot.playCount == 1 {
                     engine.noteOff(note: rootNote, bank: 1)
                 }
-                if tapIndex == 0 {
-                    if myRoot.wasHoldingWhenSwitched && prevTapIndex != 0 {
-//                        print("was not zero, was \(prevTapIndex)")
-                        toggleChordShape(triadType: prevTapIndex, addRemove: false)
-                        myRoot.prevChordIndex = 0
-                        myRoot.wasHoldingWhenSwitched = false
-                        ifNotHolding(note: my3rd, midiNote: thirdNote)
-                        ifNotHolding(note: my5th, midiNote: fifthNote)
-
-                    } else {
-//                        print("was zero, single note")
+//                print(myRoot.prevChordIndex)
+                
+                if myRoot.wasHoldingWhenSwitched {
+//                    print("was holding")
+                    if myRoot.prevChordIndex == 0 {
+//                        print("was single note when began")
                         highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
                         myRoot.playCount -= 1
-                    }
-                } else if tapIndex > 0 {
-                    if myRoot.wasHoldingWhenSwitched {
-//                        print("was holding")
-                        if prevTapIndex == 0 {
-//                            print("was zero")
-                            print(prevTapIndex)
-                            highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
-                            myRoot.playCount -= 1
-                            myRoot.wasHoldingWhenSwitched = false
-                        } else {
-//                            print("was \(prevTapIndex)")
-                            if myRoot.prevChordIndex == 0 || myRoot.prevChordIndex == prevTapIndex {
-                                toggleChordShape(triadType: prevTapIndex, addRemove: false)
-                            } else {
-                                toggleChordShape(triadType: myRoot.prevChordIndex, addRemove: false)
-                            }
-                            myRoot.prevChordIndex = 0
-                            myRoot.wasHoldingWhenSwitched = false
-                        }
-                        
                     } else {
-//                        print("Was not holding")
-                        toggleChordShape(triadType: tapIndex, addRemove: false)
+//                        print("was \(myRoot.prevChordIndex) when began")
+                        toggleChordShape(triadType: myRoot.prevChordIndex, addRemove: false)
+                        ifNotHolding(note: my3rd, midiNote: thirdNote)
+                        ifNotHolding(note: my5th, midiNote: fifthNote)
                     }
-                    ifNotHolding(note: my3rd, midiNote: thirdNote)
-                    ifNotHolding(note: my5th, midiNote: fifthNote)
+                    myRoot.wasHoldingWhenSwitched = false
                 } else {
-                    print("Error!")
+                    if tapIndex == 0 {
+//                        print("was not holding, single notes")
+                        highlightKeys(myKey: myRoot, myRoot: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
+                        myRoot.playCount -= 1
+                    } else {
+//                        print("was not holding, was \(myRoot.prevChordIndex)")
+                        toggleChordShape(triadType: myRoot.prevChordIndex, addRemove: false)
+                        ifNotHolding(note: my3rd, midiNote: thirdNote)
+                        ifNotHolding(note: my5th, midiNote: fifthNote)
+                    }
                 }
+                myRoot.holding = false
                 myRoot.isPlaying = false
             }
 
