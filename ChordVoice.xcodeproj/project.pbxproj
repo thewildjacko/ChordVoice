@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1D0ED1362040745300FB9450 /* ThreeNoteChords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D0ED1352040745300FB9450 /* ThreeNoteChords.swift */; };
 		1D1660952027A381002BB542 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1660942027A381002BB542 /* AppDelegate.swift */; };
 		1D1660972027A381002BB542 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1660962027A381002BB542 /* ViewController.swift */; };
 		1D16609A2027A381002BB542 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1D1660982027A381002BB542 /* Main.storyboard */; };
@@ -101,6 +102,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1D0ED1352040745300FB9450 /* ThreeNoteChords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeNoteChords.swift; sourceTree = "<group>"; };
 		1D1660912027A381002BB542 /* ChordVoice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChordVoice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D1660942027A381002BB542 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1D1660962027A381002BB542 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -226,6 +228,7 @@
 				1D1660A72027A3D7002BB542 /* BackgroundView.swift */,
 				1D9476502028BB2D002029AE /* HighlightKeys.swift */,
 				1D95ABBA202A31F700E594D1 /* CommonToneKeyboards.swift */,
+				1D0ED1352040745300FB9450 /* ThreeNoteChords.swift */,
 				1D895CA22038DB6F00E0A433 /* Custom Extensions.swift */,
 				1D1660982027A381002BB542 /* Main.storyboard */,
 				1D337CD020323DC90016DE24 /* Extensions */,
@@ -503,6 +506,7 @@
 				1D337D3620323DC90016DE24 /* StringProtocolExtensions.swift in Sources */,
 				1D337D3220323DC90016DE24 /* OptionalExtensions.swift in Sources */,
 				1D337D3B20323DC90016DE24 /* UIDatePickerExtensions.swift in Sources */,
+				1D0ED1362040745300FB9450 /* ThreeNoteChords.swift in Sources */,
 				1D337D2120323DC90016DE24 /* NSAttributedStringExtensions.swift in Sources */,
 				1D337D1B20323DC90016DE24 /* CalendarExtensions.swift in Sources */,
 				1D337D3320323DC90016DE24 /* SignedIntegerExtensions.swift in Sources */,

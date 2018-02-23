@@ -26,6 +26,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var add: UIButton!
     
     var buttons = [UIButton]()
+    var myCommonKeyboards: CommonToneKeyboards!
     
     func populateButtons() {
         buttons += [maj, min, aug, dim, sus4, sus2, add]
@@ -70,16 +71,7 @@ class ViewController: UIViewController {
         if addOrRemoveMKBs == true {
             add.borderColor = UIColor.blend(.red, with: .white)
 
-            addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
-            addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
-            addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 9, highlightLockKey: -1)
-            addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
-            addKeyboard(initialKey: 1, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
-            addKeyboard(initialKey: 1, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
-            addKeyboard(initialKey: 12, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
-            addKeyboard(initialKey: 10, startingOctave: 3, numberOfKeys: 7, highlightLockKey: -1)
-            addKeyboard(initialKey: 9, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
-            addKeyboard(initialKey: 9, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
+            myCommonKeyboards.addMiniKBs()
             
             let scale: CGFloat = 3/10
             let keyboardHeight = heightAboveBottomKeyboard * scale
@@ -128,17 +120,8 @@ class ViewController: UIViewController {
                 }
                 keyboard.addKeyConstraints(keys: keyboard.keys)
             }
-            
-            commonToneTriad(myKeyboard: keyboards[1], tonic: 0, root: 0, third: 4, fifth: 7, triadNumber: 1)
-            commonToneTriad(myKeyboard: keyboards[2], tonic: 0, root: 0, third: 3, fifth: 7, triadNumber: 2)
-            commonToneTriad(myKeyboard: keyboards[3], tonic: 0, root: 0, third: 4, fifth: 8, triadNumber: 3)
-            commonToneTriad(myKeyboard: keyboards[4], tonic: 0, root: 0, third: 3, fifth: 6, triadNumber: 4)
-            commonToneTriad(myKeyboard: keyboards[5], tonic: 3, root: 0, third: 3, fifth: 7, triadNumber: 5)
-            commonToneTriad(myKeyboard: keyboards[6], tonic: 3, root: 0, third: 3, fifth: 6, triadNumber: 6)
-            commonToneTriad(myKeyboard: keyboards[7], tonic: 4, root: 0, third: 4, fifth: 7, triadNumber: 7)
-            commonToneTriad(myKeyboard: keyboards[8], tonic: 6, root: 0, third: 3, fifth: 6, triadNumber: 8)
-            commonToneTriad(myKeyboard: keyboards[9], tonic: 7, root: 0, third: 4, fifth: 7, triadNumber: 9)
-            commonToneTriad(myKeyboard: keyboards[10], tonic: 7, root: 0, third: 3, fifth: 7, triadNumber: 10)
+
+            myCommonKeyboards.miniCTKBs()
             
             keyboards[1...].forEach {addChordGestureRecognizers(myKeyboard: $0)}
             backgroundView.layoutIfNeeded()
@@ -320,6 +303,15 @@ class ViewController: UIViewController {
             
             // -1: notes off, 0: single notes, 1: major triads, 2: minor triads, 3: aug triads, 4: dim triads, 5: sus4 triad, 6: sus2 triad
             
+            let majTriad = Triad(root: 0)
+            let minTriad = MinorTriad(root: 0)
+            let augTriad = AugmentedTriad(root: 0)
+            let dimTriad = DiminishedTriad(root: 0)
+            let sus4Triad = Sus4Triad(root: 0)
+            let sus2Triad = Sus2Triad(root: 0)
+            
+            let triads = [1: majTriad, 2: minTriad, 3: augTriad, 4: dimTriad, 5: sus4Triad, 6: sus2Triad]
+            
             let chordInversionOuterBounds = [1: [8, 9, 10], 2: [8, 10, 9], 3: [9, 9, 9], 4: [7, 10, 10], 5: [8, 8, 11], 6: [8, 11, 8]]
             let chordUpperOffsets = [1: [8, 5], 2: [8, 4], 3: [9, 5], 4: [7, 4], 5: [8, 6], 6: [8, 3]]
             let chordInversions = [1: [4, 7, 5, 8], 2: [3, 7, 5, 9], 3: [4, 8, 4, 8], 4: [3, 6, 6, 9], 5: [5, 7, 5, 7], 6: [2, 7, 5, 10]]
@@ -336,28 +328,57 @@ class ViewController: UIViewController {
                 let rootPosOffset = chordUpperOffsets[triadType]![0]
                 let firstInvOffset = chordUpperOffsets[triadType]![1]
                 let chord = chordInversions[triadType]
-                
+                var theChord = triads[triadType]!
                 let myChordInversionOuterBounds = chordInversionOuterBounds[triadType]!.sorted()
                                 
                 func set3rdAnd5th() {
                     if myTag <= myCount - rootPosOffset {
-                        my3rd = myKeys[myTag + chord![0]]
-                        my5th = myKeys[myTag + chord![1]]
+//                        my3rd = myKeys[myTag + chord![0]]
+//                        my5th = myKeys[myTag + chord![1]]
+//
+//                        thirdNote = rootNote + MIDINoteNumber(chord![0])
+//                        fifthNote = rootNote + MIDINoteNumber(chord![1])
                         
-                        thirdNote = rootNote + MIDINoteNumber(chord![0])
-                        fifthNote = rootNote + MIDINoteNumber(chord![1])
-                    } else if myTag > myCount - rootPosOffset && myTag <= myCount - firstInvOffset {
-                        my3rd = myKeys[myTag + chord![0]]
-                        my5th = myKeys[myTag - chord![2]]
-                    
-                        thirdNote = rootNote + MIDINoteNumber(chord![0])
-                        fifthNote = rootNote - MIDINoteNumber(chord![2])
-                    } else {
-                        my3rd = myKeys[myTag - chord![3]]
-                        my5th = myKeys[myTag - chord![2]]
+//                        if triadType == 1 || triadType == 2 {
+                            my3rd = myKeys[myTag + theChord.third]
+                            my5th = myKeys[myTag + theChord.fifth]
+                            
+                            thirdNote = rootNote + MIDINoteNumber(theChord.third)
+                            fifthNote = rootNote + MIDINoteNumber(theChord.fifth)
+//                        }
 
-                        thirdNote = rootNote - MIDINoteNumber(chord![3])
-                        fifthNote = rootNote - MIDINoteNumber(chord![2])
+                    } else if myTag > myCount - rootPosOffset && myTag <= myCount - firstInvOffset {
+//                        my3rd = myKeys[myTag + chord![0]]
+//                        my5th = myKeys[myTag - chord![2]]
+//
+//                        thirdNote = rootNote + MIDINoteNumber(chord![0])
+//                        fifthNote = rootNote - MIDINoteNumber(chord![2])
+                        
+//                        if triadType == 1 || triadType == 2 {
+                            theChord.invert(inversion: 2)
+                            my3rd = myKeys[myTag + theChord.third]
+                            my5th = myKeys[myTag + theChord.fifth]
+                            
+                            thirdNote = rootNote + MIDINoteNumber(abs(theChord.third))
+                            fifthNote = rootNote - MIDINoteNumber(abs(theChord.fifth))
+//                        }
+
+                    } else {
+//                        my3rd = myKeys[myTag - chord![3]]
+//                        my5th = myKeys[myTag - chord![2]]
+//
+//                        thirdNote = rootNote - MIDINoteNumber(chord![3])
+//                        fifthNote = rootNote - MIDINoteNumber(chord![2])
+                        
+//                        if triadType == 1 || triadType == 2 {
+                            theChord.invert(inversion: 1)
+                            my3rd = myKeys[myTag + theChord.third]
+                            my5th = myKeys[myTag + theChord.fifth]
+                            
+                            thirdNote = rootNote - MIDINoteNumber(abs(theChord.third))
+                            fifthNote = rootNote - MIDINoteNumber(abs(theChord.fifth))
+//                        }
+                        
                     }
 //                    print(rootNote, thirdNote, fifthNote)
                 }
@@ -872,6 +893,7 @@ class ViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         populateButtons()
+        myCommonKeyboards = CommonToneKeyboards()
 //        masterKeyboard.prepareForInterfaceBuilder()
 //        for key in masterKeys {
 //            key.prepareForInterfaceBuilder()
