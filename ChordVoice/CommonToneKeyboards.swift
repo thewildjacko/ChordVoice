@@ -23,6 +23,10 @@ class CommonToneKeyboards {
     }
     
     func addMiniKBs() {
+        let masterKeyboard = vc.masterKeyboard!
+        let masterHighlightKey = vc.masterHighlightKey
+        let highlightLockKey = masterKeyboard.keys[masterHighlightKey].keyType
+        
         vc.addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
         vc.addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 8, highlightLockKey: -1)
         vc.addKeyboard(initialKey: 4, startingOctave: 3, numberOfKeys: 9, highlightLockKey: -1)

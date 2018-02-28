@@ -60,6 +60,7 @@ import AudioKitUI
             let timesIn = Int(counter/12)
             let key = Key()
             key.tag = "\(self.tag)\(counter - initialKey)".int!
+            key.keyIndex = counter - initialKey
             
             if counter <= 12 {
                 keyNum = counter

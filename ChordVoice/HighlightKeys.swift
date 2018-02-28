@@ -1,5 +1,5 @@
 //
-//  CommonToneKeyboards.swift
+//  HighlightKeys.swift
 //  ChordVoice
 //
 //  Created by Jake Smolowe on 2/5/18.
@@ -10,153 +10,91 @@ import Foundation
 import AudioKit
 import AudioKitUI
 
-func addKeyShadow(add: Bool, key: Key) {
-    if add {
-        key.addShadow(ofColor: purpleShadow, radius: 10, offset: CGSize.zero, opacity: 1.0)
-        key.layer.shadowPath = UIBezierPath(rect: key.bounds).cgPath
-    } else {
-        key.addShadow(ofColor: .clear, radius: 0, offset: CGSize.zero, opacity: 0)
-        key.layer.shadowPath = nil
-    }
-}
-
-func highlightKeys(myKey: Key, myRoot: Key, highlightColor: UIColor, doHighlight: Bool) {
-    
-    let currentBackground = myKey.backgroundColor
-    let defaultBackgroundColor = myKey.defaultBackgroundColor
-    if doHighlight == true {
-        myKey.previousBackground = currentBackground!
-    }
-    
-    func printPrevBackground() {
-        switch myKey.previousBackground {
-        case UIColor.white:
-            print("Prev bkgnd was white")
-        case UIColor.darkGray:
-            print("Prev bkgnd was black")
-        case UIColor.magenta:
-            print("Prev bkgnd was pink")
-        case UIColor.red:
-            print("Prev bkgnd was red")
-        case UIColor.cyan:
-            print("Prev bkgnd was blue")
-        default:
-            ()
-        }
-    }
-    
-    func printHighlightColor() {
-        switch highlightColor {
-        case UIColor.white:
-            print("highlightColor is white")
-        case UIColor.darkGray:
-            print("highlightColor is black")
-        case UIColor.magenta:
-            print("highlightColor is pink")
-        case UIColor.red:
-            print("highlightColor is red")
-        case UIColor.cyan:
-            print("highlightColor is blue")
-        case UIColor.green:
-            print("highlightColor is green")
-        default:
-            ()
-        }
-    }
+extension Keyboard {
+    func highlightKeys(key: Key, root: Key, highlightColor: UIColor, doHighlight: Bool) {
         
-    func printCurrentHighlight() {
-        if doHighlight {
-            print("Highlighted! Current highlight value is \(myKey.currentHighlight)")
-        } else {
-            print("Un-highlighted! Current highlight value is \(myKey.currentHighlight)")
+        let currentBackground = key.backgroundColor
+        if doHighlight == true {
+            key.previousBackground = currentBackground!
         }
-    }
-    
-    func goHighlight(currentHighlightDelta: Int, newHighlightColor: UIColor) {
-        myKey.currentHighlight += currentHighlightDelta
-        myKey.backgroundColor = newHighlightColor
-    }
-    
-    func borderIt(color: UIColor, width: CGFloat) {
-        myKey.borderColor = color
-        myKey.borderWidth = width
-    }
-    
-    if myKey.currentHighlight == 0 {
-        goHighlight(currentHighlightDelta: 1, newHighlightColor: highlightColor)
-        if myKey != myRoot && myKey.highlightLocked {
-            borderIt(color: tonicBorderHighlightColor, width: 4)
-        }
-    } else {
-        if !doHighlight {
-            switch myKey.currentHighlight {
-            case 1:
-                goHighlight(currentHighlightDelta: -1, newHighlightColor: myKey.defaultBackgroundColor)
-                if myKey != myRoot && myKey.highlightLocked {
-                    borderIt(color: .black, width: 1)
-                }
-            case 2:
-                if myKey.holding {
-                    goHighlight(currentHighlightDelta: -1, newHighlightColor: keyHighlightColor)
-                    borderIt(color: .black, width: 1)
-                } else {
-                    goHighlight(currentHighlightDelta: -1, newHighlightColor: secondKeyHighlightColor)
-                    if myKey.highlightLocked {
-                        borderIt(color: tonicBorderHighlightColor, width: 4)
-                    } else {
-                        borderIt(color: .black, width: 1)
-                    }
-                }
-            case 3:
-                if myKey.holding {
-                    goHighlight(currentHighlightDelta: -1, newHighlightColor: keyHighlightColor)
-                    borderIt(color: secondKeyBorderColor, width: 4)
-                } else {
-                    goHighlight(currentHighlightDelta: -1, newHighlightColor: secondKeyHighlightColor)
-                    borderIt(color: shared3rdOr5thBorderColor, width: 4)
-                }
-            case 4:
-                if myKey.holding {
-                    goHighlight(currentHighlightDelta: -1, newHighlightColor: keyHighlightColor)
-                    borderIt(color: secondKeyBorderColor, width: 4)
-                } else {
-                    goHighlight(currentHighlightDelta: -1, newHighlightColor: secondKeyHighlightColor)
-                    borderIt(color: shared3rdOr5thBorderColor, width: 4)
-                }
-                addKeyShadow(add: false, key: myKey)
-            default:
-                ()
+        
+        if key.currentHighlight == 0 {
+            key.goHighlight(currentHighlightDelta: 1, newHighlightColor: highlightColor)
+            if key != root && key.highlightLocked {
+                key.borderIt(color: Keyboard.tonicBorderHighlightColor, width: 4)
             }
         } else {
-            switch myKey.currentHighlight {
-            case 1:
-                if myKey == myRoot {
-                    goHighlight(currentHighlightDelta: 1, newHighlightColor: keyHighlightColor)
-                    borderIt(color: secondKeyBorderColor, width: 4)
-                } else {
-                    if !myKey.isPlaying {
-                        goHighlight(currentHighlightDelta: 1, newHighlightColor: secondKeyHighlightColor)
-                        borderIt(color: shared3rdOr5thBorderColor, width: 4)
+            if !doHighlight {
+                switch key.currentHighlight {
+                case 1:
+                    key.goHighlight(currentHighlightDelta: -1, newHighlightColor: key.defaultBackgroundColor)
+                    if key != root && key.highlightLocked {
+                        key.borderIt(color: .black, width: 1)
+                    }
+                case 2:
+                    if key.holding {
+                        //                    print("key \(key.keyIndex) is holding, current highlight is \(key.currentHighlight), switching back!")
+                        key.goHighlight(currentHighlightDelta: -1, newHighlightColor: Keyboard.keyHighlightColor)
+                        key.borderIt(color: .black, width: 1)
                     } else {
-                        goHighlight(currentHighlightDelta: 1, newHighlightColor: keyHighlightColor)
-                        borderIt(color: secondKeyBorderColor, width: 4)
+                        key.goHighlight(currentHighlightDelta: -1, newHighlightColor: Keyboard.secondKeyHighlightColor)
+                        if key.highlightLocked {
+                            key.borderIt(color: Keyboard.tonicBorderHighlightColor, width: 4)
+                        } else {
+                            key.borderIt(color: .black, width: 1)
+                        }
                     }
-                }
-            case 2:
-                if myKey == myRoot {
-                    goHighlight(currentHighlightDelta: 1, newHighlightColor: keyHighlightColor)
-                    if myKey.holding {
-                        borderIt(color: shared3rdOr5thBorderColor, width: 4)
+                case 3:
+                    if key.holding {
+                        key.goHighlight(currentHighlightDelta: -1, newHighlightColor: Keyboard.keyHighlightColor)
+                        key.borderIt(color: Keyboard.secondKeyBorderColor, width: 4)
+                    } else {
+                        key.goHighlight(currentHighlightDelta: -1, newHighlightColor: Keyboard.secondKeyHighlightColor)
+                        key.borderIt(color: Keyboard.shared3rdOr5thBorderColor, width: 4)
                     }
-                } else {
-                    myKey.currentHighlight += 1
-                    borderIt(color: shared3rdOr5thBorderColor, width: 4)
+                case 4:
+                    if key.holding {
+                        key.goHighlight(currentHighlightDelta: -1, newHighlightColor: Keyboard.keyHighlightColor)
+                        key.borderIt(color: Keyboard.secondKeyBorderColor, width: 4)
+                    } else {
+                        key.goHighlight(currentHighlightDelta: -1, newHighlightColor: Keyboard.secondKeyHighlightColor)
+                        key.borderIt(color: Keyboard.shared3rdOr5thBorderColor, width: 4)
+                    }
+                    key.addKeyShadow(add: false)
+                default:
+                    ()
                 }
-            case 3:
-                goHighlight(currentHighlightDelta: 1, newHighlightColor: keyHighlightColor)
-                addKeyShadow(add: true, key: myKey)
-            default:
-                ()
+            } else {
+                switch key.currentHighlight {
+                case 1:
+                    if key == root {
+                        key.goHighlight(currentHighlightDelta: 1, newHighlightColor: Keyboard.keyHighlightColor)
+                        key.borderIt(color: Keyboard.secondKeyBorderColor, width: 4)
+                    } else {
+                        if !key.isPlaying {
+                            key.goHighlight(currentHighlightDelta: 1, newHighlightColor: Keyboard.secondKeyHighlightColor)
+                            key.borderIt(color: Keyboard.shared3rdOr5thBorderColor, width: 4)
+                        } else {
+                            key.goHighlight(currentHighlightDelta: 1, newHighlightColor: Keyboard.keyHighlightColor)
+                            key.borderIt(color: Keyboard.secondKeyBorderColor, width: 4)
+                        }
+                    }
+                case 2:
+                    if key == root {
+                        key.goHighlight(currentHighlightDelta: 1, newHighlightColor: Keyboard.keyHighlightColor)
+                        if key.holding {
+                            key.borderIt(color: Keyboard.shared3rdOr5thBorderColor, width: 4)
+                        }
+                    } else {
+                        key.currentHighlight += 1
+                        key.borderIt(color: Keyboard.shared3rdOr5thBorderColor, width: 4)
+                    }
+                case 3:
+                    key.goHighlight(currentHighlightDelta: 1, newHighlightColor: Keyboard.keyHighlightColor)
+                    key.addKeyShadow(add: true)
+                default:
+                    ()
+                }
             }
         }
     }

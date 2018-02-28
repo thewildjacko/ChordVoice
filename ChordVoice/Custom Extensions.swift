@@ -200,3 +200,7 @@ extension UIApplication{
         return presentViewController
     }
 }
+
+extension Int {
+    public static let unison = 0, min2nd = 1, maj2nd = 2, min3rd = 3, maj3rd = 4, p4th = 5, tritone = 6, p5th = 7, aug5th = 8, min6th = 8, maj6th = 9, min7th = 10, maj7th = 11, octave = 12
+}
