@@ -19,22 +19,11 @@ extension Keyboard {
         }
         
         if key.currentHighlight == 0 {
-//            if key.holding {
-//                print("key \(key.keyIndex) is holding!")
-//            } else {
-//                print("Not holding!")
-//            }
             key.goHighlight(currentHighlightDelta: 1, newHighlightColor: highlightColor)
             if key != root && key.highlightLocked {
                 key.borderIt(color: Keyboard.tonicBorderHighlightColor, width: 4)
             }
         } else {
-//            if key.holding {
-//                print("key \(key.keyIndex) is holding!")
-//            } else {
-//                print("Not holding!")
-//            }
-            
             if !doHighlight {
                 switch key.currentHighlight {
                 case 1:

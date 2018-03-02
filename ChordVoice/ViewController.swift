@@ -420,7 +420,6 @@ class ViewController: UIViewController {
                     engine.noteOn(note: thirdNote, bank: 1)
                     engine.noteOn(note: fifthNote, bank: 1)
                 }
-//                myRoot.isPlaying = true
             }
             
             if sender.state == .ended {
@@ -469,7 +468,6 @@ class ViewController: UIViewController {
                         notesEnded(wasSingle: false)
                     }
                 }
-//                myRoot.isPlaying = false
             }
 
             if sender.state == .cancelled {
@@ -711,8 +709,6 @@ class ViewController: UIViewController {
         key.backgroundColor = key.defaultBackgroundColor
         key.borderColor = .black
         key.borderWidth = 1
-//        key.isPlaying = false
-//        key.playCount = 0
         engine.bank1Notes[Int(midiNote)].playCount = 0
         key.currentHighlight = 0
         key.addKeyShadow(add: false)
