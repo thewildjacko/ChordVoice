@@ -29,7 +29,8 @@ import AudioKitUI
     var borderPath: UIBezierPath!
     var borderLayer: CAShapeLayer!
     var borderLayerColor = UIColor()
-
+    var engine: AudioEngine!
+    
     static var keyHighlightColor: UIColor = .red
     static var secondKeyHighlightColor: UIColor = .cyan
     static var secondKeyBorderColor: UIColor = .cyan
@@ -88,6 +89,7 @@ import AudioKitUI
             self.addSubview(key)
             key.setParent()
             key.note = MIDINoteNumber(startingPitch + counter - initialKey + 21)
+            key.bnk1Note = engine.bank1Notes[Int(key.note)]
 // parent!.startingPitch + myTag + 21
             counter += 1
         }

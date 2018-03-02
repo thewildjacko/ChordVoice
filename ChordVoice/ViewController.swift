@@ -214,6 +214,7 @@ class ViewController: UIViewController {
         // add and set highlightLockKey
         let myKeyboard = Keyboard(initialKey: initialKey, startingOctave: startingOctave, numberOfKeys: numberOfKeys)
         myKeyboard.highlightKey = highlightLockKey
+        myKeyboard.engine = engine
         
         // set tag, increment keyboardIndex
         myKeyboard.tag = keyboardIndex
@@ -329,82 +330,78 @@ class ViewController: UIViewController {
             let triads = [1: majTriad, 2: minTriad, 3: augTriad, 4: dimTriad, 5: sus4Triad, 6: sus2Triad]
             
             let myRoot = myKeys[myTag]
-            let rootBankNote = engine.bank1Notes[Int(myRoot.note)]
+            let rootBankNote = tappedKey.bnk1Note!
             
             var my3rd = Key()
             var thirdNote = MIDINoteNumber()
+            var thirdBankNote: MidiBankNote!
+            var fifthBankNote: MidiBankNote!
 
             var my5th = Key()
             var fifthNote = MIDINoteNumber()
             
             func toggleChordShape(triadType: Int, addRemove: Bool) {
                 var chord = triads[triadType]!
+                var multiplier1 = 1
+                var multiplier2 = 1
+                let rootNoteInt = Int(rootNote)
                 
                 func set3rdAnd5th() {
-                    if myTag <= myCount - chord.rootPosOffset {
-                            my3rd = myKeys[myTag + chord.third]
-                            my5th = myKeys[myTag + chord.fifth]
-                            
-                            thirdNote = rootNote + MIDINoteNumber(chord.third)
-                            fifthNote = rootNote + MIDINoteNumber(chord.fifth)
-                    } else if myTag > myCount - chord.rootPosOffset && myTag <= myCount - chord.firstInvOffset {
-                            chord.invert(inversion: 2)
-                        
-                            my3rd = myKeys[myTag + chord.third]
-                            my5th = myKeys[myTag + chord.fifth]
-                            
-                            thirdNote = rootNote + MIDINoteNumber(abs(chord.third))
-                            fifthNote = rootNote - MIDINoteNumber(abs(chord.fifth))
-                    } else {
-                            chord.invert(inversion: 1)
-                        
-                            my3rd = myKeys[myTag + chord.third]
-                            my5th = myKeys[myTag + chord.fifth]
-                        
-                            thirdNote = rootNote - MIDINoteNumber(abs(chord.third))
-                            fifthNote = rootNote - MIDINoteNumber(abs(chord.fifth))
+                    func thirdFifth() {
+                        my3rd = myKeys[myTag + chord.third]
+                        my5th = myKeys[myTag + chord.fifth]
+                        thirdNote = MIDINoteNumber(rootNoteInt + chord.third)
+                        fifthNote = MIDINoteNumber(rootNoteInt + chord.fifth)
+                        thirdBankNote = my3rd.bnk1Note!
+                        fifthBankNote = my5th.bnk1Note!
                     }
+                    
+                    if myTag <= myCount - chord.rootPosOffset {
+                        thirdFifth()
+                    } else if myTag > myCount - chord.rootPosOffset && myTag <= myCount - chord.firstInvOffset {
+                        chord.invert(inversion: 2)
+                        thirdFifth()
+                    } else {
+                        chord.invert(inversion: 1)
+                        thirdFifth()
+                    }
+                    
 //                    print(rootNote, thirdNote, fifthNote)
                 }
                 
-                // addRemove == true, highlight; addRemove == false, remove highlights
-                if addRemove {
-                    parent.highlightKeys(key: myRoot, root: myRoot, highlightColor: keyHighlightColor, doHighlight: true)
-                    myRoot.playCount += 1
-//                    rootBankNote.playCount += 1
-                    if myCount - chord.maxOuterBounds > 0 {
-                      //                    print("We can invert!")
-                        set3rdAnd5th()
-                        let thirdBankNote = engine.bank1Notes[Int(my3rd.note)]
-                        let fifthBankNote = engine.bank1Notes[Int(my5th.note)]
-//                        thirdBankNote.playCount += 1
-//                        fifthBankNote.playCount += 1
-                        my3rd.playCount += 1
-                        my5th.playCount += 1
-                        parent.highlightKeys(key: my3rd, root: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: true)
-                        parent.highlightKeys(key: my5th, root: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: true)
+                func addOrRemove(lightUp: Bool) {
+                    var playCountDelta = Int()
+                    
+                    if lightUp {
+                        playCountDelta = 1
+                    } else {
+                        playCountDelta = -1
                     }
-                } else {
-                    parent.highlightKeys(key: myRoot, root: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
-                    myRoot.playCount -= 1
-//                    rootBankNote.playCount -= 1
+                    
+                    parent.highlightKeys(key: myRoot, root: myRoot, highlightColor: keyHighlightColor, doHighlight: lightUp)
+                    rootBankNote.playCount += playCountDelta
+                    
+//                    myRoot.playCount += playCountDelta
                     if myCount - chord.maxOuterBounds > 0 {
                         set3rdAnd5th()
-                        let thirdBankNote = engine.bank1Notes[Int(my3rd.note)]
-                        let fifthBankNote = engine.bank1Notes[Int(my5th.note)]
 
-//                        thirdBankNote.playCount -= 1
-//                        fifthBankNote.playCount -= 1
+//                        my3rd.playCount += playCountDelta
+//                        my5th.playCount += playCountDelta
+                        
+                        parent.highlightKeys(key: my3rd, root: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: lightUp)
+                        parent.highlightKeys(key: my5th, root: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: lightUp)
 
-                        my3rd.playCount -= 1
-                        my5th.playCount -= 1
-                        parent.highlightKeys(key: my3rd, root: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: false)
-                        parent.highlightKeys(key: my5th, root: myRoot, highlightColor: secondKeyHighlightColor, doHighlight: false)
+                        thirdBankNote.playCount += playCountDelta
+                        fifthBankNote.playCount += playCountDelta
+
                     }
                 }
+                
+                addOrRemove(lightUp: addRemove) // addRemove == true, highlight; addRemove == false, remove highlights
             }
             
             if sender.state == .began  {
+//                print(rootBankNote.playCount)
                 tappedKey.initialLocation = sender.location(in: parent)
 
 //                print("my tag is \(myTag), my midi note is \(rootNote)")
@@ -416,60 +413,63 @@ class ViewController: UIViewController {
                     myRoot.holding = true
                 }
                 if tapIndex == 0 {
-                    myRoot.playCount += 1
-//                    rootBankNote.playCount += 1
+                    rootBankNote.playCount += 1
                     parent.highlightKeys(key: myRoot, root: myRoot, highlightColor: keyHighlightColor, doHighlight: true)
                 } else if tapIndex > 0 {
                     toggleChordShape(triadType: tapIndex, addRemove: true)
                     engine.noteOn(note: thirdNote, bank: 1)
                     engine.noteOn(note: fifthNote, bank: 1)
                 }
-                myRoot.isPlaying = true
+//                myRoot.isPlaying = true
             }
             
             if sender.state == .ended {
-                func ifNotHolding(note: Key, midiNote: MIDINoteNumber) {
-                    if !note.holding && note.playCount == 0 {
-                        engine.noteOff(note: midiNote, bank: 1)
+//                print(rootBankNote.playCount)
+                
+                func ifNotHolding(note: Key, midiNote: MidiBankNote) {
+                    if !note.holding {
+                        engine.ifCountZero(note: midiNote, bank: 1)
                     }
                 }
                 
-                if myRoot.playCount == 1 {
+                if rootBankNote.playCount == 1 {
                     engine.noteOff(note: rootNote, bank: 1)
                 }
 //                print(myRoot.prevChordIndex)
                 
+                func notesEnded(wasSingle: Bool) {
+                    myRoot.holding = false
+                    if wasSingle {
+                        parent.highlightKeys(key: myRoot, root: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
+                        rootBankNote.playCount -= 1
+                    } else {
+                        toggleChordShape(triadType: myRoot.prevChordIndex, addRemove: false)
+                        ifNotHolding(note: my3rd, midiNote: thirdBankNote)
+                        ifNotHolding(note: my5th, midiNote: fifthBankNote)
+                    }
+                }
+
                 if myRoot.wasHoldingWhenSwitched {
 //                    print("was holding")
+                    
                     if myRoot.prevChordIndex == 0 {
 //                        print("was single note when began")
-                        myRoot.holding = false
-                        parent.highlightKeys(key: myRoot, root: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
-                        myRoot.playCount -= 1
+                        notesEnded(wasSingle: true)
                     } else {
 //                        print("was \(myRoot.prevChordIndex) when began")
-                        myRoot.holding = false
-                        toggleChordShape(triadType: myRoot.prevChordIndex, addRemove: false)
-                        ifNotHolding(note: my3rd, midiNote: thirdNote)
-                        ifNotHolding(note: my5th, midiNote: fifthNote)
+                        notesEnded(wasSingle: false)
                     }
                     myRoot.wasHoldingWhenSwitched = false
-                    
                 } else {
                     if tapIndex == 0 {
 //                        print("was not holding, single notes")
-                        myRoot.holding = false
-                        parent.highlightKeys(key: myRoot, root: myRoot, highlightColor: keyHighlightColor, doHighlight: false)
-                        myRoot.playCount -= 1
+                        notesEnded(wasSingle: true)
                     } else {
 //                        print("was not holding, was \(myRoot.prevChordIndex)")
-                        myRoot.holding = false
-                        toggleChordShape(triadType: myRoot.prevChordIndex, addRemove: false)
-                        ifNotHolding(note: my3rd, midiNote: thirdNote)
-                        ifNotHolding(note: my5th, midiNote: fifthNote)
+                        notesEnded(wasSingle: false)
                     }
                 }
-                myRoot.isPlaying = false
+//                myRoot.isPlaying = false
             }
 
             if sender.state == .cancelled {
@@ -535,10 +535,10 @@ class ViewController: UIViewController {
             }
             
             let firstNote: MIDINoteNumber = ifNegative(note: note1)
-            let bankNote1 = engine.bank2Notes[Int(firstNote)]
+            let bank2Note1 = engine.bank2Notes[Int(firstNote)]
             
             let secondNote: MIDINoteNumber = ifNegative(note: note2)
-            let bankNote2 = engine.bank2Notes[Int(secondNote)]
+            let bank2Note2 = engine.bank2Notes[Int(secondNote)]
             
             var color: CGColor!
             var opacity = Float()
@@ -550,8 +550,8 @@ class ViewController: UIViewController {
                 engine.noteOn(note: firstNote, bank: 2)
                 engine.noteOn(note: secondNote, bank: 2)
                 
-                bankNote1.playCount += 1
-                bankNote2.playCount += 1
+                bank2Note1.playCount += 1
+                bank2Note2.playCount += 1
             } else {
                 color = clearColor.cgColor
                 if parent.triadNumber > 0 {
@@ -560,11 +560,11 @@ class ViewController: UIViewController {
                     opacity = 0.0
                 }
                 
-                bankNote1.playCount -= 1
-                bankNote2.playCount -= 1
+                bank2Note1.playCount -= 1
+                bank2Note2.playCount -= 1
 
-                engine.ifCountZero(note: bankNote1, bank: 2)
-                engine.ifCountZero(note: bankNote2, bank: 2)
+                engine.ifCountZero(note: bank2Note1, bank: 2)
+                engine.ifCountZero(note: bank2Note2, bank: 2)
             }
             toggleBorders(myBorderLayer: masterChordBorders[parent.triadNumber - 1], color: color, opacity: opacity, triadNumber: parent.triadNumber)
         }
@@ -711,8 +711,9 @@ class ViewController: UIViewController {
         key.backgroundColor = key.defaultBackgroundColor
         key.borderColor = .black
         key.borderWidth = 1
-        key.isPlaying = false
-        key.playCount = 0
+//        key.isPlaying = false
+//        key.playCount = 0
+        engine.bank1Notes[Int(midiNote)].playCount = 0
         key.currentHighlight = 0
         key.addKeyShadow(add: false)
         engine.noteOff(note: midiNote, bank: 1)

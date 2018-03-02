@@ -19,11 +19,22 @@ extension Keyboard {
         }
         
         if key.currentHighlight == 0 {
+//            if key.holding {
+//                print("key \(key.keyIndex) is holding!")
+//            } else {
+//                print("Not holding!")
+//            }
             key.goHighlight(currentHighlightDelta: 1, newHighlightColor: highlightColor)
             if key != root && key.highlightLocked {
                 key.borderIt(color: Keyboard.tonicBorderHighlightColor, width: 4)
             }
         } else {
+//            if key.holding {
+//                print("key \(key.keyIndex) is holding!")
+//            } else {
+//                print("Not holding!")
+//            }
+            
             if !doHighlight {
                 switch key.currentHighlight {
                 case 1:
@@ -71,7 +82,7 @@ extension Keyboard {
                         key.goHighlight(currentHighlightDelta: 1, newHighlightColor: Keyboard.keyHighlightColor)
                         key.borderIt(color: Keyboard.secondKeyBorderColor, width: 4)
                     } else {
-                        if !key.isPlaying {
+                        if !key.holding {
                             key.goHighlight(currentHighlightDelta: 1, newHighlightColor: Keyboard.secondKeyHighlightColor)
                             key.borderIt(color: Keyboard.shared3rdOr5thBorderColor, width: 4)
                         } else {

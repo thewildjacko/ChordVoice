@@ -17,15 +17,15 @@ import AudioKitUI
     
     var defaultBackgroundColor: UIColor = .clear
     var currentHighlight = 0
-    var isPlaying = false
     var holding = false
     var wasHoldingWhenSwitched = false
     var prevChordIndex = 0
-    var playCount = 0
     var previousBackground = UIColor()
     var highlightLocked = false
     var parent: Keyboard!
     var note = MIDINoteNumber()
+    var bnk1Note: MidiBankNote!
+    var bnk2Note: MidiBankNote!
     var keyIndex = Int()
     var initialLocation = CGPoint()
     
